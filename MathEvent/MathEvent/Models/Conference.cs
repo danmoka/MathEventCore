@@ -30,6 +30,9 @@ namespace MathEvent.Models
         [Display(Name = "Дата начала")]
         public DateTime Start { get; set; }
 
+        [HiddenInput(DisplayValue = false)]
+        public string DataPath { get; set; }
+
         [Required(ErrorMessage = "Выберите дату и время конца")]
         [DataType(DataType.DateTime)]
         [Display(Name = "Дата конца")]

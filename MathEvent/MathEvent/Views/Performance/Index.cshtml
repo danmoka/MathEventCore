@@ -1,0 +1,75 @@
+﻿@model IEnumerable<MathEvent.Models.Performance>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-controller="Performance" asp-action="Create">Создать событие</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KeyWords)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Annotation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Start)
+            </th>
+            <th>
+                <h6>Секция</h6>
+            </th>
+            <th>
+                <h6>Организатор</h6>
+            </th>
+            <th>
+                <h6>Афиша</h6>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KeyWords)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Annotation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Start)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Section.Name)
+            </td>
+            <td>
+                <h6>@item.Creator.Name @item.Creator.Surname</h6>
+            </td>
+            <td>
+                <img src="@Url.Content(item.DataPath + item.PosterName)" />
+            </td>
+            <td>
+                @Html.ActionLink("Записаться", "SignUp", new { /* id=item.PrimaryKey */ }) |
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

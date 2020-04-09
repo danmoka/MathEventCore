@@ -22,7 +22,7 @@ namespace MathEvent.Models
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Выберите тип события")]
-        [StringLength(100, MinimumLength = 3, ErrorMessage = "Недопустимый тип события")]
+        [Display(Name = "Тип")]
         public string Type { get; set; }
 
         [StringLength(250, MinimumLength = 3, ErrorMessage = "Длина поля ключевых слов должна быть от 3 до 250 символов")]

@@ -36,6 +36,9 @@ namespace MathEvent.Models
         [Display(Name = "Дата конца")]
         public DateTime End { get; set; }
 
+        [HiddenInput(DisplayValue = false)]
+        public string DataPath { get; set; }
+
         [Required]
         [ForeignKey("Conference")]
         [HiddenInput(DisplayValue = false)]

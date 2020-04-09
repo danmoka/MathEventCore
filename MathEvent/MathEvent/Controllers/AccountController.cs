@@ -51,7 +51,7 @@ namespace MathEvent.Controllers
 
                 if (result.Succeeded)
                 {
-                    UserDataPathWorker.CreateUserDirectory(user.DataPath);
+                    UserDataPathWorker.CreateDirectory(user.DataPath); // сделать проверку, что папка создалась, иначе что-то делать 
                     //await _userManager.AddToRoleAsync(user, "user");
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");

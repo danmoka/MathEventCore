@@ -11,16 +11,12 @@ namespace MathEvent.Helpers
     {
         private static IWebHostEnvironment _webHostEnvironment;
         private static string _mainDirectory = "UserData";
+        private static string _defaultImageName = "default.png";
 
         public static void Init(IWebHostEnvironment webHostEnvironment)
         {
             _webHostEnvironment = webHostEnvironment;
             DirectoryInfo directoryInfo = new DirectoryInfo(_mainDirectory);
-
-            if (!directoryInfo.Exists)
-            {
-                directoryInfo.Create();
-            }
         }
 
         public static string CreateNewUserPath(string userId)
@@ -28,8 +24,9 @@ namespace MathEvent.Helpers
             return Path.Combine(_mainDirectory, userId);
         }
 
-        public static bool CreateUserDirectory(string path)
+        public static bool CreateDirectory(string path)
         {
+            // сделать проверку, что папка создалась, иначе что-то делать
             var userTrueDirPath = Path.Combine(_webHostEnvironment.WebRootPath, path);
 
             DirectoryInfo directoryInfo = new DirectoryInfo(userTrueDirPath);
@@ -49,7 +46,7 @@ namespace MathEvent.Helpers
 
         public static bool CreateSubDirectory(ref string parentDir, string newDirName)
         {
-            parentDir = ConcatPaths(parentDir, newDirName);
+            parentDir = Path.Combine(parentDir, newDirName);
             var parentTrueDir = Path.Combine(_webHostEnvironment.WebRootPath, parentDir);
             DirectoryInfo directoryInfo = new DirectoryInfo(parentTrueDir);
 
@@ -63,6 +60,16 @@ namespace MathEvent.Helpers
             {
                 return false;
             }
+        }
+
+        public static string GetRootPath(string path)
+        {
+            return Path.Combine(_webHostEnvironment.WebRootPath, path);
+        }
+
+        public static string GetDefaultImagePath()
+        {
+            return _defaultImageName;
         }
 
         private static string ConcatPaths(string path1, string path2)
