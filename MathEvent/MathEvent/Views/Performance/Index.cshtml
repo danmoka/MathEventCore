@@ -28,13 +28,13 @@
                 @Html.DisplayNameFor(model => model.Start)
             </th>
             <th>
-                <h6>Секция</h6>
+                @Html.DisplayNameFor(model => model.Section)
             </th>
             <th>
-                <h6>Организатор</h6>
+                @Html.DisplayNameFor(model => model.Creator)
             </th>
             <th>
-                <h6>Афиша</h6>
+                @Html.DisplayNameFor(model => model.PosterName)
             </th>
             <th></th>
         </tr>
@@ -67,7 +67,7 @@
                 <img src="@Url.Content(item.DataPath + item.PosterName)" />
             </td>
             <td>
-                @Html.ActionLink("Записаться", "SignUp", new { /* id=item.PrimaryKey */ }) |
+                <a class="card-link" asp-route-performanceId="@item.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
             </td>
         </tr>
 }

@@ -39,6 +39,7 @@ namespace MathEvent.Models
         public DateTime End { get; set; }
 
         [HiddenInput(DisplayValue = false)]
+        [Display(Name = "Секции")]
         public ICollection<Section> Sections { get; set; }
 
         [ForeignKey("ApplicationUser")]

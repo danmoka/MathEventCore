@@ -7,6 +7,7 @@ using MathEvent.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
@@ -70,6 +71,36 @@ namespace MathEvent.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int sectionId)
+        {
+            // если id null, то что?
+            var section = _db.Sections.Where(c => c.Id == sectionId).FirstOrDefault();
+            // если не нашли, то что?
+
+            return View(section);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Section section)
+        {
+            _db.Sections.Update(section);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Account");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int sectionId)
+        {
+            var section = await _db.Sections.Where(p => p.Id == sectionId).FirstAsync();
+            _db.Sections.Remove(section);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Account");
         }
     }
 }

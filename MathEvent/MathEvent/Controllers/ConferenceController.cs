@@ -6,6 +6,7 @@ using MathEvent.Helpers;
 using MathEvent.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
@@ -26,7 +27,7 @@ namespace MathEvent.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Add()
+        public IActionResult Add()
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -58,6 +59,36 @@ namespace MathEvent.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int conferenceId)
+        {
+            // если id null, то что?
+            var conference = _db.Conferences.Where(c => c.Id == conferenceId).FirstOrDefault();
+            // если не нашли, то что?
+
+            return View(conference);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Conference conference)
+        {
+            _db.Conferences.Update(conference);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Account");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int conferenceId)
+        {
+            var conference = await _db.Conferences.Where(p => p.Id == conferenceId).FirstAsync();
+            _db.Conferences.Remove(conference);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Account");
         }
     }
 }

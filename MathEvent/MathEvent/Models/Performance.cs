@@ -39,25 +39,33 @@ namespace MathEvent.Models
         [Display(Name = "Дата начала")]
         public DateTime Start { get; set; }
 
+
         [ForeignKey("Section")]
         [HiddenInput(DisplayValue = false)]
         public int? SectionId { get; set; }
 
         [HiddenInput(DisplayValue = false)]
+        [Display(Name = "Секция")]
         public Section Section { get; set; }
+
 
         [ForeignKey("ApplicationUser")]
         [HiddenInput(DisplayValue = false)]
         public string CreatorId { get; set; }
 
         [HiddenInput(DisplayValue = false)]
+        [Display(Name = "Организатор")]
         public ApplicationUser Creator { get; set; }
+
 
         [HiddenInput(DisplayValue = false)]
         public string DataPath { get; set; }
 
+
         [HiddenInput(DisplayValue = false)]
+        [Display(Name = "Афиша")]
         public string PosterName { get; set; }
+
 
         [HiddenInput(DisplayValue = false)]
         public ICollection<ApplicationUserPerformance> ApplicationUserPerformances { get; set; }

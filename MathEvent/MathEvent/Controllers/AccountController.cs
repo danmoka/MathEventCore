@@ -7,6 +7,7 @@ using MathEvent.Models;
 using MathEvent.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
@@ -14,17 +15,33 @@ namespace MathEvent.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationContext _db;
 
         public AccountController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager, ApplicationContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _db = db;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            var conferences = await _db.Conferences.Where(c => c.ManagerId == user.Id)
+                .Include(c => c.Manager)
+                .Include(c => c.Sections)
+                .ThenInclude(s => s.Performances).ToListAsync();
+
+            var performances = await _db.Performances.Where(p => p.CreatorId == user.Id && p.SectionId == null).ToListAsync();
+            ViewBag.Performances = performances;
+            //var personalAreaData = new PersonalAreaViewModel
+            //{
+            //    Conferences = conferences,
+            //    Performances = performances
+            //};
+
+            return View(conferences);
         }
 
         [HttpGet]
@@ -99,6 +116,23 @@ namespace MathEvent.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Edit()
+        {
+            var user = _userManager.GetUserAsync(User);
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ApplicationUser user)
+        {
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Index", "Account");
         }
     }
 }

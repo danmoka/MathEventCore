@@ -54,7 +54,7 @@ namespace MathEvent.Controllers
                  .ToList();
             ViewBag.Types = types;
             var user = await _userManager.GetUserAsync(User);
-            var userSections = _db.Sections.Where(s => s.ManagerId == user.Id).ToList();
+            var userSections = await _db.Sections.Where(s => s.ManagerId == user.Id).ToListAsync();
             ViewBag.Sections = new SelectList(userSections, "Id", "Name");
 
             return View();
@@ -70,14 +70,14 @@ namespace MathEvent.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             performance.CreatorId = user.Id;
-            _db.Performances.Add(performance);
+            await _db.Performances.AddAsync(performance);
             await _db.SaveChangesAsync();
 
             string performanceDataPath;
 
             if (performance.SectionId != null)
             {
-                var section = _db.Sections.Where(s => s.Id == performance.SectionId).FirstOrDefault();
+                var section = await _db.Sections.Where(s => s.Id == performance.SectionId).FirstOrDefaultAsync();
                 performanceDataPath = section.DataPath;
             }
             else
@@ -106,6 +106,120 @@ namespace MathEvent.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Card(int? performanceId)
+        {
+            if (performanceId == null)
+            {
+                // сделать HttpNotFound
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
+
+            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).FirstOrDefaultAsync();
+
+            if (ap == null)
+            {
+                ViewBag.SignedUp = false;
+            }
+            else
+            {
+                ViewBag.SignedUp = true;
+            }
+
+            var performance = await _db.Performances.Where(p => p.Id == performanceId)
+                .Include(p => p.Section)
+                .Include(p => p.Creator).FirstAsync();
+
+            return View(performance);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Subscribe(int? performanceId)
+        {
+            if (performanceId == null)
+            {
+                // сделать HttpNotFound
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
+
+            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).FirstOrDefaultAsync();
+
+            if (ap == null)
+            {
+                ap = new ApplicationUserPerformance()
+                {
+                    ApplicationUserId = user.Id,
+                    PerformanceId = (int) performanceId
+                };
+
+                await _db.ApplicationUserPerformances.AddAsync(ap);
+                await _db.SaveChangesAsync();
+            }
+            // если уже записан, то вывести что-нибудь
+
+            return RedirectToAction("Card", "Performance", new { performanceId = performanceId});
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UnSubscribe(int? performanceId)
+        {
+            if (performanceId == null)
+            {
+                // сделать HttpNotFound
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
+
+            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).FirstOrDefaultAsync();
+
+            if (ap != null)
+            {
+                _db.ApplicationUserPerformances.Remove(ap);
+                await _db.SaveChangesAsync();
+            }
+            // если еще не записан, то вывести что-нибудь
+
+            return RedirectToAction("Card", "Performance", new { performanceId = performanceId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int performanceId)
+        {
+            // если id null, то что?
+            var performance = await _db.Performances.Where(c => c.Id == performanceId).FirstAsync();
+            // если не нашли, то что?
+
+            return View(performance);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Performance performance)
+        {
+            _db.Performances.Update(performance);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Account");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int performanceId)
+        {
+            var performance = await _db.Performances.Where(p => p.Id == performanceId).FirstAsync();
+            _db.Performances.Remove(performance);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Account");
         }
     }
 }
