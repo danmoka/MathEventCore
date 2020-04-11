@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MathEvent.Models.Validators;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace MathEvent.Models
 {
     [Table("Sections")]
+    //[Date]
     public class Section
     {
         [Key]
@@ -27,11 +29,13 @@ namespace MathEvent.Models
         public string Location { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время начала")]
+        [Remote(action: "CheckStartDate", controller: "Section", AdditionalFields = "End,ConferenceId")]
         [DataType(DataType.DateTime)]
         [Display(Name = "Дата начала")]
         public DateTime Start { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время конца")]
+        [Remote(action: "CheckEndDate", controller: "Section", AdditionalFields = "Start,ConferenceId")]
         [DataType(DataType.DateTime)]
         [Display(Name = "Дата конца")]
         public DateTime End { get; set; }
@@ -42,6 +46,7 @@ namespace MathEvent.Models
         [Required]
         [ForeignKey("Conference")]
         [HiddenInput(DisplayValue = false)]
+        [Display(Name = "Конференция")]
         public int ConferenceId { get; set; }
         [HiddenInput(DisplayValue = false)]
         public Conference Conference { get; set; }
@@ -55,5 +60,26 @@ namespace MathEvent.Models
 
         [HiddenInput(DisplayValue = false)]
         public ApplicationUser Manager { get; set; }
+
+        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        //{
+        //    List<ValidationResult> errors = new List<ValidationResult>();
+
+        //    if (Start < DateTime.Now)
+        //    {
+        //        errors.Add(new ValidationResult("Дата начала меньше текущей даты!", new List<string>() { "Start" }));
+        //    }
+        //    if (Start > End)
+        //    {
+        //        errors.Add(new ValidationResult("Дата начала больше даты конца",
+        //            new List<string>() { "Start", "End" }));
+        //    }
+        //    if (End < DateTime.Now)
+        //    {
+        //        errors.Add(new ValidationResult("Дата конца меньше текущей даты!", new List<string>() { "End" }));
+        //    }
+
+        //    return errors;
+        //}
     }
 }

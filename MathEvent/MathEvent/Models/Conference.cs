@@ -26,6 +26,7 @@ namespace MathEvent.Models
         public string Location { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время начала")]
+        [Remote(action: "CheckStartDate", controller: "Conference", AdditionalFields = nameof(End))]
         [DataType(DataType.DateTime)]
         [Display(Name = "Дата начала")]
         public DateTime Start { get; set; }
@@ -34,6 +35,7 @@ namespace MathEvent.Models
         public string DataPath { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время конца")]
+        [Remote(action: "CheckEndDate", controller: "Conference", AdditionalFields = nameof(Start))]
         [DataType(DataType.DateTime)]
         [Display(Name = "Дата конца")]
         public DateTime End { get; set; }

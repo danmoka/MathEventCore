@@ -34,6 +34,9 @@
                 @Html.DisplayNameFor(model => model.Creator)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Traffic)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.PosterName)
             </th>
             <th></th>
@@ -62,6 +65,9 @@
             </td>
             <td>
                 <h6>@item.Creator.Name @item.Creator.Surname</h6>
+            </td>
+            <td>
+                <h6>@item.Traffic</h6>
             </td>
             <td>
                 <img src="@Url.Content(item.DataPath + item.PosterName)" />

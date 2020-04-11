@@ -66,6 +66,9 @@
                 Дата начала
             </th>
             <th>
+                Количество записавшихся
+            </th>
+            <th>
                 Афиша
             </th>
             <th></th>
@@ -74,20 +77,23 @@
     <tbody>
         @foreach (var performance in (IEnumerable<Performance>)ViewBag.Performances)
         {
-            <tr>
-                <td>
-                    <h6>@performance.Name</h6>
-                </td>
-                <td>
-                    <h6>@performance.Start</h6>
-                </td>
-                <td>
-                    <h6>@performance.PosterName</h6>
-                </td>
-                <td>
-                    <a class="nav-link" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <h6>@performance.Name</h6>
+            </td>
+            <td>
+                <h6>@performance.Start</h6>
+            </td>
+            <td>
+                <h6>@performance.Traffic</h6>
+            </td>
+            <td>
+                <h6>@performance.PosterName</h6>
+            </td>
+            <td>
+                <a class="nav-link" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

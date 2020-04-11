@@ -53,20 +53,17 @@
             @Html.DisplayFor(model => model.Creator.Name)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Traffic)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Traffic)
+        </dd>
+        <dt class="col-sm-2">
             Записаться на событие:
         </dt>
-        @if (ViewBag.SignedUp)
-        {
-            <dd class="col-sm-10">
-                <a class="card-link" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Unsubscribe">Отписаться</a>
-            </dd>
-        }
-        else
-        {
-            <dd class="col-sm-10">
-                <a class="card-link" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Subscribe">Записаться</a>
-            </dd>
-        }
+        <dd class="col-sm-10">
+            <a class="card-link" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Subscribe">@ViewBag.SignedUp</a>
+        </dd>
     </dl>
 </div>
 <div>

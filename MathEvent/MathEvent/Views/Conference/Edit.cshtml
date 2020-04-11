@@ -13,7 +13,7 @@
         <form asp-controller="Conference" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <input asp-for="Id" class="form-control" />
+                <input asp-for="Id" class="form-control" type="hidden"/>
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -32,7 +32,7 @@
                 <span asp-validation-for="Start" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="DataPath" class="form-control" />
+                <input asp-for="DataPath" class="form-control" type="hidden"/>
                 <span asp-validation-for="DataPath" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -41,7 +41,7 @@
                 <span asp-validation-for="End" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="ManagerId" class="form-control" />
+                <input asp-for="ManagerId" class="form-control" type="hidden"/>
                 <span asp-validation-for="ManagerId" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -12,7 +12,6 @@ namespace MathEvent.Models
     public class Performance
     {
         [Key]
-        [Required]
         [HiddenInput(DisplayValue = false)]
         public int Id { get; set; }
 
@@ -35,6 +34,7 @@ namespace MathEvent.Models
         public string Annotation { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время начала")]
+        [Remote(action: "CheckStartDate", controller: "Performance", AdditionalFields = nameof(SectionId))]
         [DataType(DataType.DateTime)]
         [Display(Name = "Дата начала")]
         public DateTime Start { get; set; }
@@ -42,6 +42,7 @@ namespace MathEvent.Models
 
         [ForeignKey("Section")]
         [HiddenInput(DisplayValue = false)]
+        [Display(Name = "Секция")]
         public int? SectionId { get; set; }
 
         [HiddenInput(DisplayValue = false)]
@@ -65,6 +66,11 @@ namespace MathEvent.Models
         [HiddenInput(DisplayValue = false)]
         [Display(Name = "Афиша")]
         public string PosterName { get; set; }
+
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Некорректное значение")]
+        [Display(Name = "Количество записавшихся")]
+        public int Traffic { get; set; }
 
 
         [HiddenInput(DisplayValue = false)]

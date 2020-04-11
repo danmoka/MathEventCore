@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,30 +22,32 @@ namespace MathEvent.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var conferences = await _db.Conferences
+                .Include(c => c.Manager)
+                .Include(c => c.Sections)
+                .ThenInclude(s => s.Performances).ToListAsync();
+
+            return View(conferences);
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Add()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Conference conference)
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add([Bind("Name", "Location", "Start", "End")] Conference conference)
         {
-            // если conference == null, то создат ьи вернуть странциу BadRequest
-
-            if (!User.Identity.IsAuthenticated)
+            // если conference == null, то создать и вернуть странциу BadRequest
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction("Login", "Account");
+                // создать страницу
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -56,12 +59,14 @@ namespace MathEvent.Controllers
             UserDataPathWorker.CreateSubDirectory(ref conferenceDataPath, conference.Id.ToString());
             // todo: проверка, что папка создалась
             conference.DataPath = conferenceDataPath;
+            _db.Conferences.Update(conference);
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Edit(int conferenceId)
         {
             // если id null, то что?
@@ -72,9 +77,15 @@ namespace MathEvent.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Conference conference)
+        public async Task<IActionResult> Edit([Bind("Id, Name", "Location", "Start", "End", "ManagerId")] Conference conference)
         {
+            if (!ModelState.IsValid)
+            {
+                // создать страницу
+            }
+
             _db.Conferences.Update(conference);
             await _db.SaveChangesAsync();
 
@@ -82,13 +93,50 @@ namespace MathEvent.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Delete(int conferenceId)
         {
             var conference = await _db.Conferences.Where(p => p.Id == conferenceId).FirstAsync();
+
+            if (System.IO.File.Exists(conference.DataPath))
+            {
+                System.IO.File.Delete(conference.DataPath);
+            }
+
             _db.Conferences.Remove(conference);
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Account");
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckStartDate(DateTime start, DateTime end)
+        {
+            if (start < DateTime.Now)
+            {
+                return Json($"Дата {start} меньше текущей даты {DateTime.Now}.");
+            }
+            else if (start > end)
+            {
+                return Json($"Дата начала больше даты конца.");
+            }
+
+            return Json(true);
+        }
+
+         [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckEndDate(DateTime end, DateTime start)
+        {
+            if (end < DateTime.Now)
+            {
+                return Json($"Дата {end} меньше текущей даты {DateTime.Now}.");
+            }
+            else if (start > end)
+            {
+                return Json($"Дата начала больше даты конца.");
+            }
+
+            return Json(true);
         }
     }
 }

@@ -8,12 +8,23 @@
 
 <h4>Performance</h4>
 <hr />
+@*<div class="row">
+    <div class="col-md-4">
+        <img src="@Url.Content(Model.DataPath + Model.PosterName)" />
+        <form asp-controller="Performance" asp-action="ChangePoster" method="post" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <input asp-route-performanceId="@Model.Id" type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>*@
 <div class="row">
     <div class="col-md-4">
-        <form asp-controller="Performance" asp-action="Edit">
+        <form asp-controller="Performance" asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <input asp-for="Id" class="form-control" />
+                <input asp-for="Id" class="form-control" type="hidden" />
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -41,22 +52,35 @@
                 <input asp-for="Start" class="form-control" />
                 <span asp-validation-for="Start" class="text-danger"></span>
             </div>
+            @if (((SelectList)ViewBag.Sections).Count() > 0)
+            {
+                <div class="form-group">
+                    <label asp-for="SectionId" class="control-label"></label>
+                    <select class="custom-select form-control" asp-for="SectionId" asp-items="ViewBag.Sections">
+                        <option value=@null>Без секции</option>
+                    </select>
+                    <span asp-validation-for="SectionId" class="text-danger"></span>
+                </div>
+            }
             <div class="form-group">
-                <input asp-for="SectionId" class="form-control" />
-                <span asp-validation-for="SectionId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input asp-for="CreatorId" class="form-control" />
+                <input asp-for="CreatorId" class="form-control" type="hidden" />
                 <span asp-validation-for="CreatorId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="DataPath" class="form-control" />
+                <input asp-for="DataPath" class="form-control" type="hidden" />
                 <span asp-validation-for="DataPath" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PosterName" class="control-label"></label>
-                <input asp-for="PosterName" class="form-control" />
+                <input asp-for="PosterName" class="form-control" type="hidden" />
                 <span asp-validation-for="PosterName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Traffic" class="form-control" type="hidden" />
+                <span asp-validation-for="Traffic" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <h6>Загрузите новую афишу вашего события</h6>
+                <input type="file" name="uploadedFile" accept="image/*" /><br>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

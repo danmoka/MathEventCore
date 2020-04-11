@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ namespace MathEvent.Controllers
             _db = db;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -51,6 +53,7 @@ namespace MathEvent.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterAsync(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -119,6 +122,7 @@ namespace MathEvent.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Edit()
         {
             var user = _userManager.GetUserAsync(User);
@@ -127,10 +131,14 @@ namespace MathEvent.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ApplicationUser user)
         {
-            await _userManager.UpdateAsync(user);
+            if (ModelState.IsValid)
+            {
+                await _userManager.UpdateAsync(user);
+            }
 
             return RedirectToAction("Index", "Account");
         }

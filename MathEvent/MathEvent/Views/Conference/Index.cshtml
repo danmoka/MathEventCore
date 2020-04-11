@@ -1,0 +1,45 @@
+﻿@model IEnumerable<MathEvent.Models.Conference>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="container">
+    @foreach (var conference in Model)
+    {
+        <div class="container bg-light rounded border m-4 p-3">
+            <h5>@conference.Name</h5>
+            <h6>@conference.Location</h6>
+            @*<a class="nav-link" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">Изменить</a>*@
+
+            @foreach (var section in conference.Sections)
+            {
+                <div class="container bg-white rounded border m-3 p-3">
+                    @{
+                        var sectionName = section.Name;
+                        var sectionId = section.Id;
+                        <h5>@sectionName</h5>
+                        @*<a class="nav-link" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">Изменить</a>*@
+
+                        foreach (var performance in section.Performances)
+                        {
+                            <div class="container bg-light rounded border m-2 p-3">
+                                @{
+                                    var performanceName = performance.Name;
+                                    var performanceId = performance.Id;
+                                    <h5>@performanceName</h5>
+                                    <a class="nav-link" asp-route-performanceId="@performanceId" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
