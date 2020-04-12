@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Models;
@@ -36,11 +34,7 @@ namespace MathEvent.Controllers
             var performances = await _db.Performances
                 .Include(p => p.Section)
                 .Include(p => p.Creator).ToListAsync();
-            //foreach(var performance in performances)
-            //{
-            //    performance.DataPath = Path.Combine(_webHostEnvironment.WebRootPath, performance.DataPath);
-            //    performance.PosterName = Path.Combine(performance.DataPath, performance.PosterName);
-            //}
+
             return View(performances);
         }
 
@@ -66,7 +60,7 @@ namespace MathEvent.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // создать страницу
+                return RedirectToAction("Error400", "Error");
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -78,7 +72,7 @@ namespace MathEvent.Controllers
 
             if (performance.SectionId != null)
             {
-                var section = await _db.Sections.Where(s => s.Id == performance.SectionId).FirstOrDefaultAsync();
+                var section = await _db.Sections.Where(s => s.Id == performance.SectionId).SingleAsync();
                 performanceDataPath = section.DataPath;
             }
             else
@@ -86,15 +80,22 @@ namespace MathEvent.Controllers
                 performanceDataPath = user.DataPath;
             }
 
-            UserDataPathWorker.CreateSubDirectory(ref performanceDataPath, performance.Id.ToString());
+            if(!UserDataPathWorker.CreateSubDirectory(ref performanceDataPath, performance.Id.ToString()))
+            {
+                _db.Performances.Remove(performance);
+                await _db.SaveChangesAsync();
+
+                return RedirectToAction("Error500", "Error");
+            }
+
             performance.DataPath = performanceDataPath;
 
+            // а что если записать файл не получится?
             if (uploadedFile != null)
             {
                 performance.PosterName = Path.GetFileName(uploadedFile.FileName);
                 using var fileStream = new FileStream(UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName)), FileMode.Create);
                 await uploadedFile.CopyToAsync(fileStream);
-                //fileUpload.SaveAs(Path.Combine(performance.DataPath, performance.PosterName));
             }
             else
             {
@@ -112,8 +113,6 @@ namespace MathEvent.Controllers
         [HttpGet]
         public async Task<IActionResult> Card(int performanceId)
         {
-            // если perfId будет null, то что?
-
             ViewBag.SignedUp = "Записаться";
 
             if (_signInManager.IsSignedIn(User))
@@ -121,7 +120,7 @@ namespace MathEvent.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 var userId = user.Id;
 
-                var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).FirstOrDefaultAsync();
+                var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
 
                 if (ap != null)
                 {
@@ -131,7 +130,7 @@ namespace MathEvent.Controllers
 
             var performance = await _db.Performances.Where(p => p.Id == performanceId)
                 .Include(p => p.Section)
-                .Include(p => p.Creator).FirstAsync();
+                .Include(p => p.Creator).SingleAsync();
 
             return View(performance);
         }
@@ -140,23 +139,20 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Subscribe(int performanceId)
         {
-            // если perfId == null?
-
             var user = await _userManager.GetUserAsync(User);
             var userId = user.Id;
-
-            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).FirstOrDefaultAsync();
+            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
 
             if (ap == null)
             {
                 ap = new ApplicationUserPerformance()
                 {
                     ApplicationUserId = user.Id,
-                    PerformanceId = (int) performanceId
+                    PerformanceId = performanceId
                 };
 
                 await _db.ApplicationUserPerformances.AddAsync(ap);
-                var performance = await _db.Performances.Where(p => p.Id == performanceId).FirstAsync(); // или лучше триггер?
+                var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleAsync(); // или лучше триггер?
                 performance.Traffic++;
                 _db.Performances.Update(performance);
                 await _db.SaveChangesAsync();
@@ -164,51 +160,21 @@ namespace MathEvent.Controllers
             else
             {
                 _db.ApplicationUserPerformances.Remove(ap);
-                var performance = await _db.Performances.Where(p => p.Id == performanceId).FirstAsync(); // или лучше триггер?
+                var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleAsync(); // или лучше триггер?
                 performance.Traffic--; // если меньше 0 получается, то это ошибка проектирования (наверное) где-то, в бд стоит check(>= 0). Но будет он отрабатывать - неизвестно. Но это не его проблемы, решать эту проблему надо тут.
+                // в модели стоит Range, должен отработать скрипт, что значение меньше 0
                 _db.Performances.Update(performance);
                 await _db.SaveChangesAsync();
             }
 
-            return RedirectToAction("Card", "Performance", new { performanceId = performanceId});
+            return RedirectToAction("Index", "Performance", new { performanceId = performanceId});
         }
-
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> UnSubscribe(int? performanceId)
-        //{
-        //    if (performanceId == null)
-        //    {
-        //        // сделать HttpNotFound
-        //        return RedirectToAction("Index", "Home");
-        //    }
-
-        //    var user = await _userManager.GetUserAsync(User);
-        //    var userId = user.Id;
-
-        //    var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).FirstOrDefaultAsync();
-
-        //    if (ap != null)
-        //    {
-        //        _db.ApplicationUserPerformances.Remove(ap);
-        //        var performance = await _db.Performances.Where(p => p.Id == performanceId).FirstAsync(); // или лучше триггер?
-        //        performance.Traffic--;
-        //        _db.Performances.Update(performance);
-        //        await _db.SaveChangesAsync();
-        //    }
-        //    // если еще не записан, то вывести что-нибудь
-
-        //    return RedirectToAction("Card", "Performance", new { performanceId = performanceId });
-        //}
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit(int performanceId)
         {
-            // если id null, то что?
-            var performance = await _db.Performances.Where(c => c.Id == performanceId).FirstAsync();
-            // если не нашли, то что?
-
+            var performance = await _db.Performances.Where(c => c.Id == performanceId).SingleAsync();
             var user = await _userManager.GetUserAsync(User);
             var userSections = await _db.Sections.Where(s => s.ManagerId == user.Id).ToListAsync();
             ViewBag.Sections = new SelectList(userSections, "Id", "Name");
@@ -224,12 +190,14 @@ namespace MathEvent.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // создать страницу
+                return RedirectToAction("Error400", "Error");
             }
 
+            // что если картинку не удалось загрузить?
             if (uploadedFile != null)
             {
                 var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName));
+
                 if (System.IO.File.Exists(imageToBeDeleted))
                 {
                     System.IO.File.Delete(imageToBeDeleted);
@@ -238,7 +206,6 @@ namespace MathEvent.Controllers
                 performance.PosterName = Path.GetFileName(uploadedFile.FileName);
                 using var fileStream = new FileStream(UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName)), FileMode.Create);
                 await uploadedFile.CopyToAsync(fileStream);
-                //fileUpload.SaveAs(Path.Combine(performance.DataPath, performance.PosterName));
             }
 
             _db.Performances.Update(performance);
@@ -251,9 +218,7 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int performanceId)
         {
-            // если perfId == null?
-
-            var performance = await _db.Performances.Where(p => p.Id == performanceId).FirstAsync();
+            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleAsync();
 
             if (System.IO.File.Exists(performance.DataPath))
             {
@@ -269,8 +234,6 @@ namespace MathEvent.Controllers
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckStartDate(DateTime start, int? sectionId)
         {
-            
-
             if (start < DateTime.Now)
             {
                 return Json($"Дата {start} меньше текущей даты {DateTime.Now}.");
@@ -286,30 +249,5 @@ namespace MathEvent.Controllers
 
             return Json(true);
         }
-
-        //[HttpPost]
-        //[ActionName("ChangePoster")]
-        //public async Task<IActionResult> ChangePoster(int performanceId, IFormFile uploadedFile)
-        //{
-        //    var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
-
-        //    if (uploadedFile != null)
-        //    {
-        //        var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName));
-        //        if (System.IO.File.Exists(imageToBeDeleted))
-        //        {
-        //            System.IO.File.Delete(imageToBeDeleted);
-        //        }
-
-        //        performance.PosterName = Path.GetFileName(uploadedFile.FileName);
-        //        using var fileStream = new FileStream(UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName)), FileMode.Create);
-        //        await uploadedFile.CopyToAsync(fileStream);
-        //        //fileUpload.SaveAs(Path.Combine(performance.DataPath, performance.PosterName));
-        //        _db.Performances.Update(performance);
-        //        await _db.SaveChangesAsync();
-        //    }
-
-        //    return RedirectToAction("Edit", "Performance", new { performanceId = performanceId });
-        //}
     }
 }

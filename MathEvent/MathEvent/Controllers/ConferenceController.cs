@@ -44,20 +44,25 @@ namespace MathEvent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add([Bind("Name", "Location", "Start", "End")] Conference conference)
         {
-            // если conference == null, то создать и вернуть странциу BadRequest
             if (!ModelState.IsValid)
             {
-                // создать страницу
+                return RedirectToAction("Error400", "Error");
             }
 
             var user = await _userManager.GetUserAsync(User);
             conference.ManagerId = user.Id;
-            _db.Conferences.Add(conference);
+            await _db.Conferences.AddAsync(conference);
             await _db.SaveChangesAsync();
 
             var conferenceDataPath = user.DataPath;
-            UserDataPathWorker.CreateSubDirectory(ref conferenceDataPath, conference.Id.ToString());
-            // todo: проверка, что папка создалась
+            if (!UserDataPathWorker.CreateSubDirectory(ref conferenceDataPath, conference.Id.ToString()))
+            {
+                _db.Conferences.Remove(conference);
+                await _db.SaveChangesAsync();
+
+                return RedirectToAction("Error500", "Error");
+            }
+
             conference.DataPath = conferenceDataPath;
             _db.Conferences.Update(conference);
             await _db.SaveChangesAsync();
@@ -67,11 +72,9 @@ namespace MathEvent.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult Edit(int conferenceId)
+        public async Task<IActionResult> Edit(int conferenceId)
         {
-            // если id null, то что?
-            var conference = _db.Conferences.Where(c => c.Id == conferenceId).FirstOrDefault();
-            // если не нашли, то что?
+            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleAsync();
 
             return View(conference);
         }
@@ -83,7 +86,7 @@ namespace MathEvent.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // создать страницу
+                return RedirectToAction("Error400", "Error");
             }
 
             _db.Conferences.Update(conference);
@@ -96,7 +99,7 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int conferenceId)
         {
-            var conference = await _db.Conferences.Where(p => p.Id == conferenceId).FirstAsync();
+            var conference = await _db.Conferences.Where(p => p.Id == conferenceId).SingleAsync();
 
             if (System.IO.File.Exists(conference.DataPath))
             {
@@ -124,7 +127,7 @@ namespace MathEvent.Controllers
             return Json(true);
         }
 
-         [AcceptVerbs("Get", "Post")]
+        [AcceptVerbs("Get", "Post")]
         public IActionResult CheckEndDate(DateTime end, DateTime start)
         {
             if (end < DateTime.Now)

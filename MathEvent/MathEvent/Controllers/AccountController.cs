@@ -37,11 +37,10 @@ namespace MathEvent.Controllers
 
             var performances = await _db.Performances.Where(p => p.CreatorId == user.Id && p.SectionId == null).ToListAsync();
             ViewBag.Performances = performances;
-            //var personalAreaData = new PersonalAreaViewModel
-            //{
-            //    Conferences = conferences,
-            //    Performances = performances
-            //};
+
+            var subsribedPerformances = await _db.ApplicationUserPerformances.Where(ap => ap.ApplicationUserId == user.Id)
+                .Include(p => p.Performance).ToListAsync();
+            ViewBag.SubscribedPerformances = subsribedPerformances;
 
             return View(conferences);
         }
@@ -71,8 +70,13 @@ namespace MathEvent.Controllers
 
                 if (result.Succeeded)
                 {
-                    UserDataPathWorker.CreateDirectory(user.DataPath); // сделать проверку, что папка создалась, иначе что-то делать 
-                    //await _userManager.AddToRoleAsync(user, "user");
+                    if (!UserDataPathWorker.CreateDirectory(user.DataPath))
+                    {
+                        await _userManager.DeleteAsync(user);
+                        return RedirectToAction("Error500", "Error");
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "user");
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
                 }

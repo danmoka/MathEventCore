@@ -98,6 +98,51 @@
     </tbody>
 </table>
 
+<h5>События, на которые записан</h5>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Название
+            </th>
+            <th>
+                Дата начала
+            </th>
+            <th>
+                Количество записавшихся
+            </th>
+            <th>
+                Афиша
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ap in (IEnumerable<ApplicationUserPerformance>)ViewBag.SubscribedPerformances)
+        {
+            <tr>
+                <td>
+                    <h6>@ap.Performance.Name</h6>
+                </td>
+                <td>
+                    <h6>@ap.Performance.Start</h6>
+                </td>
+                <td>
+                    <h6>@ap.Performance.Traffic</h6>
+                </td>
+                <td>
+                    <h6>@ap.Performance.PosterName</h6>
+                </td>
+                <td>
+                    <a class="nav-link" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a> |
+                    <a class="card-link" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Subscribe">Отписаться</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @*<table class="table">
         <thead>
             <tr>

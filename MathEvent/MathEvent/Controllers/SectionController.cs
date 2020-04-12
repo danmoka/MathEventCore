@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
@@ -32,7 +31,7 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Add()
         {
             var user = await _userManager.GetUserAsync(User);
-            var userConferences = _db.Conferences.Where(c => c.ManagerId == user.Id);
+            var userConferences = await _db.Conferences.Where(c => c.ManagerId == user.Id).ToListAsync();
 
             if (userConferences.Count() == 0)
             {
@@ -51,37 +50,38 @@ namespace MathEvent.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(); // сделать что-то нормальное
+                return RedirectToAction("Error400", "Error");
             }
 
             var user = await _userManager.GetUserAsync(User);
             section.ManagerId = user.Id;
-
-            _db.Sections.Add(section);
+            await _db.Sections.AddAsync(section);
             await _db.SaveChangesAsync();
 
-            var conference = _db.Conferences.Where(c => c.Id == section.ConferenceId).FirstOrDefault();
-            // проверить даты секции и конференции
-
+            var conference = await _db.Conferences.Where(c => c.Id == section.ConferenceId).SingleAsync();
             var sectionDataPath = conference.DataPath;
-            UserDataPathWorker.CreateSubDirectory(ref sectionDataPath, section.Id.ToString());
-            // todo: проверка, что папка создалась
+            
+            if (!UserDataPathWorker.CreateSubDirectory(ref sectionDataPath, section.Id.ToString()))
+            {
+                _db.Sections.Remove(section);
+                await _db.SaveChangesAsync();
+
+                return RedirectToAction("Error500", "Error");
+            }
+            
             section.DataPath = sectionDataPath;
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Add", "Section");
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit(int sectionId)
         {
-            // если id null, то что?
-            var section = _db.Sections.Where(c => c.Id == sectionId).FirstOrDefault(); // или FirstAsync?
-            // если не нашли, то что?
-
+            var section = await _db.Sections.Where(c => c.Id == sectionId).SingleAsync();
             var user = await _userManager.GetUserAsync(User);
-            var userConferences = _db.Conferences.Where(c => c.ManagerId == user.Id);
+            var userConferences = await _db.Conferences.Where(c => c.ManagerId == user.Id).ToListAsync();
 
             if (userConferences.Count() == 0)
             {
@@ -101,7 +101,7 @@ namespace MathEvent.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // создать страницу
+                return RedirectToAction("Error400", "Error");
             }
 
             _db.Sections.Update(section);
@@ -114,9 +114,7 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int sectionId)
         {
-            // если sectionId == null?
-
-            var section = await _db.Sections.Where(p => p.Id == sectionId).FirstAsync();
+            var section = await _db.Sections.Where(p => p.Id == sectionId).SingleAsync();
 
             if (System.IO.File.Exists(section.DataPath))
             {
@@ -132,7 +130,6 @@ namespace MathEvent.Controllers
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> CheckStartDate(DateTime start, DateTime end, int conferenceId)
         {
-            // а если входные данные равны null?
             var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleAsync();
 
             if (start < conference.Start || start > conference.End)
@@ -154,7 +151,6 @@ namespace MathEvent.Controllers
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> CheckEndDate(DateTime end, DateTime start, int conferenceId)
         {
-            // а если входные данные равны null?
             var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleAsync();
 
             if (end < conference.Start || end > conference.End)
