@@ -1,8 +1,46 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model IEnumerable<MathEvent.Models.Performance>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-4">
+    <div class="jumbotron jumbotron-image shadow" @*style="background-image: url(../../Images/jumbotron.jpg);"*@>
+        <div class="display-4 mb-4">MathEvent - powered by Матфак</div>
+        <h4 class="mb-4">Создай своё событие!</h4>
+        @Html.ActionLink("Попробовать >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-primary btn-primary-jb" })
+    </div>
+</div>
+<div class="container">
+    <div class="row pb-4">
+        <div class="col-2 pt-1 text-left">
+            <hr class="bg-dark mx-auto block-1" />
+        </div>
+        <div class="col-10 text-left">
+            <h4>Ближайшие события!</h4>
+        </div>
+    </div>
+</div>
+<div id="carouselExampleIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
+    <div class="carousel-inner">
+        @{var i = 0;
+            foreach (var item in Model)
+            {
+                var active = i == 0 ? "active" : "";
+                <div class="carousel-item @active">
+                    <img class="d-block w-100 lowbright" src="~/default.png">
+                    <div class="carousel-caption">
+                        <h4 class="dark-light">@item.Name</h4>
+                        <h5 class="dark-light">@item.KeyWords</h5>
+                        <h4 class="dark-light"><strong>@item.Start.Date.ToString("d")</strong></h4>
+                    </div>
+                </div>
+                i++;
+            }
+        }
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
 </div>

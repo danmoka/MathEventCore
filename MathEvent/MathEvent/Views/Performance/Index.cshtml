@@ -1,81 +1,19 @@
 ﻿@model IEnumerable<MathEvent.Models.Performance>
 
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
-
-<p>
-    <a asp-controller="Performance" asp-action="Create">Создать событие</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.KeyWords)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Annotation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Start)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Section)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Creator)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Traffic)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PosterName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KeyWords)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Annotation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Start)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Section.Name)
-            </td>
-            <td>
-                <h6>@item.Creator.Name @item.Creator.Surname</h6>
-            </td>
-            <td>
-                <h6>@item.Traffic</h6>
-            </td>
-            <td>
-                <img src="@Url.Content(item.DataPath + item.PosterName)" />
-            </td>
-            <td>
-                <a class="card-link" asp-route-performanceId="@item.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="card-columns">
+    @foreach(var item in Model)
+    {
+        <div class="card">
+            <img class="card-img-top" src="~/default.png"/>
+            <div class="card-body">
+                <h4 class="card-title">@item.Name</h4>
+                <h6 class="card-text">@item.KeyWords</h6>
+                @Html.RouteLink("Перейти",
+               new {controller = "Performance", action = "Card", performanceId = item.Id}, new { @class = "btn btn-primary" })
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
+            </div>
+        </div>
+    }
+</div>

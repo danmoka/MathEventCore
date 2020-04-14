@@ -9,16 +9,18 @@
 @using System.ComponentModel
 @using Newtonsoft.Json
 @using System.Text
-@*@inject HttpClient Http*@
 @inject NavigationManager NavigationManager
-<h5>@Count()</h5>
-<a @onclick="SignUp">@current</a>
+<div class="container">
+    <div class="row d-flex align-items-center">
+        <input type="button" class="btn btn-lg btn-success" @onclick="SignUp" value="@CurrentButtonValue()" />
+        <h5 class="ml-4">Участников: @Count()</h5>
+    </div>
+</div>
 
 @code {
     [Parameter] public CardViewModel card { get; set; }
     [Parameter] public int traffic { get; set; }
 
-    string current = "";
     //int count = 0;
 
     protected async Task SignUp()
@@ -30,14 +32,14 @@
 
         if (!card.IsSignedUp)
         {
-            current = "Отписаться";
+            //current = "Отписаться";
             traffic++;
             card.IsSignedUp = !card.IsSignedUp;
         }
         else
         {
             traffic--;
-            current = "Записаться";
+            //current = "Записаться";
             card.IsSignedUp = !card.IsSignedUp;
         }
 
@@ -50,15 +52,18 @@
 
     protected int Count()
     {
+        return traffic;
+    }
+
+    protected string CurrentButtonValue()
+    {
         if (card.IsSignedUp)
         {
-            current = "Отписаться";
+            return "Отписаться";
         }
         else
         {
-            current = "Записаться";
+            return "Записаться";
         }
-
-        return traffic;
     }
 }

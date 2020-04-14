@@ -114,8 +114,6 @@ namespace MathEvent.Controllers
         [HttpGet]
         public async Task<IActionResult> Card(int performanceId)
         {
-            ViewBag.SignedUp = "Записаться";
-
             var performance = await _db.Performances.Where(p => p.Id == performanceId)
                 .Include(p => p.Section)
                 .Include(p => p.Creator).SingleAsync();
@@ -125,6 +123,7 @@ namespace MathEvent.Controllers
                 Id = performance.Id,
                 Name = performance.Name,
                 Annotation = performance.Annotation,
+                KeyWords = performance.KeyWords,
                 Start = performance.Start,
                 CreatorId = performance.CreatorId,
                 CreatorName = performance.Creator.Name,

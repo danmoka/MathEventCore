@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MathEvent.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
@@ -33,9 +34,18 @@ namespace MathEvent.Controllers
             //_db.SaveChanges();
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var performances = await _db.Performances.Include(p => p.Section)
+                .Where(p => p.Start >= DateTime.Now)
+                .OrderByDescending(p => p.Start).Take(3).ToListAsync();
+
+            //var performances = _db.Performances.Include(b => b.Section);
+            //performances = performances
+            //    .Where(p => p.Start >= DateTime.Now)
+            //    .OrderByDescending(p => p.DateStart).Take(3);
+
+            return View(performances);
         }
 
         public IActionResult Privacy()

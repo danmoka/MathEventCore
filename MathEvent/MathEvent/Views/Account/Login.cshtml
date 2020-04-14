@@ -1,27 +1,49 @@
 ﻿@model MathEvent.Models.ViewModels.LoginViewModel
-@{
-    ViewData["Title"] = "Вход";
+
+<div class="row">
+    <div class="col form-group">
+        <h2 class="mb-4">Вход на сайт MathEvent!</h2>
+        <hr class="bg-primary block-1" />
+        <p>
+            Войдите! Вы сможете создавать и записываться на события!
+        </p>
+    </div>
+</div>
+<div class="row d-flex py-4 mt-4 justify-content-center">
+    <div class="col-8 col-sm-6 col-md-4">
+        <form method="post"  asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
+            <div class="container rounded border pt-4">
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="form-row">
+                    <div class="form-group btn-block mx-auto">
+                        <input class="form-control" asp-for="Username" placeholder="Адрес электронной почты" />
+                        <span class="text-danger" asp-validation-for="Username"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group btn-block mx-auto">
+                        <input class="form-control" type="password" asp-for="Password" placeholder="Пароль" />
+                        <span class="text-danger" asp-validation-for="Password"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group btn-block mx-auto">
+                        <div class="checkbox">
+                            <input class="checkbox" asp-for="RememberMe" />
+                            <label asp-for="RememberMe"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <input type="submit" value="Войти" class="btn btn-block btn-success mb-4" />
+                </div>
+                <div class="form-row">
+                    @Html.ActionLink("Регистрация нового пользователя", "Register", "Account", new { area = "" }, new { @class = "btn btn-block btn-primary mb-4" })
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-
-
-<h2>Вход в приложение</h2>
-<form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
-    <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Username"></label><br />
-        <input asp-for="Username" />
-        <span asp-validation-for="Username"></span>
-    </div>
-    <div>
-        <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <label asp-for="RememberMe"></label><br />
-        <input asp-for="RememberMe" />
-    </div>
-    <div>
-        <input type="submit" value="Войти" />
-    </div>
-</form>

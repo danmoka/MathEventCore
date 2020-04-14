@@ -1,0 +1,64 @@
+﻿.btn-block {
+    display: block;
+    width: 100%;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.block-1 {
+    background: #120c5e;
+    width: 100%;
+    height: 1px;
+}
+.login-textbox {
+    /*не используется*/
+    width: 250px;
+}
+
+@media only screen and (max-width: 959px) {
+    .carousel-item {
+        height: 200px
+    }
+}
+
+@media only screen and (min-width: 960px) {
+    .carousel-item {
+        height: 400px
+    }
+}
+
+@media (min-width: 576px) {
+    .card-columns {
+        column-count: 2;
+    }
+    .login-textbox {
+        width: 210px;
+    }
+}
+
+@media (min-width: 768px) {
+    .card-columns {
+        column-count: 2;
+    }
+    .login-textbox {
+        width: 180px;
+    }
+}
+
+@media (min-width: 992px) {
+    .card-columns {
+        column-count: 3;
+    }
+    .login-textbox {
+        width: 260px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .card-columns {
+        column-count: 3;
+    }
+    .login-textbox {
+        width: 280px;
+    }
+}
