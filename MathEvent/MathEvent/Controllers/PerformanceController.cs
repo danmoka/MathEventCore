@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Models;
+using MathEvent.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -115,6 +116,23 @@ namespace MathEvent.Controllers
         {
             ViewBag.SignedUp = "Записаться";
 
+            var performance = await _db.Performances.Where(p => p.Id == performanceId)
+                .Include(p => p.Section)
+                .Include(p => p.Creator).SingleAsync();
+
+            var card = new CardViewModel
+            {
+                Id = performance.Id,
+                Name = performance.Name,
+                Annotation = performance.Annotation,
+                Start = performance.Start,
+                CreatorId = performance.CreatorId,
+                CreatorName = performance.Creator.Name,
+                DataPath = performance.DataPath,
+                PosterName = performance.PosterName,
+                Traffic = performance.Traffic
+            };
+
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -122,17 +140,10 @@ namespace MathEvent.Controllers
 
                 var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
 
-                if (ap != null)
-                {
-                    ViewBag.SignedUp = "Отписаться";
-                }
+                card.IsSignedUp = ap != null;
             }
 
-            var performance = await _db.Performances.Where(p => p.Id == performanceId)
-                .Include(p => p.Section)
-                .Include(p => p.Creator).SingleAsync();
-
-            return View(performance);
+            return View(card);
         }
 
         [HttpGet]

@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using MathEvent.Models;
 using MathEvent.Helpers;
 using Microsoft.AspNetCore.Http;
+using System.Net.Http;
+using Microsoft.AspNetCore.Components;
 
 namespace MathEvent
 {
@@ -35,6 +37,26 @@ namespace MathEvent
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+
+            services.AddServerSideBlazor();
+            //services.AddHttpClient();
+            //// Server Side Blazor doesn't register HttpClient by default
+            //if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
+            //{
+            //    // Setup HttpClient for server side in a client side compatible fashion
+            //    services.AddScoped<HttpClient>(s =>
+            //    {
+            //        // Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
+            //        var uriHelper = s.GetRequiredService<NavigationManager>();
+            //        return new HttpClient
+            //        {
+            //            BaseAddress = new Uri(uriHelper.BaseUri)
+            //        };
+            //    });
+            //}
+
+
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
@@ -69,6 +91,7 @@ namespace MathEvent
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapBlazorHub();
             });
         }
     }

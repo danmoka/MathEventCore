@@ -86,7 +86,7 @@
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
-        <a class="nav-link" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>
+        <a class="nav-link" onclick="return confirm('Вы точно хотите удалить?')" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>
     </div>
 </div>
 

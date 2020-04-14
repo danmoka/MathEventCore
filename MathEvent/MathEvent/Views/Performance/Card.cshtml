@@ -1,5 +1,7 @@
-﻿@model MathEvent.Models.Performance
-
+﻿@model MathEvent.Models.ViewModels.CardViewModel
+@using MathEvent.Components
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Card";
 }
@@ -17,18 +19,6 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Type)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Type)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.KeyWords)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.KeyWords)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Annotation)
         </dt>
         <dd class="col-sm-10">
@@ -41,16 +31,10 @@
             @Html.DisplayFor(model => model.Start)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Section)
+            @Html.DisplayNameFor(model => model.CreatorName)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Section.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Creator)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Creator.Name)
+            @Html.DisplayFor(model => model.CreatorName)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Traffic)
@@ -62,6 +46,10 @@
             Записаться на событие:
         </dt>
         <dd class="col-sm-10">
+            @{ 
+                Model.UserId = UserManager.GetUserId(User);
+            }
+            @(await Html.RenderComponentAsync<MyComponent>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
             <a class="card-link" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Subscribe">@ViewBag.SignedUp</a>
         </dd>
     </dl>
