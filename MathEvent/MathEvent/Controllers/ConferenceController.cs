@@ -67,7 +67,7 @@ namespace MathEvent.Controllers
             _db.Conferences.Update(conference);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Conference");
         }
 
         [HttpGet]

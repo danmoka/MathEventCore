@@ -1,48 +1,90 @@
 ﻿@model MathEvent.Models.Conference
 
-@{
-    ViewData["Title"] = "Add";
-}
-
-<h1>Add</h1>
-
-<h4>Conference</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Add">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Start" class="control-label"></label>
-                <input asp-for="Start" class="form-control" />
-                <span asp-validation-for="Start" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="End" class="control-label"></label>
-                <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="col form-group">
+        <h2 class="mb-4">Создайте страницу вашей конференции!</h2>
+        <hr class="bg-primary block-1" />
+        <p>
+            После создания конференции вы сможете добавить на неё секции и события!
+        </p>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row">
+    <a class="nav-link h5" asp-controller="Conference" asp-action="Index"><< К списку конференций</a>
 </div>
-
+<form asp-controller="Conference" asp-action="Add" method="post" enctype="multipart/form-data">
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+    <div class="row d-flex align-items-top">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">&#127991</span>
+                    </div>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>@*<form-group*@
+        <div class="form-group">
+            <label asp-for="Location" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">&#127970</span>
+                </div>
+                <input asp-for="Location" class="form-control" />
+            </div>
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>@*<form-group*@
+        <div class="form-group">
+            <label asp-for="Start" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">&#128198</span>
+                </div>
+                <input asp-for="Start" class="form-control" />
+            </div>
+            <span asp-validation-for="Start" class="text-danger"></span>
+        </div>@*<form-group*@
+        <div class="form-group">
+            <label asp-for="End" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">&#128198</span>
+                </div>
+                <input asp-for="End" class="form-control" />
+            </div>
+            <span asp-validation-for="End" class="text-danger"></span>
+        </div>@*<form-group*@
+            <div class="form-group mt-4">
+                <input type="submit" class="btn btn-lg btn-success" value="Создать" />
+            </div>
+        </div>
+        <div class="col-md-5">
+            <img class="w-100 need-hide" src="@Url.Content("Images")/hex_left.png">
+        </div>
+    </div>
+</form>
+<hr class="bg-primary block-1 mb-4" />
+<div class="row">
+    <div class="col-auto"></div>
+    <div class="col-md-5">
+        <img class="w-100 need-hide" src="@Url.Content("Images")/plus_right.png">
+    </div>
+    <div class="col-md-5">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h4 class="card-title">Обратите внимание </h4>
+                <ul class="card-text">
+                    <li>После создания секции вы сможете добавить на неё секции</li>
+                    <li>Конференция отобразиться в списке всех конференций MathEvent</li>
+                    <li>Отредактировать или удалить конференцию можно в Кабинете</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-auto"></div>
+</div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

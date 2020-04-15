@@ -3,193 +3,154 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<h1>Index</h1>
-
-<div class="container rounded border">
-    <div class="row d-flex align-items-center">
-        <div class="col-6 text-left">
-            @{ 
-                var firstName = UserManager.GetUserAsync(User).Result.Name;
-                var lastName = UserManager.GetUserAsync(User).Result.Surname;
-                var username = $"{firstName} {lastName}";
-                <h5>@username</h5>
-            }
-        </div>
-        <div class="col-6 text-right">
-            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Edit">Изменить</a>
-        </div>
+<div class="row">
+    <div class="col form-group">
+        <h2 class="mb-4">Личный кабинет</h2>
+        <hr class="bg-primary block-1" />
+        <p>
+            Здесь вы можете редактировать ваши конференции, секции и события!
+        </p>
     </div>
 </div>
 
+<div class="container rounded border" style="background-image: url(@Url.Content("Images")/all_together3.png);
+         min-height: 150px;">
+    <div class="row d-flex align-items-center">
+        <div class="col-6 text-left">
+            @{
+                var firstName = UserManager.GetUserAsync(User).Result.Name;
+                var lastName = UserManager.GetUserAsync(User).Result.Surname;
+                var username = $"{firstName} {lastName}";
+                <div class="display-4">@username</div>
+            }
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-info" asp-area="" asp-controller="Account" asp-action="Edit">Изменить</a>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col form-group">
+        <h2 class="mb-4">Ваши конференции</h2>
+        <hr class="bg-primary block-1" />
+    </div>
+</div>
 <div class="container">
     @foreach (var conference in Model)
     {
-        <div class="container bg-light rounded border m-4 p-3">
-            <h5>@conference.Name</h5>
-            <h6>@conference.Location</h6>
-            <a class="nav-link" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">Изменить</a>
-
-            @foreach (var section in conference.Sections)
-            {
-                <div class="container bg-white rounded border m-3 p-3">
-                    @{
+        <div class="row mt-4">
+            <div class="col-md-12 mb-2">
+                <div class="row d-flex align-items-center rounded-top bg-dark p-1">
+                    <div class="col text-left p-3 ">
+                        <h2 class="text-white">@conference.Name</h2>
+                    </div>
+                    <div class="col text-right p-3 ">
+                        <a class="btn btn-info" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">Изменить</a>
+                    </div>
+                </div>
+                <div class="row rounded-bottom border p-2">
+                    <div class="row">
+                        <div class="col form-group">
+                            <h5 class="mb-2">@conference.Location, @conference.Start.Date.ToShortDateString()</h5>
+                            <h4 class="mb-2">Секции на конференции:</h4>
+                        </div>
+                    </div>
+                    @foreach (var section in conference.Sections)
+                    {
                         var sectionName = section.Name;
                         var sectionId = section.Id;
-                        <h5>@sectionName</h5>
-                        <a class="nav-link" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">Изменить</a>
-
-                        foreach (var performance in section.Performances)
-                        {
-                            <div class="container bg-light rounded border m-2 p-3">
-                                @{
-                                    var performanceName = performance.Name;
-                                    var performanceId = performance.Id;
-                                    <h5>@performanceName</h5>
-                                    <a class="nav-link" asp-route-performanceId="@performanceId" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
-                                }
+                        var sectionStart = section.Start;
+                        var sectionAddress = section.Location;
+                        <div class="col-md-9 mb-2">
+                            <div class="row d-flex align-items-center rounded-top p-1 bg-secondary">
+                                <div class="col text-left p-3 ">
+                                    <h3 class="text-white">@sectionName</h3>
+                                </div>
+                                <div class="col text-right p-3 ">
+                                    <a class="btn btn-info" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">Изменить</a>
+                                </div>
                             </div>
-                        }
+                            <div class="row rounded-bottom border p-2">
+                                <div class="col-md-12 mb-2">
+                                    <div class="row">
+                                        <div class="col form-group">
+                                            <h5 class="mb-2">@sectionAddress, @sectionStart.Date.ToShortDateString()</h5>
+                                            <h4 class="mb-2">События на секции:</h4>
+                                        </div>
+                                    </div>
+                                    <div class="card-columns">
+                                        @foreach (var performance in section.Performances)
+                                        {
+                                            var performanceName = performance.Name;
+                                            var performanceId = performance.Id;
+                                            <div class="card">
+                                                <img class="card-img-top" src="~/default.png" />
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@performanceName</h5>
+                                                    <a class="btn btn-info" asp-route-performanceId="@performanceId" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <img class="w-100 need-hide" src="@Url.Content("Images")/equals_left.png">
+                        </div>
                     }
                 </div>
-            }
+            </div>
         </div>
     }
 </div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Название
-            </th>
-            <th>
-                Дата начала
-            </th>
-            <th>
-                Количество записавшихся
-            </th>
-            <th>
-                Афиша
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var performance in (IEnumerable<Performance>)ViewBag.Performances)
-        {
-        <tr>
-            <td>
-                <h6>@performance.Name</h6>
-            </td>
-            <td>
-                <h6>@performance.Start</h6>
-            </td>
-            <td>
-                <h6>@performance.Traffic</h6>
-            </td>
-            <td>
-                <h6>@performance.PosterName</h6>
-            </td>
-            <td>
-                <a class="nav-link" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
-
-<h5>События, на которые записан</h5>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Название
-            </th>
-            <th>
-                Дата начала
-            </th>
-            <th>
-                Количество записавшихся
-            </th>
-            <th>
-                Афиша
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var ap in (IEnumerable<ApplicationUserPerformance>)ViewBag.SubscribedPerformances)
-        {
-            <tr>
-                <td>
-                    <h6>@ap.Performance.Name</h6>
-                </td>
-                <td>
-                    <h6>@ap.Performance.Start</h6>
-                </td>
-                <td>
-                    <h6>@ap.Performance.Traffic</h6>
-                </td>
-                <td>
-                    <h6>@ap.Performance.PosterName</h6>
-                </td>
-                <td>
-                    <a class="nav-link" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a> |
-                    <a class="card-link" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Subscribe">Отписаться</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@*<table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Location)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Start)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.End)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ManagerId)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+<div class="row mt-4">
+    <div class="col form-group">
+        <h2 class="mb-4">События вне секций</h2>
+        <hr class="bg-primary block-1" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <div class="card-columns">
+            @foreach (var performance in (IEnumerable<Performance>)ViewBag.Performances)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Location)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Start)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.End)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Manager.Name)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                    </td>
-                </tr>
-
+                <div class="card">
+                    <img class="card-img-top" src="~/default.png" />
+                    <div class="card-body">
+                        <h5 class="card-title">@performance.Name</h5>
+                        <a class="btn btn-info" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>*@
+        </div>
+    </div>
+    <div class="col-md-3">
+        <img class="w-100 need-hide" src="@Url.Content("Images")/triangle_left.png">
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col form-group">
+        <h2 class="mb-4">События, на которые вы записаны!</h2>
+        <hr class="bg-primary block-1" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <div class="card-columns">
+            @foreach (var ap in (IEnumerable<ApplicationUserPerformance>)ViewBag.SubscribedPerformances)
+            {
+                <div class="card">
+                    <img class="card-img-top" src="~/default.png" />
+                    <div class="card-body">
+                        <h5 class="card-title">@ap.Performance.Name</h5>
+                        <a class="btn btn-info" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-3">
+        <img class="w-100 need-hide" src="@Url.Content("Images")/hex_left.png">
+    </div>
+</div>

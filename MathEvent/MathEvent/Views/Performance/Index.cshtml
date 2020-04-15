@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<MathEvent.Models.Performance>
-
+<div class="container">
+    <div class="jumbotron jumbotron-image shadow" 
+         style="background-image: url(@Url.Content("Images")/all_together4.png);
+         min-height: 150px;">
+    </div>
+</div>
 <div class="card-columns">
     @foreach(var item in Model)
     {

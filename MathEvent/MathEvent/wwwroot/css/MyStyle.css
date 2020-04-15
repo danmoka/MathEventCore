@@ -1,4 +1,20 @@
-﻿.btn-block {
+﻿textarea {
+    min-width: 100%;
+    resize: none;
+}
+
+.background-dark {
+    background: rgba(0, 0, 0, 0.28);
+    padding: 10px;
+    width: 100%;
+}
+
+.dark-light {
+    text-shadow: #000000 10px 10px 20px;
+    color: #ffffff;
+}
+
+.btn-block {
     display: block;
     width: 100%;
     padding-right: 0;
@@ -10,6 +26,7 @@
     width: 100%;
     height: 1px;
 }
+
 .login-textbox {
     /*не используется*/
     width: 250px;
@@ -60,5 +77,11 @@
     }
     .login-textbox {
         width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .need-hide {
+        display: none;
     }
 }

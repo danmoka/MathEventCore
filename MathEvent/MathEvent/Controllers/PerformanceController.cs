@@ -184,6 +184,10 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int performanceId)
         {
+            var types = DataFactory.GetPerformanceTypes().GetValues()
+                 .Select(x => new SelectListItem { Text = x, Value = x })
+                 .ToList();
+            ViewBag.Types = types;
             var performance = await _db.Performances.Where(c => c.Id == performanceId).SingleAsync();
             var user = await _userManager.GetUserAsync(User);
             var userSections = await _db.Sections.Where(s => s.ManagerId == user.Id).ToListAsync();

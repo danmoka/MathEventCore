@@ -72,7 +72,7 @@ namespace MathEvent.Controllers
             section.DataPath = sectionDataPath;
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Add", "Section");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]

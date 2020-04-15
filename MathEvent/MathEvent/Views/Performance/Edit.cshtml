@@ -1,67 +1,66 @@
 ﻿@model MathEvent.Models.Performance
-
-@{
-    ViewData["Title"] = "Edit";
-}
-
-<h1>Edit</h1>
-
-<h4>Performance</h4>
-<hr />
-@*<div class="row">
-    <div class="col-md-4">
-        <img src="@Url.Content(Model.DataPath + Model.PosterName)" />
-        <form asp-controller="Performance" asp-action="ChangePoster" method="post" enctype="multipart/form-data">
-            
-            <div class="form-group">
-                <input asp-route-performanceId="@Model.Id" type="submit" value="Сохранить" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>*@
 <div class="row">
-    <div class="col-md-4">
-        <form asp-controller="Performance" asp-action="Edit" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input asp-for="Id" class="form-control" type="hidden" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
+    <div class="col form-group">
+        <h2 class="mb-4">Измените ваше событие!</h2>
+        <hr class="bg-primary block-1" />
+    </div>
+</div>
+<div class="row">
+    <a class="nav-link h5" asp-controller="Account" asp-action="Index"><< В кабинет</a>
+</div>
+<form asp-controller="Performance" asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+    <div class="row d-flex align-items-top">
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">&#127991</span>
+                    </div>
+                    <input asp-for="Name" class="form-control" />
+                </div>
                 <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+            </div>@*<form-group*@
             <div class="form-group">
                 <label asp-for="Type" class="control-label"></label>
-                <input asp-for="Type" class="form-control" />
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">&#9997</span>
+                    </div>
+                    <select asp-for="Type" class="custom-select form-control" asp-items="ViewBag.Types"></select>
+                </div>
                 <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="KeyWords" class="control-label"></label>
-                <input asp-for="KeyWords" class="form-control" />
-                <span asp-validation-for="KeyWords" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Annotation" class="control-label"></label>
-                <input asp-for="Annotation" class="form-control" />
-                <span asp-validation-for="Annotation" class="text-danger"></span>
-            </div>
+            </div>@*<form-group*@
             <div class="form-group">
                 <label asp-for="Start" class="control-label"></label>
-                <input asp-for="Start" class="form-control" />
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">&#128198</span>
+                    </div>
+                    <input asp-for="Start" class="form-control" />
+                </div>
                 <span asp-validation-for="Start" class="text-danger"></span>
-            </div>
+            </div>@*<form-group*@
             @if (((SelectList)ViewBag.Sections).Count() > 0)
             {
                 <div class="form-group">
                     <label asp-for="SectionId" class="control-label"></label>
-                    <select class="custom-select form-control" asp-for="SectionId" asp-items="ViewBag.Sections">
-                        <option value=@null>Без секции</option>
-                    </select>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#128047</span>
+                        </div>
+                        <select class="custom-select form-control" asp-for="SectionId" asp-items="ViewBag.Sections">
+                            <option value=@null>Без секции</option>
+                        </select>
+                    </div>
                     <span asp-validation-for="SectionId" class="text-danger"></span>
-                </div>
+                </div>@*<form-group*@
             }
+            <div class="form-group">
+                <input asp-for="Id" class="form-control" type="hidden" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input asp-for="CreatorId" class="form-control" type="hidden" />
                 <span asp-validation-for="CreatorId" class="text-danger"></span>
@@ -82,18 +81,29 @@
                 <h6>Загрузите новую афишу вашего события</h6>
                 <input type="file" name="uploadedFile" accept="image/*" /><br>
             </div>
+        </div>
+        <div class="col-md-5">
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label asp-for="KeyWords" class="control-label"></label>
+                <textarea asp-for="KeyWords" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="KeyWords" class="text-danger"></span>
             </div>
-        </form>
-        <a class="nav-link" onclick="return confirm('Вы точно хотите удалить?')" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>
+            <div class="form-group">
+                <label asp-for="Annotation" class="control-label"></label>
+                <textarea asp-for="Annotation" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Annotation" class="text-danger"></span>
+            </div>
+            <div class="form-row form-group d-flex align-items-end mt-4">
+                <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>
+                <input type="submit" class="btn btn-success" value="Сохранить изменения" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <img class="w-100 need-hide" src="@Url.Content("Images")/triangle_left.png">
+        </div>
     </div>
-</div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

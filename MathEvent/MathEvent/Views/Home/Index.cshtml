@@ -1,10 +1,13 @@
 ﻿@model IEnumerable<MathEvent.Models.Performance>
 
 <div class="container py-4">
-    <div class="jumbotron jumbotron-image shadow" @*style="background-image: url(../../Images/jumbotron.jpg);"*@>
-        <div class="display-4 mb-4">MathEvent - powered by Матфак</div>
-        <h4 class="mb-4">Создай своё событие!</h4>
-        @Html.ActionLink("Попробовать >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-primary btn-primary-jb" })
+    <div class="jumbotron jumbotron-image shadow" 
+         style="background-image: url(@Url.Content("Images")/all_together.png);
+         padding-left: 2px;
+         padding-right: 2px;">
+        <div class="display-4 text-white background-dark dark-light mb-4 pl-4">MathEvent - powered by Матфак</div>
+        @*<h4 class="text-white dark-light mb-4 pl-4">Создай своё событие!</h4>*@
+        @Html.ActionLink("Создать событие >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-primary btn-primary-jb ml-4" })
     </div>
 </div>
 <div class="container">
