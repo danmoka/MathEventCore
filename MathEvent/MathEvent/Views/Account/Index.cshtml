@@ -15,17 +15,17 @@
 
 <div class="container rounded border" style="background-image: url(@Url.Content("Images")/all_together3.png);
          min-height: 150px;">
-    <div class="row d-flex align-items-center">
+    <div class="row d-flex align-items-center background-dark dark-light">
         <div class="col-6 text-left">
             @{
                 var firstName = UserManager.GetUserAsync(User).Result.Name;
                 var lastName = UserManager.GetUserAsync(User).Result.Surname;
                 var username = $"{firstName} {lastName}";
-                <div class="display-4">@username</div>
+                <div class="display-4 text-white">@username</div>
             }
         </div>
         <div class="col-6 text-right">
-            <a class="btn btn-info" asp-area="" asp-controller="Account" asp-action="Edit">Изменить</a>
+            <a class="btn btn-outline-light" asp-area="" asp-controller="Account" asp-action="Edit">&#9999</a>
         </div>
     </div>
 </div>
@@ -38,23 +38,18 @@
 <div class="container">
     @foreach (var conference in Model)
     {
-        <div class="row mt-4">
-            <div class="col-md-12 mb-2">
-                <div class="row d-flex align-items-center rounded-top bg-dark p-1">
-                    <div class="col text-left p-3 ">
-                        <h2 class="text-white">@conference.Name</h2>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="row d-flex align-items-center bg-very-light-blue shadow p-1">
+                    <div class="col text-left">
+                        <h4>@conference.Name</h4>
+                        <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
                     </div>
-                    <div class="col text-right p-3 ">
-                        <a class="btn btn-info" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">Изменить</a>
+                    <div class="col text-right">
+                        <a class="btn" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">&#9999</a>
                     </div>
                 </div>
-                <div class="row rounded-bottom border p-2">
-                    <div class="row">
-                        <div class="col form-group">
-                            <h5 class="mb-2">@conference.Location, @conference.Start.Date.ToShortDateString()</h5>
-                            <h4 class="mb-2">Секции на конференции:</h4>
-                        </div>
-                    </div>
+                <div class="row rounded-bottom border p-4">
                     @foreach (var section in conference.Sections)
                     {
                         var sectionName = section.Name;
@@ -62,22 +57,17 @@
                         var sectionStart = section.Start;
                         var sectionAddress = section.Location;
                         <div class="col-md-9 mb-2">
-                            <div class="row d-flex align-items-center rounded-top p-1 bg-secondary">
-                                <div class="col text-left p-3 ">
-                                    <h3 class="text-white">@sectionName</h3>
+                            <div class="row d-flex align-items-center rounded-top p-1 bg-very-light-blue shadow">
+                                <div class="col text-left">
+                                    <h5>@sectionName</h5>
+                                    <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
                                 </div>
                                 <div class="col text-right p-3 ">
-                                    <a class="btn btn-info" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">Изменить</a>
+                                    <a class="btn" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">&#9999</a>
                                 </div>
                             </div>
                             <div class="row rounded-bottom border p-2">
                                 <div class="col-md-12 mb-2">
-                                    <div class="row">
-                                        <div class="col form-group">
-                                            <h5 class="mb-2">@sectionAddress, @sectionStart.Date.ToShortDateString()</h5>
-                                            <h4 class="mb-2">События на секции:</h4>
-                                        </div>
-                                    </div>
                                     <div class="card-columns">
                                         @foreach (var performance in section.Performances)
                                         {
@@ -144,7 +134,7 @@
                     <img class="card-img-top" src="~/default.png" />
                     <div class="card-body">
                         <h5 class="card-title">@ap.Performance.Name</h5>
-                        <a class="btn btn-info" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
+                        <a class="btn btn-primary" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
                     </div>
                 </div>
             }

@@ -1,24 +1,9 @@
-﻿@model IEnumerable<MathEvent.Models.Performance>
-<div class="container">
-    <div class="jumbotron jumbotron-image shadow" 
-         style="background-image: url(@Url.Content("Images")/all_together4.png);
-         min-height: 150px;">
-    </div>
+﻿@model IEnumerable<MathEvent.Models.ViewModels.CardViewModel>
+@using MathEvent.Components
+
+<div class="jumbotron jumbotron-image shadow"
+     style="background-image: url(@Url.Content("Images")/all_together4.png);
+     min-height: 150px;">
 </div>
-<div class="card-columns">
-    @foreach(var item in Model)
-    {
-        <div class="card">
-            <img class="card-img-top" src="~/default.png"/>
-            <div class="card-body">
-                <h4 class="card-title">@item.Name</h4>
-                <h6 class="card-text">@item.KeyWords</h6>
-                @Html.RouteLink("Перейти",
-               new {controller = "Performance", action = "Card", performanceId = item.Id}, new { @class = "btn btn-primary" })
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
-            </div>
-        </div>
-    }
-</div>
+
+@(await Html.RenderComponentAsync<PerformanceList>(RenderMode.ServerPrerendered, new { Performances = Model}))

@@ -3,8 +3,12 @@
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
 
+<div class="row">
+    <a class="nav-link h5" asp-controller="Performance" asp-action="Index"><< К списку событий</a>
+</div>
+
 <div class="conteiner rounded-bottom bg-light border">
-    <div class="container my-2" style="background-image: url(@Url.Content("default.png"));">
+    <div class="container background-dark" style="background-image: url(@Url.Content("Images")/all_together.png">
         <div class="row d-flex align-items-end">
             <div class="col-lg-7 p-0 m-0">
                 <img class="card-img-top" src="~/default.png">
@@ -15,14 +19,13 @@
             </div>
         </div>
     </div>
-
     <div class="container">
         <div class="row d-flex align-items-top">
             <div class="col text-left p-3 ">
                 @{
                     Model.UserId = UserManager.GetUserId(User);
                 }
-                @(await Html.RenderComponentAsync<MyComponent>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
+                @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
             </div>
             <div class="col text-right p-3 ">
                 @Html.RouteLink("Написать организатору", new { controller = "Performance", action = "ContactTheCreator", creatorId = Model.CreatorId }, new { @class = "btn btn-lg btn-info" })
@@ -31,33 +34,29 @@
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-4 mb-2">
-        <div class="container rounded-top text-center p-1 bg-dark">
-            <h2 class="text-white">О мероприятии</h2>
+<div class="card-deck my-4">
+    <div class="card">
+        <div class="card-header bg-very-light-blue">
+            <h4>О мероприятии</h4>
         </div>
-        <div class="rounded-bottom border p-2">
+        <div class="card-body">
+            <p>@Model.KeyWords</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header bg-very-light-blue">
+            <h4>Полное описание</h4>
+        </div>
+        <div class="card-body">
             <p>@Model.Annotation</p>
         </div>
     </div>
-    <div class="col-md-3 mb-2">
-        <div class="container rounded-top text-center p-1 bg-dark">
-            <h2 class="text-white">Организатор</h2>
+    <div class="card">
+        <div class="card-header bg-very-light-blue">
+            <h4>Организатор</h4>
         </div>
-        <div class="rounded-bottom border p-2">
+        <div class="card-body">
             <p>@Model.CreatorName</p>
         </div>
     </div>
-    <div class="col-md-5 mb-2">
-        <div class="container rounded-top text-center p-1 bg-dark">
-            <h2 class="text-white">Полное описание</h2>
-        </div>
-        <div class="rounded-bottom border p-2">
-            <p>@Model.Annotation</p>
-        </div>
-    </div>
-</div>
-
-<div>
-    <a class="nav-link mt-4" asp-controller="Performance" asp-action="Index"> << К списку событий</a>
 </div>

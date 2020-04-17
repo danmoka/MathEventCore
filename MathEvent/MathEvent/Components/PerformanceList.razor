@@ -1,0 +1,86 @@
+﻿@using System.Net.Http
+@using System.Text
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using Newtonsoft.Json
+@using MathEvent.Models
+@using MathEvent.Models.ViewModels
+
+@inject NavigationManager NavigationManager
+
+<div class="container bg-light box-shadow mb-2">
+    <div class="row d-flex align-items-center">
+        <div class="d-inline-flex">
+            <select class="btn btn-secondary dropdown-toggle mr-2" @onchange="@ChangeType">
+                <option value="Любой">Любой</option>
+                <option value="Доклад">Доклад</option>
+                <option value="Мастер-класс">Мастер-класс</option>
+                <option value="Семинар">Семинар</option>
+            </select>
+            <select class="btn btn-secondary dropdown-toggle mr-2" @onchange="@ChangePeriod">
+                <option value="0">За всё время</option>
+                <option value="1">Сегодня</option>
+                <option value="2">В этом месяце</option>
+                <option value="3">В этом году</option>
+            </select>
+            <button @onclick="@(() => Filter())" class="btn btn-primary">Фильтровать</button>
+        </div>
+    </div>
+</div>
+
+<div class="card-columns">
+    @foreach (var item in Performances)
+    {
+        var id = item.Id;
+        <div class="card">
+            <img class="card-img-top" src="/default.png" />
+            <div class="card-body">
+                <h4 class="card-title">@item.Name</h4>
+                <h6 class="card-text">@item.KeyWords</h6>
+                <button @onclick="@(() => GoToCard(id))" class="btn btn-primary">Подробнее</button>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<CardViewModel> Performances { get; set; }
+
+    public string Type { get; set; } = "Любой";
+    public string Period { get; set; } = "0";
+
+    public void GoToCard(int id)
+    {
+        NavigationManager.NavigateTo($"https://localhost:44305/Performance/Card?id={id}", true);
+    }
+
+    public async Task ChangeType(ChangeEventArgs e)
+    {
+        var type = e.Value.ToString();
+        Type = type;
+        var client = new HttpClient { BaseAddress = new Uri("https://localhost:44305/") };
+        var response = await client.GetAsync($"Performance/FilterByType?type={Type}");
+        var responseResult = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<IEnumerable<CardViewModel>>(responseResult);
+        Performances = result;
+        //NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index/?type={type}", true);
+    }
+
+    public async Task ChangePeriod(ChangeEventArgs e)
+    {
+        var period = e.Value.ToString();
+        Period = period;
+        //NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index/?type={type}", true);
+    }
+
+    public async Task Filter()
+    {
+        NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index?type={Type}&period={Period}", true);
+    }
+}
+

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,13 +31,86 @@ namespace MathEvent.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string type, string period)
         {
-            var performances = await _db.Performances
+            IEnumerable<Performance> performances = await _db.Performances
                 .Include(p => p.Section)
                 .Include(p => p.Creator).ToListAsync();
 
-            return View(performances);
+            if (!(type == null || type == "Любой"))
+            {
+                performances = performances.Where(p => p.Type == type);
+            }
+
+            switch (period)
+            {
+                case "1":
+                    performances = performances.Where(p => p.Start.Day == DateTime.Now.Day);
+                    break;
+                case "2":
+                    performances = performances.Where(p => p.Start.Month == DateTime.Now.Month);
+                    break;
+                case "3":
+                    performances = performances.Where(p => p.Start.Year == DateTime.Now.Year);
+                    break;
+            }
+            var cards = new List<CardViewModel>();
+
+            foreach (var performance in performances)
+            {
+                var card = new CardViewModel
+                {
+                    Id = performance.Id,
+                    Name = performance.Name,
+                    Annotation = performance.Annotation,
+                    KeyWords = performance.KeyWords,
+                    Start = performance.Start,
+                    CreatorId = performance.CreatorId,
+                    CreatorName = performance.Creator.Name,
+                    DataPath = performance.DataPath,
+                    PosterName = performance.PosterName,
+                    Traffic = performance.Traffic
+                };
+
+                cards.Add(card);
+            }
+
+            return View(cards);
+        }
+
+        public async Task<IEnumerable<CardViewModel>> FilterByType(string type)
+        {
+            IEnumerable<Performance> performances = await _db.Performances
+                .Include(p => p.Section)
+                .Include(p => p.Creator).ToListAsync();
+
+            if (!(type == null || type == "Любой"))
+            {
+                performances = performances.Where(p => p.Type == type);
+            }
+
+            var cards = new List<CardViewModel>();
+
+            foreach (var performance in performances)
+            {
+                var card = new CardViewModel
+                {
+                    Id = performance.Id,
+                    Name = performance.Name,
+                    Annotation = performance.Annotation,
+                    KeyWords = performance.KeyWords,
+                    Start = performance.Start,
+                    CreatorId = performance.CreatorId,
+                    CreatorName = performance.Creator.Name,
+                    DataPath = performance.DataPath,
+                    PosterName = performance.PosterName,
+                    Traffic = performance.Traffic
+                };
+
+                cards.Add(card);
+            }
+
+            return cards;
         }
 
         [HttpGet]
@@ -112,9 +186,9 @@ namespace MathEvent.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Card(int performanceId)
+        public async Task<IActionResult> Card(int id)
         {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId)
+            var performance = await _db.Performances.Where(p => p.Id == id)
                 .Include(p => p.Section)
                 .Include(p => p.Creator).SingleAsync();
 
@@ -129,7 +203,7 @@ namespace MathEvent.Controllers
                 CreatorName = performance.Creator.Name,
                 DataPath = performance.DataPath,
                 PosterName = performance.PosterName,
-                Traffic = performance.Traffic
+                Traffic = performance.Traffic,
             };
 
             if (_signInManager.IsSignedIn(User))
@@ -137,7 +211,7 @@ namespace MathEvent.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 var userId = user.Id;
 
-                var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
+                var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == id && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
 
                 card.IsSignedUp = ap != null;
             }

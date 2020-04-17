@@ -1,17 +1,40 @@
-﻿textarea {
+﻿/*для того чтобы футер прилип к низу>*/
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1 0 auto;
+}
+/*<для того чтобы футер прилип к низу*/
+
+textarea {
     min-width: 100%;
     resize: none;
 }
 
 .background-dark {
     background: rgba(0, 0, 0, 0.28);
-    padding: 10px;
-    width: 100%;
 }
 
 .dark-light {
     text-shadow: #000000 10px 10px 20px;
     color: #ffffff;
+}
+
+.bg-light-blue {
+    background: rgba(26, 138, 203, 0.50);
+    /*rgba(26, 138, 203, 0.70)*/
+}
+
+.bg-very-light-blue {
+    background: rgba(26, 60, 150, 0.10);
+    /*rgba(26, 138, 203, 0.70)*/
 }
 
 .btn-block {
