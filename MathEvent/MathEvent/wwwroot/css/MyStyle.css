@@ -6,6 +6,7 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
+    margin-bottom: 0px;
 }
 
 .content {

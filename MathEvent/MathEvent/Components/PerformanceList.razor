@@ -8,7 +8,7 @@
 @using MathEvent.Models.ViewModels
 
 @inject NavigationManager NavigationManager
-
+@{Init();}
 <div class="container bg-light box-shadow mb-2">
     <div class="row d-flex align-items-center">
         <div class="d-inline-flex">
@@ -19,10 +19,10 @@
                 <option value="Семинар">Семинар</option>
             </select>
             <select class="btn btn-secondary dropdown-toggle mr-2" @onchange="@ChangePeriod">
-                <option value="0">За всё время</option>
-                <option value="1">Сегодня</option>
-                <option value="2">В этом месяце</option>
-                <option value="3">В этом году</option>
+                <option value="За всё время">За всё время</option>
+                <option value="Сегодня">Сегодня</option>
+                <option value="В этом месяце">В этом месяце</option>
+                <option value="В этом году">В этом году</option>
             </select>
             <button @onclick="@(() => Filter())" class="btn btn-primary">Фильтровать</button>
         </div>
@@ -49,10 +49,14 @@
 
 @code {
     [Parameter]
-    public IEnumerable<CardViewModel> Performances { get; set; }
-
+    public List<CardViewModel> Performances { get; set; }
+    private List<CardViewModel> _performancesOriginal = null;
     public string Type { get; set; } = "Любой";
-    public string Period { get; set; } = "0";
+    public string Period { get; set; } = "За всё время";
+    private HttpClient _client = new HttpClient
+    {
+        BaseAddress = new Uri("https://localhost:44305/")
+    };
 
     public void GoToCard(int id)
     {
@@ -61,26 +65,79 @@
 
     public async Task ChangeType(ChangeEventArgs e)
     {
-        var type = e.Value.ToString();
-        Type = type;
-        var client = new HttpClient { BaseAddress = new Uri("https://localhost:44305/") };
-        var response = await client.GetAsync($"Performance/FilterByType?type={Type}");
-        var responseResult = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<IEnumerable<CardViewModel>>(responseResult);
-        Performances = result;
-        //NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index/?type={type}", true);
+        Type = e.Value.ToString();
+        await Filter();
     }
 
     public async Task ChangePeriod(ChangeEventArgs e)
     {
-        var period = e.Value.ToString();
-        Period = period;
-        //NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index/?type={type}", true);
+        Period = e.Value.ToString();
+        await Filter();
     }
 
     public async Task Filter()
     {
-        NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index?type={Type}&period={Period}", true);
+        var filteredCards = _performancesOriginal;
+        if (Type != "Любой")
+        {
+            filteredCards = await FilterAction(filteredCards, Type, "api/Filter/type");
+        }
+
+        if (Period != "За всё время")
+        {
+            filteredCards = await FilterAction(filteredCards, Period, "api/Filter/period");
+        }
+
+        Performances = filteredCards;
+
+
+        //var filterViewModel = new FilterViewModel
+        //{
+        //    Cards = _performancesOriginal,
+        //    FilterPatameter = Type
+        //};
+
+        //var model = JsonConvert.SerializeObject(filterViewModel);
+        //var content = new StringContent(model, Encoding.UTF8, "application/json");
+
+        //var response = await _client.PostAsync("api/Filter/period", content);
+        //var responseResult = await response.Content.ReadAsStringAsync();
+        //var result = JsonConvert.DeserializeObject<FilterViewModel>(responseResult);
+
+        //result.FilterPatameter = Period;
+        //model = JsonConvert.SerializeObject(result);
+        //content = new StringContent(model, Encoding.UTF8, "application/json");
+        //response = await _client.PostAsync("api/Filter/period", content);
+        //responseResult = await response.Content.ReadAsStringAsync();
+        //result = JsonConvert.DeserializeObject<FilterViewModel>(responseResult);
+        //Performances = result.Cards;
+        //NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index?type={Type}&period={Period}", true);
+    }
+
+    private void Init()
+    {
+        if (_performancesOriginal == null)
+        {
+            _performancesOriginal = Performances;
+        }
+    }
+
+    private async Task<List<CardViewModel>> FilterAction(List<CardViewModel> cardViewModels, string parameter, string route)
+    {
+        var filterViewModel = new FilterViewModel
+        {
+            Cards = cardViewModels,
+            FilterPatameter = parameter
+        };
+
+        var model = JsonConvert.SerializeObject(filterViewModel);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+
+        var response = await _client.PostAsync($"{route}", content);
+        var responseResult = await response.Content.ReadAsStringAsync();
+        filterViewModel = JsonConvert.DeserializeObject<FilterViewModel>(responseResult);
+
+        return filterViewModel.Cards;
     }
 }
 

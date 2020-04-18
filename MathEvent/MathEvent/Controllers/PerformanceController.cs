@@ -69,7 +69,8 @@ namespace MathEvent.Controllers
                     CreatorName = performance.Creator.Name,
                     DataPath = performance.DataPath,
                     PosterName = performance.PosterName,
-                    Traffic = performance.Traffic
+                    Traffic = performance.Traffic,
+                    Type = performance.Type
                 };
 
                 cards.Add(card);
@@ -104,7 +105,8 @@ namespace MathEvent.Controllers
                     CreatorName = performance.Creator.Name,
                     DataPath = performance.DataPath,
                     PosterName = performance.PosterName,
-                    Traffic = performance.Traffic
+                    Traffic = performance.Traffic,
+                    Type = performance.Type
                 };
 
                 cards.Add(card);
