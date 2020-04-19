@@ -54,11 +54,11 @@ namespace MathEvent.Controllers
                     performances = performances.Where(p => p.Start.Year == DateTime.Now.Year);
                     break;
             }
-            var cards = new List<CardViewModel>();
+            var cards = new List<PerformanceViewModel>();
 
             foreach (var performance in performances)
             {
-                var card = new CardViewModel
+                var card = new PerformanceViewModel
                 {
                     Id = performance.Id,
                     Name = performance.Name,
@@ -79,7 +79,7 @@ namespace MathEvent.Controllers
             return View(cards);
         }
 
-        public async Task<IEnumerable<CardViewModel>> FilterByType(string type)
+        public async Task<IEnumerable<PerformanceViewModel>> FilterByType(string type)
         {
             IEnumerable<Performance> performances = await _db.Performances
                 .Include(p => p.Section)
@@ -90,11 +90,11 @@ namespace MathEvent.Controllers
                 performances = performances.Where(p => p.Type == type);
             }
 
-            var cards = new List<CardViewModel>();
+            var cards = new List<PerformanceViewModel>();
 
             foreach (var performance in performances)
             {
-                var card = new CardViewModel
+                var card = new PerformanceViewModel
                 {
                     Id = performance.Id,
                     Name = performance.Name,
@@ -194,7 +194,7 @@ namespace MathEvent.Controllers
                 .Include(p => p.Section)
                 .Include(p => p.Creator).SingleAsync();
 
-            var card = new CardViewModel
+            var card = new PerformanceViewModel
             {
                 Id = performance.Id,
                 Name = performance.Name,

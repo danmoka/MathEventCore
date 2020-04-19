@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<MathEvent.Models.Conference>
 @using Microsoft.AspNetCore.Identity
+@using MathEvent.Helpers
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
@@ -13,7 +14,7 @@
     </div>
 </div>
 
-<div class="container rounded border" style="background-image: url(@Url.Content("Images")/all_together3.png);
+<div class="container rounded border" style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(2))));
          min-height: 150px;">
     <div class="row d-flex align-items-center background-dark dark-light">
         <div class="col-6 text-left">
@@ -29,12 +30,16 @@
         </div>
     </div>
 </div>
+
 <div class="row mt-4">
-    <div class="col form-group">
-        <h2 class="mb-4">Ваши конференции</h2>
-        <hr class="bg-primary block-1" />
+    <div class="col-2 text-left">
+        <hr class="bg-primary mx-auto block-1" />
+    </div>
+    <div class="col-10 text-left">
+        <h4>Ваши конференции!</h4>
     </div>
 </div>
+
 <div class="container">
     @foreach (var conference in Model)
     {
@@ -74,7 +79,7 @@
                                             var performanceName = performance.Name;
                                             var performanceId = performance.Id;
                                             <div class="card">
-                                                <img class="card-img-top" src="~/default.png" />
+                                                <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.PosterName))"/>
                                                 <div class="card-body">
                                                     <h5 class="card-title">@performanceName</h5>
                                                     <a class="btn btn-info" asp-route-performanceId="@performanceId" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
@@ -86,7 +91,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
-                            <img class="w-100 need-hide" src="@Url.Content("Images")/equals_left.png">
+                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "equals_left.png"))">
                         </div>
                     }
                 </div>
@@ -95,9 +100,11 @@
     }
 </div>
 <div class="row mt-4">
-    <div class="col form-group">
-        <h2 class="mb-4">События вне секций</h2>
-        <hr class="bg-primary block-1" />
+    <div class="col-2 text-left">
+        <hr class="bg-primary mx-auto block-1" />
+    </div>
+    <div class="col-10 text-left">
+        <h4>События вне секций</h4>
     </div>
 </div>
 <div class="row">
@@ -106,7 +113,7 @@
             @foreach (var performance in (IEnumerable<Performance>)ViewBag.Performances)
             {
                 <div class="card">
-                    <img class="card-img-top" src="~/default.png" />
+                    <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.PosterName))"/>
                     <div class="card-body">
                         <h5 class="card-title">@performance.Name</h5>
                         <a class="btn btn-info" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
@@ -116,13 +123,15 @@
         </div>
     </div>
     <div class="col-md-3">
-        <img class="w-100 need-hide" src="@Url.Content("Images")/triangle_left.png">
+        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
     </div>
 </div>
 <div class="row mt-4">
-    <div class="col form-group">
-        <h2 class="mb-4">События, на которые вы записаны!</h2>
-        <hr class="bg-primary block-1" />
+    <div class="col-2 text-left">
+        <hr class="bg-primary mx-auto block-1" />
+    </div>
+    <div class="col-10 text-left">
+        <h4>События, на которые вы записаны!</h4>
     </div>
 </div>
 <div class="row">
@@ -131,16 +140,16 @@
             @foreach (var ap in (IEnumerable<ApplicationUserPerformance>)ViewBag.SubscribedPerformances)
             {
                 <div class="card">
-                    <img class="card-img-top" src="~/default.png" />
+                    <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(ap.Performance.DataPath, ap.Performance.PosterName))" />
                     <div class="card-body">
                         <h5 class="card-title">@ap.Performance.Name</h5>
-                        <a class="btn btn-primary" asp-route-performanceId="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
+                        <a class="btn btn-primary" asp-route-id="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
                     </div>
                 </div>
             }
         </div>
     </div>
     <div class="col-md-3">
-        <img class="w-100 need-hide" src="@Url.Content("Images")/hex_left.png">
+        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "hex_left.png"))">
     </div>
 </div>

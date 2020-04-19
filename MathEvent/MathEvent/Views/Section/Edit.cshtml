@@ -1,4 +1,5 @@
 ﻿@model MathEvent.Models.Section
+@using MathEvent.Helpers 
 
 <div class="row">
     <div class="col form-group">
@@ -81,7 +82,7 @@
             </div>
         </div>
         <div class="col-md-5">
-            <img class="w-100 need-hide" src="@Url.Content("Images")/equals_left.png">
+            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "equals_left.png"))">
         </div>
     </div>
 </form>

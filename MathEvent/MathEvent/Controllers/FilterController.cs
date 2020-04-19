@@ -14,50 +14,18 @@ namespace MathEvent.Controllers
     [ApiController]
     public class FilterController : ControllerBase
     {
-        private readonly ApplicationContext _db;
-
-        public FilterController(ApplicationContext db)
-        {
-            _db = db;
-        }
-
         [HttpPost]
         [Route("type")]
-        public async Task<FilterViewModel> FilterByType(FilterViewModel filterViewModel)
+        public FilterCardViewModel FilterByType(FilterCardViewModel filterViewModel)
         {
-
             filterViewModel.Cards = filterViewModel.Cards.Where(c => c.Type == filterViewModel.FilterPatameter).ToList();
-            //else
-            //{
-            //    var performances = await _db.Performances
-            //        .Include(p => p.Section)
-            //        .Include(p => p.Creator).ToListAsync();
-            //    filterViewModel.Cards = new List<CardViewModel>();
-            //    foreach (var performance in performances)
-            //    {
-            //        filterViewModel.Cards.Add(new CardViewModel
-            //        {
-            //            Id = performance.Id,
-            //            Name = performance.Name,
-            //            Annotation = performance.Annotation,
-            //            KeyWords = performance.KeyWords,
-            //            Start = performance.Start,
-            //            CreatorId = performance.CreatorId,
-            //            CreatorName = performance.Creator.Name,
-            //            DataPath = performance.DataPath,
-            //            PosterName = performance.PosterName,
-            //            Traffic = performance.Traffic,
-            //            Type = performance.Type
-            //        });
-            //    }
-            //}
 
             return filterViewModel;
         }
 
         [HttpPost]
         [Route("period")]
-        public async Task<FilterViewModel> FilterByPeriod(FilterViewModel filterViewModel)
+        public  FilterCardViewModel FilterByPeriod(FilterCardViewModel filterViewModel)
         {
             var period = filterViewModel.FilterPatameter;
             switch (period)
@@ -72,27 +40,6 @@ namespace MathEvent.Controllers
                     filterViewModel.Cards = filterViewModel.Cards.Where(p => p.Start.Year == DateTime.Now.Year).ToList();
                     break;
                 default:
-                    //var performances = await _db.Performances
-                    //    .Include(p => p.Section)
-                    //    .Include(p => p.Creator).ToListAsync();
-                    //filterViewModel.Cards = new List<CardViewModel>();
-                    //foreach(var performance in performances)
-                    //{
-                    //    filterViewModel.Cards.Append(new CardViewModel
-                    //    {
-                    //        Id = performance.Id,
-                    //        Name = performance.Name,
-                    //        Annotation = performance.Annotation,
-                    //        KeyWords = performance.KeyWords,
-                    //        Start = performance.Start,
-                    //        CreatorId = performance.CreatorId,
-                    //        CreatorName = performance.Creator.Name,
-                    //        DataPath = performance.DataPath,
-                    //        PosterName = performance.PosterName,
-                    //        Traffic = performance.Traffic,
-                    //        Type = performance.Type
-                    //    });
-                    //}
                     break;
             }
 

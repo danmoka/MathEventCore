@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Models;
+using MathEvent.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,59 @@ namespace MathEvent.Controllers
                 .Include(c => c.Sections)
                 .ThenInclude(s => s.Performances).ToListAsync();
 
-            return View(conferences);
+            var conferenceViewModels = new List<ConferenceViewModel>();
+
+            foreach(var conference in conferences)
+            {
+                var conferenceViewModel = new ConferenceViewModel
+                {
+                    Name = conference.Name,
+                    Location = conference.Location,
+                    Start = conference.Start
+                };
+
+                var sectionViewModels = new List<SectionViewModel>();
+
+                foreach(var section in conference.Sections)
+                {
+                    var sectionViewModel = new SectionViewModel
+                    {
+                        Name = section.Name,
+                        Location = section.Location,
+                        Start = section.Start
+                    };
+
+                    var performanceViewModels = new List<PerformanceViewModel>();
+
+                    foreach(var performance in section.Performances)
+                    {
+                        var performanceViewModel = new PerformanceViewModel
+                        {
+                            Id = performance.Id,
+                            Name = performance.Name,
+                            Annotation = performance.Annotation,
+                            KeyWords = performance.KeyWords,
+                            Start = performance.Start,
+                            CreatorId = performance.CreatorId,
+                            CreatorName = performance.Creator.Name,
+                            DataPath = performance.DataPath,
+                            PosterName = performance.PosterName,
+                            Traffic = performance.Traffic,
+                            Type = performance.Type
+                        };
+
+                        performanceViewModels.Add(performanceViewModel);
+                    }
+
+                    sectionViewModel.PerformanceViewModels = performanceViewModels;
+                    sectionViewModels.Add(sectionViewModel);
+                }
+
+                conferenceViewModel.SectionViewModels = sectionViewModels;
+                conferenceViewModels.Add(conferenceViewModel);
+            }
+
+            return View(conferenceViewModels);
         }
 
         [HttpGet]

@@ -19,13 +19,13 @@ namespace MathEvent.Initializers
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
 
-            //await InitializeAdminAccount(userManager);
+            await InitializeAdminAccount(userManager);
         }
 
         private static async Task InitializeAdminAccount(UserManager<ApplicationUser> userManager)
         {
-            const string adminEmail = "";
-            const string adminPassword = "";
+            const string adminEmail = "admin@admin.ru";
+            const string adminPassword = "!1Qwerty";
 
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {

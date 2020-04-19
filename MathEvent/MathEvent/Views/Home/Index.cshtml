@@ -1,48 +1,55 @@
 ﻿@model IEnumerable<MathEvent.Models.Performance>
+@using MathEvent.Helpers
 
 <div class="container py-4">
     <div class="jumbotron jumbotron-image shadow" 
-         style="background-image: url(@Url.Content("Images")/all_together.png);
+         style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(0))));
          padding-left: 2px;
          padding-right: 2px;">
         <div class="display-4 text-white background-dark dark-light mb-4 pl-4">MathEvent - powered by Матфак</div>
-        @*<h4 class="text-white dark-light mb-4 pl-4">Создай своё событие!</h4>*@
         @Html.ActionLink("Создать событие >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-lg btn-primary ml-4" })
     </div>
 </div>
 <div class="container">
-    <div class="row pb-4">
-        <div class="col-2 pt-1 text-left">
-            <hr class="bg-dark mx-auto block-1" />
+    <div class="row mb-2">
+        <div class="col-2 text-left">
+            <hr class="bg-primary mx-auto block-1" />
         </div>
         <div class="col-10 text-left">
             <h4>Ближайшие события!</h4>
         </div>
     </div>
 </div>
-<div id="carouselExampleIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
+<div id="carouselIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselIndicators" data-slide-to="2"></li>
+    </ol>
     <div class="carousel-inner">
         @{var i = 0;
             foreach (var item in Model)
             {
                 var active = i == 0 ? "active" : "";
                 <div class="carousel-item @active">
-                    <img class="d-block w-100 lowbright" src="~/default.png">
-                    <div class="carousel-caption">
-                        <h4 class="dark-light">@item.Name</h4>
-                        <h5 class="dark-light">@item.KeyWords</h5>
-                        <h4 class="dark-light"><strong>@item.Start.Date.ToString("d")</strong></h4>
-                    </div>
+                    <a asp-route-id="@item.Id" asp-controller="Performance" asp-action="Card">
+                        <img class="d-block w-100 half-bright" src="@Url.Content(UserDataPathWorker.ConcatPaths(item.DataPath, item.PosterName))">
+                        <div class="carousel-caption dark-light">
+                            <h3><strong>@item.Name</strong></h3>
+                            <h5>@item.KeyWords</h5>
+                            <h4><strong>@item.Start.Date.ToString("d")</strong></h4>
+                        </div>
+                    </a>
                 </div>
                 i++;
             }
         }
     </div>
-    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+    <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
     </a>
-    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+    <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
     </a>

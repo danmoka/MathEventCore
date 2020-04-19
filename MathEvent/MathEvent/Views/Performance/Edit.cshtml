@@ -1,4 +1,6 @@
 ﻿@model MathEvent.Models.Performance
+@using MathEvent.Helpers
+
 <div class="row">
     <div class="col form-group">
         <h2 class="mb-4">Измените ваше событие!</h2>
@@ -99,7 +101,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <img class="w-100 need-hide" src="@Url.Content("Images")/triangle_left.png">
+            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
         </div>
     </div>
 </form>

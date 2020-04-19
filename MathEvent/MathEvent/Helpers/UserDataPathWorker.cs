@@ -1,17 +1,28 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MathEvent.Helpers
 {
     public static class UserDataPathWorker
     {
-        private static IWebHostEnvironment _webHostEnvironment;
+        private static string _webRootPath;
         private static string _mainUserDirectory = "UserData";
         private static string _defaultImageName = "default.png";
+        private static string _slash = "/";
+        private static string _imageDirectory = "Images";
+        private static List<string> _backgroundImages = new List<string>
+        {
+            "all_together.png",
+            "all_together_1.png",
+            "all_together_2.png",
+            "all_together_3.png"
+        };
 
         public static void Init(IWebHostEnvironment webHostEnvironment)
         {
-            _webHostEnvironment = webHostEnvironment;
+            _webRootPath = webHostEnvironment.WebRootPath.Replace("\\", "/");
         }
 
         /// <summary>
@@ -27,7 +38,7 @@ namespace MathEvent.Helpers
                 throw new System.ArgumentException("argument is null", "userId");
             }
 
-            return Path.Combine(_mainUserDirectory, userId);
+            return ConcatPaths(_mainUserDirectory, userId);
         }
 
         /// <summary>
@@ -43,7 +54,7 @@ namespace MathEvent.Helpers
                 throw new System.ArgumentException("argument is null", "path");
             }
 
-            var userTrueDirPath = Path.Combine(_webHostEnvironment.WebRootPath, path);
+            var userTrueDirPath = ConcatPaths(_webRootPath, path);             
             DirectoryInfo directoryInfo = new DirectoryInfo(userTrueDirPath);
 
             if (!directoryInfo.Exists)
@@ -86,7 +97,7 @@ namespace MathEvent.Helpers
                 throw new System.ArgumentException("argument is null", "newDirName");
             }
 
-            parentDir = Path.Combine(parentDir, newDirName);
+            parentDir = ConcatPaths(parentDir, newDirName);
             return CreateDirectory(parentDir);
         }
 
@@ -103,12 +114,34 @@ namespace MathEvent.Helpers
                 throw new System.ArgumentException("argument is null", "path");
             }
 
-            return Path.Combine(_webHostEnvironment.WebRootPath, path);
+            return ConcatPaths(_webRootPath, path);
         }
 
         public static string GetDefaultImagePath()
         {
             return _defaultImageName;
+        }
+
+        public static string ConcatPaths(string path1, string path2)
+        {
+            return $"{path1}{_slash}{path2}";
+        }
+
+        public static string GetBackgroundImage(int index)
+        {
+            try
+            {
+                return _backgroundImages[index];
+            }
+            catch
+            {
+                return _backgroundImages[0];
+            }
+        }
+
+        public static string GetImagesDirectory()
+        {
+            return _imageDirectory;
         }
     }
 }

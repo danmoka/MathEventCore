@@ -38,7 +38,8 @@ namespace MathEvent.Controllers
             var performances = await _db.Performances.Where(p => p.CreatorId == user.Id && p.SectionId == null).ToListAsync();
             ViewBag.Performances = performances;
 
-            var subsribedPerformances = await _db.ApplicationUserPerformances.Where(ap => ap.ApplicationUserId == user.Id)
+            var subsribedPerformances = await _db.ApplicationUserPerformances
+                .Where(ap => ap.ApplicationUserId == user.Id)
                 .Include(p => p.Performance).ToListAsync();
             ViewBag.SubscribedPerformances = subsribedPerformances;
 

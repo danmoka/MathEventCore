@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MathEvent.Models;
 using Microsoft.EntityFrameworkCore;
+using MathEvent.Models.ViewModels;
 
 namespace MathEvent.Controllers
 {
@@ -36,14 +37,32 @@ namespace MathEvent.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var performances = await _db.Performances.Include(p => p.Section)
+            var performances = await _db.Performances
+                .Include(p => p.Section)
                 .Where(p => p.Start >= DateTime.Now)
                 .OrderByDescending(p => p.Start).Take(3).ToListAsync();
 
-            //var performances = _db.Performances.Include(b => b.Section);
-            //performances = performances
-            //    .Where(p => p.Start >= DateTime.Now)
-            //    .OrderByDescending(p => p.DateStart).Take(3);
+            //var cards = new List<PerformanceViewModel>();
+
+            //foreach (var performance in performances)
+            //{
+            //    var card = new PerformanceViewModel
+            //    {
+            //        Id = performance.Id,
+            //        Name = performance.Name,
+            //        Annotation = performance.Annotation,
+            //        KeyWords = performance.KeyWords,
+            //        Start = performance.Start,
+            //        CreatorId = performance.CreatorId,
+            //        CreatorName = performance.Creator.Name,
+            //        DataPath = performance.DataPath,
+            //        PosterName = performance.PosterName,
+            //        Traffic = performance.Traffic,
+            //        Type = performance.Type
+            //    };
+
+            //    cards.Add(card);
+            //}
 
             return View(performances);
         }

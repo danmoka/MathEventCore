@@ -28,7 +28,7 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public async Task<IActionResult> SignUp(CardViewModel model)
+        public async Task<IActionResult> SignUp(PerformanceViewModel model)
         {
             var ap = _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId).SingleOrDefault();
 

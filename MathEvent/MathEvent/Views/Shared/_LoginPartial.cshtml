@@ -4,7 +4,7 @@
 
     <ul class="navbar-nav">
         @if (SignInManager.IsSignedIn(User))
-        {
+        {   // если нет юзеров в бд, а куки видят, что юзер залогинился, то беда
             var firstName = UserManager.GetUserAsync(User).Result.Name;
             var lastName = UserManager.GetUserAsync(User).Result.Surname;
             var username = $"{firstName} {lastName}";

@@ -1,30 +1,33 @@
-﻿@model MathEvent.Models.ViewModels.CardViewModel
+﻿@model MathEvent.Models.ViewModels.PerformanceViewModel
 @using MathEvent.Components
 @using Microsoft.AspNetCore.Identity
+@using MathEvent.Helpers
 @inject UserManager<ApplicationUser> UserManager
+
+@{
+    Model.UserId = UserManager.GetUserId(User);
+}
 
 <div class="row">
     <a class="nav-link h5" asp-controller="Performance" asp-action="Index"><< К списку событий</a>
 </div>
 
-<div class="conteiner rounded-bottom bg-light border">
-    <div class="container background-dark" style="background-image: url(@Url.Content("Images")/all_together.png">
+<div class="conteiner rounded bg-light border">
+    <div class="container background-dark" style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(0))))">
         <div class="row d-flex align-items-end">
             <div class="col-lg-7 p-0 m-0">
-                <img class="card-img-top" src="~/default.png">
+                <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(Model.DataPath, Model.PosterName))">
             </div>
             <div class="col-lg-5 text-right dark-light">
                 <h3 class="text-white">@Model.Name</h3>
                 <p class="display-4 text-white"><strong>@Model.Start.Date.ToString("d")</strong></p>
+                <p class="text-white"><strong>@Model.Start.Date.TimeOfDay.ToString()</strong></p>
             </div>
         </div>
     </div>
     <div class="container">
         <div class="row d-flex align-items-top">
             <div class="col text-left p-3 ">
-                @{
-                    Model.UserId = UserManager.GetUserId(User);
-                }
                 @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
             </div>
             <div class="col text-right p-3 ">

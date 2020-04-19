@@ -6,6 +6,8 @@
 @using Newtonsoft.Json
 @using MathEvent.Models
 @using MathEvent.Models.ViewModels
+@using MathEvent.Helpers
+@using Microsoft.AspNetCore.Mvc
 
 @inject NavigationManager NavigationManager
 @{Init();}
@@ -24,7 +26,6 @@
                 <option value="В этом месяце">В этом месяце</option>
                 <option value="В этом году">В этом году</option>
             </select>
-            <button @onclick="@(() => Filter())" class="btn btn-primary">Фильтровать</button>
         </div>
     </div>
 </div>
@@ -34,10 +35,13 @@
     {
         var id = item.Id;
         <div class="card">
-            <img class="card-img-top" src="/default.png" />
+            <img class="card-img-top" src="@UserDataPathWorker.ConcatPaths(item.DataPath, item.PosterName)"/>
             <div class="card-body">
                 <h4 class="card-title">@item.Name</h4>
-                <h6 class="card-text">@item.KeyWords</h6>
+                @if (!IsKeyWordsHidden)
+                {
+                    <h6 class="card-text">@item.KeyWords</h6>
+                }
                 <button @onclick="@(() => GoToCard(id))" class="btn btn-primary">Подробнее</button>
             </div>
             <div class="card-footer">
@@ -49,8 +53,10 @@
 
 @code {
     [Parameter]
-    public List<CardViewModel> Performances { get; set; }
-    private List<CardViewModel> _performancesOriginal = null;
+    public List<PerformanceViewModel> Performances { get; set; }
+    [Parameter]
+    public bool IsKeyWordsHidden { get; set; }
+    private List<PerformanceViewModel> _performancesOriginal = null;
     public string Type { get; set; } = "Любой";
     public string Period { get; set; } = "За всё время";
     private HttpClient _client = new HttpClient
@@ -60,7 +66,7 @@
 
     public void GoToCard(int id)
     {
-        NavigationManager.NavigateTo($"https://localhost:44305/Performance/Card?id={id}", true);
+        NavigationManager.NavigateTo($"{_client.BaseAddress}Performance/Card?id={id}", true);
     }
 
     public async Task ChangeType(ChangeEventArgs e)
@@ -89,29 +95,6 @@
         }
 
         Performances = filteredCards;
-
-
-        //var filterViewModel = new FilterViewModel
-        //{
-        //    Cards = _performancesOriginal,
-        //    FilterPatameter = Type
-        //};
-
-        //var model = JsonConvert.SerializeObject(filterViewModel);
-        //var content = new StringContent(model, Encoding.UTF8, "application/json");
-
-        //var response = await _client.PostAsync("api/Filter/period", content);
-        //var responseResult = await response.Content.ReadAsStringAsync();
-        //var result = JsonConvert.DeserializeObject<FilterViewModel>(responseResult);
-
-        //result.FilterPatameter = Period;
-        //model = JsonConvert.SerializeObject(result);
-        //content = new StringContent(model, Encoding.UTF8, "application/json");
-        //response = await _client.PostAsync("api/Filter/period", content);
-        //responseResult = await response.Content.ReadAsStringAsync();
-        //result = JsonConvert.DeserializeObject<FilterViewModel>(responseResult);
-        //Performances = result.Cards;
-        //NavigationManager.NavigateTo($"https://localhost:44305/Performance/Index?type={Type}&period={Period}", true);
     }
 
     private void Init()
@@ -122,9 +105,9 @@
         }
     }
 
-    private async Task<List<CardViewModel>> FilterAction(List<CardViewModel> cardViewModels, string parameter, string route)
+    private async Task<List<PerformanceViewModel>> FilterAction(List<PerformanceViewModel> cardViewModels, string parameter, string route)
     {
-        var filterViewModel = new FilterViewModel
+        var filterViewModel = new FilterCardViewModel
         {
             Cards = cardViewModels,
             FilterPatameter = parameter
@@ -135,7 +118,7 @@
 
         var response = await _client.PostAsync($"{route}", content);
         var responseResult = await response.Content.ReadAsStringAsync();
-        filterViewModel = JsonConvert.DeserializeObject<FilterViewModel>(responseResult);
+        filterViewModel = JsonConvert.DeserializeObject<FilterCardViewModel>(responseResult);
 
         return filterViewModel.Cards;
     }

@@ -1,0 +1,59 @@
+﻿@using System.Net.Http
+@using System.Text
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using Newtonsoft.Json
+@using MathEvent.Models
+@using MathEvent.Models.ViewModels
+@using MathEvent.Helpers
+@using Microsoft.AspNetCore.Mvc
+
+@inject NavigationManager NavigationManager
+
+<div id="carouselIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
+    <div class="carousel-inner">
+        @{
+            var i = 0;
+            foreach (var item in Performances)
+            {
+                var id = item.Id;
+                var active = i == 0 ? "active" : "";
+                <div class="carousel-item @active">
+                    <img class="d-block w-100 half-bright" src="@UserDataPathWorker.ConcatPaths(item.DataPath, item.PosterName)"
+                         @onclick="@(() => GoToCard(id))">
+                    <div class="carousel-caption dark-light">
+                        <h3><strong>@item.Name</strong></h3>
+                        <h5>@item.KeyWords</h5>
+                        <h4><strong>@item.Start.Date.ToString("d")</strong></h4>
+                    </div>
+                </div>
+                i++;
+            }
+        }
+    </div>
+    <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+@code {
+    [Parameter]
+    public List<PerformanceViewModel> Performances { get; set; }
+
+    private HttpClient _client = new HttpClient
+    {
+        BaseAddress = new Uri("https://localhost:44305/")
+    };
+
+    public void GoToCard(int id)
+    {
+        NavigationManager.NavigateTo($"{_client.BaseAddress}Performance/Card?id={id}", true);
+    }
+
+}

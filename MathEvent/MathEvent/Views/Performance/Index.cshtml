@@ -1,9 +1,10 @@
-﻿@model IEnumerable<MathEvent.Models.ViewModels.CardViewModel>
+﻿@model IEnumerable<MathEvent.Models.ViewModels.PerformanceViewModel>
 @using MathEvent.Components
+@using MathEvent.Helpers
 
 <div class="jumbotron jumbotron-image shadow"
-     style="background-image: url(@Url.Content("Images")/all_together4.png);
+     style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(3))));
      min-height: 150px;">
 </div>
 
-@(await Html.RenderComponentAsync<PerformanceList>(RenderMode.ServerPrerendered, new { Performances = Model}))
+@(await Html.RenderComponentAsync<PerformanceList>(RenderMode.ServerPrerendered, new { Performances = Model, IsKeyWordsHidden = false}))

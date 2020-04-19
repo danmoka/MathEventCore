@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace MathEvent.Models.ViewModels
 {
-    public class FilterViewModel
+    public class FilterCardViewModel
     {
-        public List<CardViewModel> Cards { get; set; }
+        public List<PerformanceViewModel> Cards { get; set; }
 
         public string FilterPatameter { get; set; }
     }

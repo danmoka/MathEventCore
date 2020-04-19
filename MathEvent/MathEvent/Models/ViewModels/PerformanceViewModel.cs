@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MathEvent.Models.ViewModels
 {
-    public class CardViewModel
+    public class PerformanceViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

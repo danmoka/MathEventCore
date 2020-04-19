@@ -1,4 +1,5 @@
 ﻿@model MathEvent.Models.Performance
+@using MathEvent.Helpers 
 
 <div class="row">
     <div class="col form-group">
@@ -87,7 +88,7 @@
 <div class="row">
     <div class="col-auto"></div>
     <div class="col-md-5">
-        <img class="w-100 need-hide" src="@Url.Content("Images")/plus_right.png">
+        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "plus_right.png"))">
     </div>
     <div class="col-md-5">
         <div class="card bg-light">
