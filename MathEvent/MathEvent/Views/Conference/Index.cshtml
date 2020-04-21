@@ -7,41 +7,86 @@
      min-height: 150px;">
 </div>
 <div class="container">
-    @foreach (var conference in Model)
-    {
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="row d-flex align-items-center bg-very-light-blue shadow p-1">
-                    <div class="col text-left">
-                        <h4>@conference.Name</h4>
-                        <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+    @{
+        if (Model.Count() < 1)
+        {
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-4">
+                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
                     </div>
                 </div>
-                <div class="row rounded-bottom border p-4">
-                    @foreach (var section in conference.SectionViewModels)
-                    {
-                        var sectionName = section.Name;
-                        var sectionStart = section.Start;
-                        var sectionAddress = section.Location;
-                        <div class="col-md-9 mb-2">
-                            <div class="row d-flex align-items-center rounded-top p-1 bg-very-light-blue shadow">
-                                <div class="col text-left">
-                                    <h5>@sectionName</h5>
-                                    <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
-                                </div>
-                            </div>
-                            <div class="row rounded-bottom border p-2">
-                                <div class="col-md-12 mb-2">
-                                        @(await Html.RenderComponentAsync<PerformanceList>(RenderMode.ServerPrerendered, new { Performances = section.PerformanceViewModels, IsKeyWordsHidden = true}))
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
-                        </div>
-                    }
-                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            @foreach (var conference in Model)
+            {
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="row d-flex align-items-center bg-very-light-blue shadow p-1">
+                            <div class="col text-left">
+                                <h4>@conference.Name</h4>
+                                <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="row rounded-bottom border p-4">
+                            @{
+                                if (conference.SectionViewModels.Count() < 1)
+                                {
+                                    <div class="container">
+                                        <div class="row d-flex justify-content-center">
+                                            <div class="col-md-4">
+                                                @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @foreach (var section in conference.SectionViewModels)
+                                    {
+                                        var sectionName = section.Name;
+                                        var sectionStart = section.Start;
+                                        var sectionAddress = section.Location;
+                                        <div class="col-md-9 mb-2">
+                                            <div class="row d-flex align-items-center rounded-top p-1 bg-very-light-blue shadow">
+                                                <div class="col text-left">
+                                                    <h5>@sectionName</h5>
+                                                    <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
+                                                </div>
+                                            </div>
+                                            <div class="row rounded-bottom border p-2">
+                                                @{
+                                                    if (section.PerformanceViewModels.Count() < 1)
+                                                    {
+                                                        <div class="container">
+                                                            <div class="row d-flex justify-content-center">
+                                                                <div class="col-md-4">
+                                                                    @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-md-12 mb-2">
+                                                            @(await Html.RenderComponentAsync<PerformanceList>(RenderMode.ServerPrerendered, new { Performances = section.PerformanceViewModels, IsKeyWordsHidden = true}))
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
     }
 </div>

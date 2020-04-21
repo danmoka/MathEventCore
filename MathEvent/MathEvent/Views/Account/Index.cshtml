@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<MathEvent.Models.Conference>
 @using Microsoft.AspNetCore.Identity
 @using MathEvent.Helpers
+@using MathEvent.Components 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
@@ -41,62 +42,107 @@
 </div>
 
 <div class="container">
-    @foreach (var conference in Model)
-    {
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="row d-flex align-items-center bg-very-light-blue shadow p-1">
-                    <div class="col text-left">
-                        <h4>@conference.Name</h4>
-                        <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+    @{
+        if (Model.Count() < 1)
+        {
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-4">
+                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
                     </div>
-                    <div class="col text-right">
-                        <a class="btn" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">&#9999</a>
-                    </div>
-                </div>
-                <div class="row rounded-bottom border p-4">
-                    @foreach (var section in conference.Sections)
-                    {
-                        var sectionName = section.Name;
-                        var sectionId = section.Id;
-                        var sectionStart = section.Start;
-                        var sectionAddress = section.Location;
-                        <div class="col-md-9 mb-2">
-                            <div class="row d-flex align-items-center rounded-top p-1 bg-very-light-blue shadow">
-                                <div class="col text-left">
-                                    <h5>@sectionName</h5>
-                                    <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
-                                </div>
-                                <div class="col text-right p-3 ">
-                                    <a class="btn" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">&#9999</a>
-                                </div>
-                            </div>
-                            <div class="row rounded-bottom border p-2">
-                                <div class="col-md-12 mb-2">
-                                    <div class="card-columns">
-                                        @foreach (var performance in section.Performances)
-                                        {
-                                            var performanceName = performance.Name;
-                                            var performanceId = performance.Id;
-                                            <div class="card">
-                                                <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.PosterName))"/>
-                                                <div class="card-body">
-                                                    <h5 class="card-title">@performanceName</h5>
-                                                    <a class="btn btn-info" asp-route-performanceId="@performanceId" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "equals_left.png"))">
-                        </div>
-                    }
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            @foreach (var conference in Model)
+            {
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="row d-flex align-items-center bg-very-light-blue shadow p-1">
+                            <div class="col text-left">
+                                <h4>@conference.Name</h4>
+                                <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+                            </div>
+                            <div class="col text-right">
+                                <a class="btn" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">&#9999</a>
+                            </div>
+                        </div>
+                        <div class="row rounded-bottom border p-4">
+                            @{
+                                if (conference.Sections.Count() < 1)
+                                {
+                                    <div class="container">
+                                        <div class="row d-flex justify-content-center">
+                                            <div class="col-md-4">
+                                                @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @foreach (var section in conference.Sections)
+                                    {
+                                        var sectionName = section.Name;
+                                        var sectionId = section.Id;
+                                        var sectionStart = section.Start;
+                                        var sectionAddress = section.Location;
+                                        <div class="col-md-9 mb-2">
+                                            <div class="row d-flex align-items-center rounded-top p-1 bg-very-light-blue shadow">
+                                                <div class="col text-left">
+                                                    <h5>@sectionName</h5>
+                                                    <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
+                                                </div>
+                                                <div class="col text-right p-3 ">
+                                                    <a class="btn" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">&#9999</a>
+                                                </div>
+                                            </div>
+                                            <div class="row rounded-bottom border p-2">
+                                                @{
+                                                    if (section.Performances.Count() < 1)
+                                                    {
+                                                        <div class="container">
+                                                            <div class="row d-flex justify-content-center">
+                                                                <div class="col-md-4">
+                                                                    @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-md-12 mb-2">
+                                                            <div class="card-columns">
+                                                                @foreach (var performance in section.Performances)
+                                                                {
+                                                                    var performanceName = performance.Name;
+                                                                    var performanceId = performance.Id;
+                                                                    <div class="card">
+                                                                        <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.PosterName))" />
+                                                                        <div class="card-body">
+                                                                            <h5 class="card-title">@performanceName</h5>
+                                                                            <a class="btn btn-info" asp-route-performanceId="@performanceId" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "equals_left.png"))">
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
     }
 </div>
 <div class="row mt-4">
@@ -108,23 +154,38 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-9">
-        <div class="card-columns">
-            @foreach (var performance in (IEnumerable<Performance>)ViewBag.Performances)
-            {
-                <div class="card">
-                    <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.PosterName))"/>
-                    <div class="card-body">
-                        <h5 class="card-title">@performance.Name</h5>
-                        <a class="btn btn-info" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
+    @{
+        if (((IEnumerable<Performance>)ViewBag.Performances).Count() < 1)
+        {
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-4">
+                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
                     </div>
                 </div>
-            }
-        </div>
-    </div>
-    <div class="col-md-3">
-        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
-    </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-9">
+                <div class="card-columns">
+                    @foreach (var performance in (IEnumerable<Performance>)ViewBag.Performances)
+                    {
+                        <div class="card">
+                            <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.PosterName))" />
+                            <div class="card-body">
+                                <h5 class="card-title">@performance.Name</h5>
+                                <a class="btn btn-info" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-md-3">
+                <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
+            </div>
+        }
+    }
 </div>
 <div class="row mt-4">
     <div class="col-2 text-left">
@@ -135,21 +196,36 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-9">
-        <div class="card-columns">
-            @foreach (var ap in (IEnumerable<ApplicationUserPerformance>)ViewBag.SubscribedPerformances)
-            {
-                <div class="card">
-                    <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(ap.Performance.DataPath, ap.Performance.PosterName))" />
-                    <div class="card-body">
-                        <h5 class="card-title">@ap.Performance.Name</h5>
-                        <a class="btn btn-primary" asp-route-id="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
+    @{
+        if (((IEnumerable<ApplicationUserPerformance>)ViewBag.SubscribedPerformances).Count() < 1)
+        {
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-4">
+                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
                     </div>
                 </div>
-            }
-        </div>
-    </div>
-    <div class="col-md-3">
-        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "hex_left.png"))">
-    </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-9">
+                <div class="card-columns">
+                    @foreach (var ap in (IEnumerable<ApplicationUserPerformance>)ViewBag.SubscribedPerformances)
+                    {
+                        <div class="card">
+                            <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(ap.Performance.DataPath, ap.Performance.PosterName))" />
+                            <div class="card-body">
+                                <h5 class="card-title">@ap.Performance.Name</h5>
+                                <a class="btn btn-primary" asp-route-id="@ap.Performance.Id" asp-area="" asp-controller="Performance" asp-action="Card">Перейти</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-md-3">
+                <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "hex_left.png"))">
+            </div>
+        }
+    }
 </div>

@@ -1,0 +1,13 @@
+﻿@using MathEvent.Helpers
+
+<div class="row">
+    <div class="col form-group p-0 w-0">
+        <h3 class="mb-2">@Comment</h3>
+        <img class="w-75 need-hide" src="@UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_sad.png")">
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Comment { get; set; } = "Ничего не найдено :(";
+}

@@ -8,6 +8,7 @@
 @using MathEvent.Models.ViewModels
 @using MathEvent.Helpers
 @using Microsoft.AspNetCore.Mvc
+@using MathEvent.Components
 
 @inject NavigationManager NavigationManager
 @{Init();}
@@ -29,27 +30,41 @@
         </div>
     </div>
 </div>
-
-<div class="card-columns">
-    @foreach (var item in Performances)
+@{
+    if (Performances.Count() < 1)
     {
-        var id = item.Id;
-        <div class="card">
-            <img class="card-img-top" src="@UserDataPathWorker.ConcatPaths(item.DataPath, item.PosterName)"/>
-            <div class="card-body">
-                <h4 class="card-title">@item.Name</h4>
-                @if (!IsKeyWordsHidden)
-                {
-                    <h6 class="card-text">@item.KeyWords</h6>
-                }
-                <button @onclick="@(() => GoToCard(id))" class="btn btn-primary">Подробнее</button>
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-5">
+                    <NotFound Comment="Нет событий, удовлетворяющих фильтрам"></NotFound>
+                </div>
             </div>
         </div>
     }
-</div>
+    else
+    {
+        <div class="card-columns">
+            @foreach (var item in Performances)
+            {
+                var id = item.Id;
+                <div class="card">
+                    <img class="card-img-top" src="@UserDataPathWorker.ConcatPaths(item.DataPath, item.PosterName)" />
+                    <div class="card-body">
+                        <h4 class="card-title">@item.Name</h4>
+                        @if (!IsKeyWordsHidden)
+                        {
+                            <h6 class="card-text">@item.KeyWords</h6>
+                        }
+                        <button @onclick="@(() => GoToCard(id))" class="btn btn-primary">Подробнее</button>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
 
 @code {
     [Parameter]

@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<MathEvent.Models.Performance>
 @using MathEvent.Helpers
+@using MathEvent.Components 
 
 <div class="container py-4">
-    <div class="jumbotron jumbotron-image shadow" 
+    <div class="jumbotron jumbotron-image shadow"
          style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(0))));
          padding-left: 2px;
          padding-right: 2px;">
@@ -20,37 +21,52 @@
         </div>
     </div>
 </div>
-<div id="carouselIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
-    <ol class="carousel-indicators">
-        <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
-        <li data-target="#carouselIndicators" data-slide-to="1"></li>
-        <li data-target="#carouselIndicators" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner">
-        @{var i = 0;
-            foreach (var item in Model)
-            {
-                var active = i == 0 ? "active" : "";
-                <div class="carousel-item @active">
-                    <a asp-route-id="@item.Id" asp-controller="Performance" asp-action="Card">
-                        <img class="d-block w-100 half-bright" src="@Url.Content(UserDataPathWorker.ConcatPaths(item.DataPath, item.PosterName))">
-                        <div class="carousel-caption dark-light">
-                            <h3><strong>@item.Name</strong></h3>
-                            <h5>@item.KeyWords</h5>
-                            <h4><strong>@item.Start.Date.ToString("d")</strong></h4>
-                        </div>
-                    </a>
+@{
+    if (Model.Count() < 1)
+    {
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-4">
+                    @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "У нас пока нет событий... Станьте первым!"}))
                 </div>
-                i++;
-            }
-        }
-    </div>
-    <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div id="carouselIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselIndicators" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                @{var i = 0;
+                    foreach (var item in Model)
+                    {
+                        var active = i == 0 ? "active" : "";
+                        <div class="carousel-item @active">
+                            <a asp-route-id="@item.Id" asp-controller="Performance" asp-action="Card">
+                                <img class="d-block w-100 half-bright" src="@Url.Content(UserDataPathWorker.ConcatPaths(item.DataPath, item.PosterName))">
+                                <div class="carousel-caption dark-light">
+                                    <h3><strong>@item.Name</strong></h3>
+                                    <h5>@item.KeyWords</h5>
+                                    <h4><strong>@item.Start.Date.ToString("d")</strong></h4>
+                                </div>
+                            </a>
+                        </div>
+                        i++;
+                    }
+                }
+            </div>
+            <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    }
+}
