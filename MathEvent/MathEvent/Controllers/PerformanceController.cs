@@ -34,6 +34,7 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Index(string type, string period)
         {
             IEnumerable<Performance> performances = await _db.Performances
+                .Where(p => p.Start.Month >= DateTime.Now.Month)
                 .Include(p => p.Section)
                 .Include(p => p.Creator).ToListAsync();
 
@@ -70,49 +71,14 @@ namespace MathEvent.Controllers
                     DataPath = performance.DataPath,
                     PosterName = performance.PosterName,
                     Traffic = performance.Traffic,
-                    Type = performance.Type
+                    Type = performance.Type,
+                    Location = performance.Location
                 };
 
                 cards.Add(card);
             }
 
             return View(cards);
-        }
-
-        public async Task<IEnumerable<PerformanceViewModel>> FilterByType(string type)
-        {
-            IEnumerable<Performance> performances = await _db.Performances
-                .Include(p => p.Section)
-                .Include(p => p.Creator).ToListAsync();
-
-            if (!(type == null || type == "Любой"))
-            {
-                performances = performances.Where(p => p.Type == type);
-            }
-
-            var cards = new List<PerformanceViewModel>();
-
-            foreach (var performance in performances)
-            {
-                var card = new PerformanceViewModel
-                {
-                    Id = performance.Id,
-                    Name = performance.Name,
-                    Annotation = performance.Annotation,
-                    KeyWords = performance.KeyWords,
-                    Start = performance.Start,
-                    CreatorId = performance.CreatorId,
-                    CreatorName = performance.Creator.Name,
-                    DataPath = performance.DataPath,
-                    PosterName = performance.PosterName,
-                    Traffic = performance.Traffic,
-                    Type = performance.Type
-                };
-
-                cards.Add(card);
-            }
-
-            return cards;
         }
 
         [HttpGet]
@@ -133,7 +99,7 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add([Bind("Name", "Type", "KeyWords", "Annotation", "Start", "SectionId")] Performance performance, IFormFile uploadedFile)
+        public async Task<IActionResult> Add([Bind("Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId")] Performance performance, IFormFile uploadedFile)
         {
             if (!ModelState.IsValid)
             {
@@ -206,6 +172,7 @@ namespace MathEvent.Controllers
                 DataPath = performance.DataPath,
                 PosterName = performance.PosterName,
                 Traffic = performance.Traffic,
+                Location = performance.Location
             };
 
             if (_signInManager.IsSignedIn(User))
@@ -253,7 +220,7 @@ namespace MathEvent.Controllers
                 await _db.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index", "Performance", new { performanceId = performanceId});
+            return RedirectToAction("Index", "Performance", new { performanceId });
         }
 
         [HttpGet]
@@ -275,7 +242,7 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id", "Name", "Type", "KeyWords", "Annotation", "Start", "SectionId",
+        public async Task<IActionResult> Edit([Bind("Id", "Name", "Location", "Type", "KeyWords", "Annotation", "Start", "SectionId",
             "CreatorId", "DataPath", "PosterName", "Traffic")] Performance performance, IFormFile uploadedFile)
         {
             if (!ModelState.IsValid)
@@ -309,12 +276,21 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Delete(int performanceId)
         {
             var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleAsync();
+            var path = UserDataPathWorker.GetRootPath(performance.DataPath);
 
-            if (System.IO.File.Exists(performance.DataPath))
+            if (Directory.Exists(path))
             {
-                System.IO.File.Delete(performance.DataPath);
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch
+                {
+                    return RedirectToAction("Error500", "Error");
+                }
+                
             }
-            
+            await Subscribe(performanceId);
             _db.Performances.Remove(performance);
             await _db.SaveChangesAsync();
 
@@ -326,7 +302,7 @@ namespace MathEvent.Controllers
         {
             if (start < DateTime.Now)
             {
-                return Json($"Дата {start} меньше текущей даты {DateTime.Now}.");
+                return Json($"Дата {start} меньше текущей даты {DateTime.Now}");
             }
             if (sectionId != null)
             {
@@ -335,6 +311,17 @@ namespace MathEvent.Controllers
                 {
                     return Json($"Дата {start} выходит за временные рамки секции {section.Name}.");
                 }
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckType(string type)
+        {
+            if (!DataFactory.GetPerformanceTypes().GetValues().Contains(type))
+            {
+                return Json($"Тип {type} не существует");
             }
 
             return Json(true);

@@ -38,8 +38,8 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Index()
         {
             var performances = await _db.Performances
-                .Include(p => p.Section)
                 .Where(p => p.Start >= DateTime.Now)
+                .Include(p => p.Section)
                 .OrderByDescending(p => p.Start).Take(3).ToListAsync();
 
             //var cards = new List<PerformanceViewModel>();

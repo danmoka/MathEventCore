@@ -11,6 +11,7 @@ namespace MathEvent.Models.ViewModels
         public string Name { get; set; }
         public string Annotation { get; set; }
         public string KeyWords { get; set; }
+        public string Location { get; set; }
         public DateTime Start { get; set; }
         public string CreatorId { get; set; }
         public string CreatorName { get; set; }

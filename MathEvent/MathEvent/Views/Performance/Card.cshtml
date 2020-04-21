@@ -11,31 +11,30 @@
 <div class="row">
     <a class="nav-link h5" asp-controller="Performance" asp-action="Index"><< К списку событий</a>
 </div>
-
-<div class="conteiner rounded bg-light border">
-    <div class="container background-dark" style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(0))))">
-        <div class="row d-flex align-items-end">
-            <div class="col-lg-7 p-0 m-0">
-                <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(Model.DataPath, Model.PosterName))">
+        <div class="row">
+            <div class="col-lg-8 pr-lg-3 m-0">
+                <img class="card-img" src="@Url.Content(UserDataPathWorker.ConcatPaths(Model.DataPath, Model.PosterName))">
             </div>
-            <div class="col-lg-5 text-right dark-light">
-                <h3 class="text-white">@Model.Name</h3>
-                <p class="display-4 text-white"><strong>@Model.Start.Date.ToString("d")</strong></p>
-                <p class="text-white"><strong>@Model.Start.Date.TimeOfDay.ToString()</strong></p>
+            <div class="col-lg-4 px-4">
+                <div class="row mb-2">
+                    <hr class="bg-primary block-1" />
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <h4 class="mb-4">@Model.Name</h4>
+                        <p><strong>Начало: @Model.Start.ToString("dd/MM/yyyy HH:mm")</strong></p>
+                        <p>@Model.Location</p>
+                    </div>
+                </div>  
+                <div class="row">
+                    <div class="col">
+                        @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
+                        @Html.RouteLink("Написать организатору", new { controller = "Performance", action = "ContactTheCreator", creatorId = Model.CreatorId }, new { @class = "btn btn-block btn-info md-4" })
+                    </div>
+                   
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="row d-flex align-items-top">
-            <div class="col text-left p-3 ">
-                @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
-            </div>
-            <div class="col text-right p-3 ">
-                @Html.RouteLink("Написать организатору", new { controller = "Performance", action = "ContactTheCreator", creatorId = Model.CreatorId }, new { @class = "btn btn-lg btn-info" })
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="card-deck my-4">
     <div class="card">
@@ -43,15 +42,15 @@
             <h4>О мероприятии</h4>
         </div>
         <div class="card-body">
-            <p>@Model.KeyWords</p>
+            <p>@Model.Annotation</p>
         </div>
     </div>
     <div class="card">
         <div class="card-header bg-very-light-blue">
-            <h4>Полное описание</h4>
+            <h4>Адрес</h4>
         </div>
         <div class="card-body">
-            <p>@Model.Annotation</p>
+            <p>@Model.Location</p>
         </div>
     </div>
     <div class="card">

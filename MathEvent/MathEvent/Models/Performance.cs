@@ -21,6 +21,7 @@ namespace MathEvent.Models
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Выберите тип события")]
+        [Remote(action: "CheckType", controller: "Performance")]
         [Display(Name = "Тип")]
         public string Type { get; set; }
 
@@ -32,6 +33,11 @@ namespace MathEvent.Models
         [StringLength(400, MinimumLength = 3, ErrorMessage = "Длина описания должна быть от 3 до 400 символов")]
         [Display(Name = "О событии")]
         public string Annotation { get; set; }
+
+        [Required(ErrorMessage = "Введите адрес, где будет проходить событие")]
+        [StringLength(400, MinimumLength = 3, ErrorMessage = "Длина поля адрес должна быть от 3 до 400 символов")]
+        [Display(Name = "Адрес")]
+        public string Location { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время начала")]
         [Remote(action: "CheckStartDate", controller: "Performance", AdditionalFields = nameof(SectionId))]

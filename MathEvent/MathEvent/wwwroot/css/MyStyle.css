@@ -9,6 +9,11 @@ body {
     margin-bottom: 0px;
 }
 
+.bottom-subscribe-block {
+    position: absolute;
+    bottom: 0;
+}
+
 .content {
     flex: 1 0 auto;
 }

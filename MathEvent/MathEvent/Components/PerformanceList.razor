@@ -58,7 +58,15 @@
                         <button @onclick="@(() => GoToCard(id))" class="btn btn-primary">Подробнее</button>
                     </div>
                     <div class="card-footer">
-                        <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
+                        <div class="row d-flex align-items-center">
+                            <div class="col-md-5 text-center text-md-left mb-4 mb-md-0">
+                                <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
+                            </div>
+                            <div class="col-md-7 text-center text-md-right">
+                                <small class="text-muted">@item.Location</small>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
@@ -115,10 +116,19 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Delete(int sectionId)
         {
             var section = await _db.Sections.Where(p => p.Id == sectionId).SingleAsync();
+            var path = UserDataPathWorker.GetRootPath(section.DataPath);
 
-            if (System.IO.File.Exists(section.DataPath))
+            if (Directory.Exists(path))
             {
-                System.IO.File.Delete(section.DataPath);
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch
+                {
+                    return RedirectToAction("Error500", "Error");
+                }
+
             }
 
             _db.Sections.Remove(section);

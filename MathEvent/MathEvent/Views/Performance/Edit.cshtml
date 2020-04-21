@@ -35,6 +35,16 @@
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>@*<form-group*@
             <div class="form-group">
+                <label asp-for="Location" class="control-label"></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">&#127970</span>
+                    </div>
+                    <input asp-for="Location" class="form-control" />
+                </div>
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>@*<form-group*@
+            <div class="form-group">
                 <label asp-for="Start" class="control-label"></label>
                 <div class="input-group">
                     <div class="input-group-prepend">

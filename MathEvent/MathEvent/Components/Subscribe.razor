@@ -9,12 +9,9 @@
 @using Newtonsoft.Json
 @using System.Text
 @inject NavigationManager NavigationManager
-<div class="container">
-    <div class="row d-flex align-items-center">
-        <input type="button" class="btn btn-lg btn-success" @onclick="SignUp" value="@CurrentButtonValue()" />
-        <h5 class="ml-md-4">Участников: @Count()</h5>
-    </div>
-</div>
+
+<h6>Участников: @Count()</h6>
+<input type="button" class="btn btn-block btn-success" @onclick="SignUp" value="@CurrentButtonValue()" />        
 
 @code {
     [Parameter] public PerformanceViewModel card { get; set; }

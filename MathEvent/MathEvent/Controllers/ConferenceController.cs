@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
@@ -26,6 +27,7 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Index()
         {
             var conferences = await _db.Conferences
+                .Where(c => c.Start.Month >= DateTime.Now.Month)
                 .Include(c => c.Manager)
                 .Include(c => c.Sections)
                 .ThenInclude(s => s.Performances).ToListAsync();
@@ -153,10 +155,19 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Delete(int conferenceId)
         {
             var conference = await _db.Conferences.Where(p => p.Id == conferenceId).SingleAsync();
+            var path = UserDataPathWorker.GetRootPath(conference.DataPath);
 
-            if (System.IO.File.Exists(conference.DataPath))
+            if (Directory.Exists(path))
             {
-                System.IO.File.Delete(conference.DataPath);
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch
+                {
+                    return RedirectToAction("Error500", "Error");
+                }
+
             }
 
             _db.Conferences.Remove(conference);

@@ -67,7 +67,8 @@
                 <span asp-validation-for="DataPath" class="text-danger"></span>
             </div>
             <div class="form-row form-group d-flex align-items-end mt-4">
-                <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')" asp-route-conferenceId="@Model.Id" asp-area="" asp-controller="Conference" asp-action="Delete">Удалить</a>
+                <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')" 
+                   asp-route-conferenceId="@Model.Id" asp-area="" asp-controller="Conference" asp-action="Delete">Удалить</a>
                 <input type="submit" class="btn btn-success" value="Сохранить изменения" />
             </div>
         </div>
