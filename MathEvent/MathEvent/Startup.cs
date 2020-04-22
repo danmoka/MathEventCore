@@ -17,6 +17,7 @@ using MathEvent.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
+using MathEvent.Helpers.Email;
 
 namespace MathEvent
 {
@@ -38,8 +39,17 @@ namespace MathEvent
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-
             services.AddServerSideBlazor();
+
+            
+
+            var emailConfig = Configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+
+            emailConfig.Password = Configuration["Email:Key"];
+
+            services.AddSingleton(emailConfig);
             //services.AddHttpClient();
             //// Server Side Blazor doesn't register HttpClient by default
             //if (!services.Any(x => x.ServiceType == typeof(HttpClient)))

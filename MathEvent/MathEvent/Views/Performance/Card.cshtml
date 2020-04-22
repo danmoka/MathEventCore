@@ -29,7 +29,7 @@
                 <div class="row">
                     <div class="col">
                         @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
-                        @Html.RouteLink("Написать организатору", new { controller = "Performance", action = "ContactTheCreator", creatorId = Model.CreatorId }, new { @class = "btn btn-block btn-info md-4" })
+                        @Html.RouteLink("Написать организатору", new { controller = "Email", action = "Index", performanceId = Model.Id }, new { @class = "btn btn-block btn-info md-4" })
                     </div>
                    
                 </div>

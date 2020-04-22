@@ -65,7 +65,6 @@ namespace MathEvent.Controllers
                             Annotation = performance.Annotation,
                             KeyWords = performance.KeyWords,
                             Start = performance.Start,
-                            CreatorId = performance.CreatorId,
                             CreatorName = performance.Creator.Name,
                             DataPath = performance.DataPath,
                             PosterName = performance.PosterName,

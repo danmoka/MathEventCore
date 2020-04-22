@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using MathEvent.Models;
 using Microsoft.EntityFrameworkCore;
 using MathEvent.Models.ViewModels;
+using MathEvent.Helpers.Email;
 
 namespace MathEvent.Controllers
 {
@@ -15,10 +16,11 @@ namespace MathEvent.Controllers
     {
         private readonly ApplicationContext _db;
         private readonly ILogger<HomeController> _logger;
+        private readonly EmailSender _emailSender;
 
-        public HomeController(ApplicationContext db)
+        public HomeController(ApplicationContext db, EmailConfiguration es)
         {
-
+            _emailSender = new EmailSender(es);
             _db = db;
             //Performance performance = new Performance()
             //{
@@ -63,6 +65,8 @@ namespace MathEvent.Controllers
 
             //    cards.Add(card);
             //}
+            //var message = new Message(new string[] { "daniilpot1998@gmail.com" }, "Test email", "This is the content from our email.");
+            //_emailSender.SendEmail(message);
 
             return View(performances);
         }

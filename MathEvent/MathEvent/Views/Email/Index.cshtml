@@ -1,0 +1,89 @@
+﻿@model MathEvent.Models.ViewModels.EmailSendMessageViewModel
+
+<div class="row">
+    <div class="col form-group">
+        <h2 class="mb-4">Сообщение организатору события!</h2>
+        <hr class="bg-primary block-1" />
+        <p>
+            Организатор ответит на ваш Email, который нужно указать в форме ниже
+        </p>
+    </div>
+</div>
+@*<div class="row">
+    <a class="nav-link h5" asp-route-id="@Model.PerformanceId" asp-controller="Performance" asp-action="Card"><< Назад</a>
+</div>*@
+<div class="row d-flex justify-content-center">
+    <div class="col-8 col-sm-6 col-md-4">
+        <form asp-controller="Email" asp-action="Send" method="post">
+            <div class="container rounded border pt-3">
+                <div class="form-row mb-2">
+                    <hr class="bg-primary block-1" />
+                </div>
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="form-row">
+                    <div class="form-group btn-block mx-auto">
+                        <input class="form-control" asp-for="UserEmail" placeholder="Ваш Email" />
+                        <span class="text-danger" asp-validation-for="UserEmail"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group btn-block mx-auto">
+                        <input class="form-control" asp-for="Content" placeholder="Тема" />
+                        <span class="text-danger" asp-validation-for="Content"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group btn-block mx-auto">
+                        <textarea asp-for="Message" class="form-control" rows="3" placeholder="Сообщение"></textarea>
+                        <span class="text-danger" asp-validation-for="Message"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input asp-for="PerformanceId" class="form-control" type="hidden" />
+                </div>
+                <div class="form-group">
+                    <input asp-for="CreatorEmail" class="form-control" type="hidden" />
+                </div>
+                <div class="form-row">
+                    <input type="submit" value="отправить" class="btn btn-block btn-success mb-4" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@*<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Email" asp-action="Send" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="PerformanceId" class="form-control" type="hidden" />
+            </div>
+            <div class="form-group">
+                <input asp-for="CreatorEmail" class="form-control" type="hidden" />
+            </div>
+            <div class="form-group">
+                <label asp-for="UserEmail" class="control-label"></label>
+                <input asp-for="UserEmail" class="form-control" />
+                <span asp-validation-for="UserEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Message" class="control-label"></label>
+                <input asp-for="Message" class="form-control" />
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <input asp-for="Content" class="form-control" />
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Отправить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>*@
+

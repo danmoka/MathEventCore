@@ -13,7 +13,6 @@ namespace MathEvent.Models.ViewModels
         public string KeyWords { get; set; }
         public string Location { get; set; }
         public DateTime Start { get; set; }
-        public string CreatorId { get; set; }
         public string CreatorName { get; set; }
         public string DataPath { get; set; }
         public string PosterName { get; set; }
