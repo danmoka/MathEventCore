@@ -269,6 +269,11 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Delete(int performanceId)

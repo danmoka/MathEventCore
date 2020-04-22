@@ -1,0 +1,46 @@
+﻿@model MathEvent.Models.ViewModels.AccountViewModel
+
+<div class="row">
+    <div class="col form-group">
+        <h2 class="mb-4">Аккаунт</h2>
+        <hr class="bg-primary block-1" />
+        <p>
+            Здесь вы можете изменить имя, фамилию и сбросить пароль
+        </p>
+    </div>
+</div>
+
+<div class="row d-flex align-items-top">
+    <div class="col-md-5">
+        <form method="post" asp-controller="Account" asp-action="Edit" asp-route-returnUrl="@Model.ReturnUrl">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">&#9999</span>
+                    </div>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>@*<form-group*@
+            <div class="form-group">
+                <label asp-for="Surname" class="control-label"></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">&#9999</span>
+                    </div>
+                    <input asp-for="Surname" class="form-control" />
+                </div>
+                <span asp-validation-for="Surname" class="text-danger"></span>
+            </div>@*<form-group*@
+            <div class="form-group mt-4">
+                <input type="submit" class="btn btn-success" value="Сохранить изменения" />
+            </div>
+        </form>
+        <a class="text-center" asp-controller="Account" asp-action="ForgotPassword">Сменить пароль</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

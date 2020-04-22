@@ -175,6 +175,11 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
         [AcceptVerbs("Get", "Post")]
         public IActionResult CheckStartDate(DateTime start, DateTime end)
         {

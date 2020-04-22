@@ -12,6 +12,7 @@ namespace MathEvent.Helpers
         private static string _defaultImageName = "default.png";
         private static string _slash = "/";
         private static string _imageDirectory = "Images";
+        private static string _instructionsDirectory = "Images/Instructions";
         private static List<string> _backgroundImages = new List<string>
         {
             "all_together.png",
@@ -142,6 +143,11 @@ namespace MathEvent.Helpers
         public static string GetImagesDirectory()
         {
             return _imageDirectory;
+        }
+
+        public static string GetInstructionsDirectory()
+        {
+            return _instructionsDirectory;
         }
     }
 }

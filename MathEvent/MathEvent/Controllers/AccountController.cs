@@ -157,22 +157,35 @@ namespace MathEvent.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit()
         {
-            var user = _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
+            var model = new AccountViewModel
+            {
+                Name = user.Name,
+                Surname = user.Surname
+            };
 
-            return View(user);
+            return View(model);
         }
 
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ApplicationUser user)
+        public async Task<IActionResult> Edit(AccountViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _userManager.UpdateAsync(user);
+                return RedirectToAction("Error500", "Error");
             }
+
+            var user = await _userManager.GetUserAsync(User);
+            user.Name = model.Name;
+            user.Surname = model.Surname;
+            await _userManager.UpdateAsync(user);
+
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                return Redirect(model.ReturnUrl);
 
             return RedirectToAction("Index", "Account");
         }

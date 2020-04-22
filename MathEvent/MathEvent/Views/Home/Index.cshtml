@@ -7,8 +7,8 @@
          style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(0))));
          padding-left: 2px;
          padding-right: 2px;">
-        <div class="display-4 text-white background-dark dark-light mb-4 pl-4">MathEvent - powered by Матфак</div>
-        @Html.ActionLink("Создать событие >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-lg btn-primary ml-4" })
+        <div class="display-4 text-white background-dark dark-light mb-4 pl-4">MathEvent - powered by МатФак</div>
+        @Html.ActionLink("Создать событие >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-lg bg-light-blue text-white ml-4" })
     </div>
 </div>
 <div class="container">
@@ -17,7 +17,7 @@
             <hr class="bg-primary mx-auto block-1" />
         </div>
         <div class="col-10 text-left">
-            <h4>Ближайшие события!</h4>
+            <h2 class="font-weight-light">Ближайшие события!</h2>
         </div>
     </div>
 </div>

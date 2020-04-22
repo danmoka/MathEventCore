@@ -137,6 +137,11 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> CheckStartDate(DateTime start, DateTime end, int conferenceId)
         {
