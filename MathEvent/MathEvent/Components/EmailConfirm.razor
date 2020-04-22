@@ -1,0 +1,25 @@
+﻿@using MathEvent.Helpers
+
+<div class="row">
+    <div class="col form-group">
+        <h2 class="mb-4">@MainComment</h2>
+        <hr class="bg-primary block-1" />
+        <p>
+            @Comment
+        </p>
+    </div>
+</div>
+<div class="container">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6">
+            <img class="w-75 need-hide" src="@UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "email.png")">
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string MainComment { get; set; }
+    [Parameter]
+    public string Comment { get; set; }
+}

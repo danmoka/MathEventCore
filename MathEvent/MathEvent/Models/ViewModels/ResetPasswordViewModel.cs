@@ -6,21 +6,12 @@ using System.Threading.Tasks;
 
 namespace MathEvent.Models.ViewModels
 {
-    public class RegisterViewModel
+    public class ResetPasswordViewModel
     {
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
-
-        [Required]
-        [Display(Name = "Имя")]
-        public string Name { get; set; }
-
-        [Required]
-        [Display(Name = "Фамилия")]
-        public string Surname { get; set; }
-
 
         [Required]
         [DataType(DataType.Password)]
@@ -33,5 +24,7 @@ namespace MathEvent.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердите пароль")]
         public string PasswordConfirm { get; set; }
+
+        public string Code { get; set; }
     }
 }

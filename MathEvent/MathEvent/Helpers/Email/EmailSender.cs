@@ -16,11 +16,11 @@ namespace MathEvent.Helpers.Email
             _emailConfig = emailConfig;
         }
 
-        public void SendEmail(Message message)
+        public async Task SendEmailAsync(Message message)
         {
             var emailMessage = CreateEmailMessage(message);
 
-            Send(emailMessage);
+            await Send(emailMessage);
         }
 
         private MimeMessage CreateEmailMessage(Message message)
@@ -34,17 +34,17 @@ namespace MathEvent.Helpers.Email
             return emailMessage;
         }
 
-        private void Send(MimeMessage mailMessage)
+        private async Task Send(MimeMessage mailMessage)
         {
             using (var client = new SmtpClient())
             {
                 try
                 {
-                    client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
+                    await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, true);
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
-                    client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
+                    await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
 
-                    client.Send(mailMessage);
+                    await client.SendAsync(mailMessage);
                 }
                 catch
                 {
@@ -53,7 +53,7 @@ namespace MathEvent.Helpers.Email
                 }
                 finally
                 {
-                    client.Disconnect(true);
+                    await client.DisconnectAsync(true);
                     client.Dispose();
                 }
             }

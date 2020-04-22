@@ -15,9 +15,9 @@ namespace MathEvent.Controllers
         private readonly ApplicationContext _db;
         private readonly EmailSender _emailSender;
 
-        public EmailController(ApplicationContext db, EmailConfiguration es)
+        public EmailController(ApplicationContext db, EmailConfiguration er)
         {
-            _emailSender = new EmailSender(es);
+            _emailSender = new EmailSender(er);
             _db = db;
         }
 
@@ -29,7 +29,7 @@ namespace MathEvent.Controllers
 
             if (performance == null)
             {
-                return RedirectToAction("500", "Error");
+                return RedirectToAction("Error500", "Error");
             }
 
             var email = performance.Creator.UserName;
@@ -66,11 +66,11 @@ namespace MathEvent.Controllers
             try
             {
                 var emailMessage = new Message(new string[] { creatorEmail }, content, message);
-                _emailSender.SendEmail(emailMessage);
+                await _emailSender.SendEmailAsync(emailMessage);
             }
             catch
             {
-                return RedirectToAction("500", "Error");
+                return RedirectToAction("Error500", "Error");
             }
 
             return RedirectToAction("Card", "Performance", new { id = model.PerformanceId });

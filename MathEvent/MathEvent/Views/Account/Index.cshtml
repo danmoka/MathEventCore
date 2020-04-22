@@ -20,17 +20,26 @@
     <div class="row d-flex align-items-center background-dark dark-light">
         <div class="col-6 text-left">
             @{
-                var firstName = UserManager.GetUserAsync(User).Result.Name;
-                var lastName = UserManager.GetUserAsync(User).Result.Surname;
+                var user = UserManager.GetUserAsync(User).Result;
+                var firstName = user.Name;
+                var lastName = user.Surname;
                 var username = $"{firstName} {lastName}";
                 <div class="display-4 text-white">@username</div>
             }
         </div>
-        <div class="col-6 text-right">
-            <a class="btn btn-outline-light" asp-area="" asp-controller="Account" asp-action="Edit">&#9999</a>
+        <div class="col-5 text-right">
+            @{
+                if (!UserManager.IsEmailConfirmedAsync(user).Result)
+                {
+                    <a class="btn btn-danger" asp-area="" asp-controller="Account" asp-action="ConfirmEmailRequest">Подтвердить Email</a>
+                }
+            }
+        </div>
+            <div class="col-1 text-right">
+                <a class="btn btn-outline-light" asp-area="" asp-controller="Account" asp-action="Edit">&#9999</a>
+            </div>
         </div>
     </div>
-</div>
 
 <div class="row mt-4">
     <div class="col-2 text-left">

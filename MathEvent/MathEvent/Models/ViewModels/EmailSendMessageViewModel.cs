@@ -12,6 +12,7 @@ namespace MathEvent.Models.ViewModels
         public string CreatorEmail { get; set; }
 
         [Required(ErrorMessage = "Введите ваш Email")]
+        [EmailAddress]
         [Display(Name = "Ваш Email")]
         public string UserEmail { get; set; }
 
