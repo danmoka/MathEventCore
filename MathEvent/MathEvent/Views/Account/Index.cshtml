@@ -8,16 +8,16 @@
 <div class="row">
     <div class="col form-group">
         <h2 class="mb-4">Личный кабинет</h2>
-        <hr class="bg-primary block-1" />
+        <hr class="block-1" />
         <p>
-            Здесь вы можете редактировать ваши конференции, секции и события!
+            Здесь вы можете редактировать ваши конференции, секции и события
         </p>
     </div>
 </div>
 
 <div class="container rounded border" style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(2))));
          min-height: 150px;">
-    <div class="row d-flex align-items-center background-dark dark-light">
+    <div class="row d-flex align-items-center bg-main opacity-8 dark-light">
         <div class="col-6 text-left">
             @{
                 var user = UserManager.GetUserAsync(User).Result;
@@ -43,10 +43,10 @@
 
 <div class="row mt-4">
     <div class="col-2 text-left">
-        <hr class="bg-primary mx-auto block-1" />
+        <hr class="mx-auto block-1" />
     </div>
     <div class="col-10 text-left">
-        <h4>Ваши конференции!</h4>
+        <h4>Ваши конференции</h4>
     </div>
 </div>
 
@@ -68,7 +68,7 @@
             {
                 <div class="row mb-4">
                     <div class="col-md-12">
-                        <div class="row d-flex align-items-center bg-very-light-blue shadow p-1">
+                        <div class="row d-flex align-items-center rounded bg-very-light-blue shadow p-1">
                             <div class="col text-left">
                                 <h4>@conference.Name</h4>
                                 <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
@@ -156,7 +156,7 @@
 </div>
 <div class="row mt-4">
     <div class="col-2 text-left">
-        <hr class="bg-primary mx-auto block-1" />
+        <hr class="mx-auto block-1" />
     </div>
     <div class="col-10 text-left">
         <h4>События вне секций</h4>
@@ -198,10 +198,10 @@
 </div>
 <div class="row mt-4">
     <div class="col-2 text-left">
-        <hr class="bg-primary mx-auto block-1" />
+        <hr class="mx-auto block-1" />
     </div>
     <div class="col-10 text-left">
-        <h4>События, на которые вы записаны!</h4>
+        <h4>События, на которые вы записаны</h4>
     </div>
 </div>
 <div class="row">

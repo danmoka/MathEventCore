@@ -6,8 +6,10 @@
     --me-dark-cyan-light: #0C9D96;
     --me-blue-crayola: #83E8ED;
     --me-royal-blue: #3546DD;
+    --me-royal-blue-light: #6673EE;
     --me-green-lawn: #34C924;
     --me-sea-green-crayola-light: #E1F4EF;
+    --me-murena: #1B5E70;
 }
 /*Поиск>*/
 .active-royal-2 input[type=text] {
@@ -28,8 +30,13 @@
 .btn-primary {
     background-color: var(--me-royal-blue);
 }
+
+.btn-primary:hover {
+    background-color: var(--me-royal-blue-light);
+    border-color: var(--me-royal-blue-light);
+}
+
 .btn-secondary {
-    background: var(--me-dark-cyan);
     background-color: var(--me-dark-cyan);
     border-color: var(--me-dark-cyan);
 }
@@ -44,13 +51,25 @@
     border-color: var(--me-dark-cyan-light);
 }
 
+.btn-light {
+    background-color: var(--me-sea-green-crayola-light);
+    border-color: var(--me-sea-green-crayola-light);
+}
+
+.btn-light:hover {
+    background-color: var(--me-sea-green-crayola);
+    border-color: var(--me-sea-green-crayola-light);
+    color: white;
+}
+
+.input-group-text {
+    background-color: var(--me-sea-green-crayola-light);
+}
 /*.btn-success {
     background-color: var(--me-green-lawn);
     border-color: var(--me-green-lawn);
 }*/
-
 /*<Переопределение цветов*/
-
 .royal-blue {
     color: var(--me-royal-blue);
 }
@@ -60,16 +79,59 @@
 }
 .bg-very-light-blue {
     background-color: var(--me-sea-green-crayola-light);
-    /*rgba(26, 138, 203, 0.70)*/
 }
 .bg-dark-cyan {
     background-color: var(--me-dark-cyan);
+}
+.bg-murena {
+    background-color: var(--me-murena);
+}
+.bg-sea-crayola {
+    background: var(--me-sea-green-crayola);
+}
+
+.text-dark-cyan {
+    color: var(--me-dark-cyan);
+}
+
+.text-royal-blue {
+    color: var(--me-royal-blue)
 }
 
 .opacity-8 {
     opacity: 0.8;
 }
 
+/*Стиль ссылок футера>*/
+.footer-link:link {
+    color: whitesmoke;
+}
+
+/* visited link */
+.footer-link:visited {
+    color: whitesmoke;
+}
+/*<Стиль ссылок футера>*/
+
+.main-link:link, main-link:visited {
+    color: var(--me-royal-blue);
+}
+
+.main-link:hover {
+    color: var(--me-royal-blue-light);
+    text-decoration: none;
+}
+
+
+/* mouse over link */
+.footer-link:hover {
+    color: var(--me-sea-green-crayola-light);
+}
+
+/* selected link */
+.footer-link:active {
+    color: whitesmoke;
+}
 
 /*для того чтобы футер прилип к низу>*/
 html, body {

@@ -130,6 +130,11 @@ namespace MathEvent.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
+            if (User != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 

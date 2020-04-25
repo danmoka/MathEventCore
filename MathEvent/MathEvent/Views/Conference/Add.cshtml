@@ -3,15 +3,15 @@
 
 <div class="row">
     <div class="col form-group">
-        <h2 class="mb-4">Создайте страницу вашей конференции!</h2>
-        <hr class="bg-primary block-1" />
+        <h2 class="mb-4">Создайте страницу вашей конференции</h2>
+        <hr class="block-1" />
         <p>
-            После создания конференции вы сможете добавить на неё секции и события!
+            После создания конференции вы сможете добавить на неё секции и события
         </p>
     </div>
 </div>
 <div class="row">
-    <a class="nav-link h5" asp-controller="Conference" asp-action="Index"><< К списку конференций</a>
+    <a class="main-link h5" asp-controller="Conference" asp-action="Index"><< К списку конференций</a>
 </div>
 <form asp-controller="Conference" asp-action="Add" method="post" enctype="multipart/form-data">
     <div class="text-danger" asp-validation-summary="ModelOnly"></div>
@@ -58,7 +58,7 @@
             <span asp-validation-for="End" class="text-danger"></span>
         </div>@*<form-group*@
             <div class="form-group mt-4">
-                <input type="submit" class="btn btn-lg btn-success" value="Создать" />
+                <input type="submit" class="btn btn-success" value="Создать конференцию" />
             </div>
         </div>
         <div class="col-md-5">
@@ -66,7 +66,7 @@
         </div>
     </div>
 </form>
-<hr class="bg-primary block-1 mb-4" />
+<hr class="block-1 mb-4" />
 <div class="row">
     <div class="col-auto"></div>
     <div class="col-md-5">

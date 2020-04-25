@@ -3,12 +3,12 @@
 
 <div class="row">
     <div class="col form-group">
-        <h2 class="mb-4">Измените вашу секцию!</h2>
-        <hr class="bg-primary block-1" />
+        <h2 class="mb-4">Измените вашу секцию</h2>
+        <hr class="block-1" />
     </div>
 </div>
 <div class="row">
-    <a class="nav-link h5" asp-controller="Account" asp-action="Index"><< В кабинет</a>
+    <a class="main-link h5" asp-controller="Account" asp-action="Index"><< В кабинет</a>
 </div>
 <form asp-controller="Section" asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="text-danger" asp-validation-summary="ModelOnly"></div>

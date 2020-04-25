@@ -49,7 +49,7 @@ namespace MathEvent.Controllers
                     Annotation = performance.Annotation,
                     KeyWords = performance.KeyWords,
                     Start = performance.Start,
-                    CreatorName = performance.Creator.Name,
+                    CreatorName = $"{performance.Creator.Name} {performance.Creator.Surname}",
                     DataPath = performance.DataPath,
                     PosterName = performance.PosterName,
                     Traffic = performance.Traffic,
@@ -149,7 +149,7 @@ namespace MathEvent.Controllers
                 Annotation = performance.Annotation,
                 KeyWords = performance.KeyWords,
                 Start = performance.Start,
-                CreatorName = performance.Creator.Name,
+                CreatorName = $"{performance.Creator.Name} {performance.Creator.Surname}",
                 DataPath = performance.DataPath,
                 PosterName = performance.PosterName,
                 Traffic = performance.Traffic,
@@ -208,11 +208,17 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int performanceId)
         {
+            var performance = await _db.Performances.Where(c => c.Id == performanceId).SingleAsync(); // SingleOrDefault!!!
+
+            if (performance.CreatorId != _userManager.GetUserId(User))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var types = DataFactory.GetPerformanceTypes().GetValues()
                  .Select(x => new SelectListItem { Text = x, Value = x })
                  .ToList();
             ViewBag.Types = types;
-            var performance = await _db.Performances.Where(c => c.Id == performanceId).SingleAsync();
             var user = await _userManager.GetUserAsync(User);
             var userSections = await _db.Sections.Where(s => s.ManagerId == user.Id).ToListAsync();
             ViewBag.Sections = new SelectList(userSections, "Id", "Name");

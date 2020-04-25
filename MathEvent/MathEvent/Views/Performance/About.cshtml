@@ -1,5 +1,5 @@
 ﻿@using MathEvent.Helpers
-<header class="bg-light-blue text-center py-5 mb-4">
+<header class="bg-sea-crayola text-center py-5 mb-4">
     <div class="container">
         <h1 class="display-4 text-white">Событие</h1>
     </div>
@@ -9,7 +9,7 @@
     <div class="container py-5">
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 order-2 order-lg-1">
-                <i class="fa fa-bar-chart fa-2x mb-3 text-primary"></i>
+                <i class="fa fa-sign-in fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Зарегистрируйтесь!</h2>
                 <p class="font-italic text-muted mb-4">Если вы еще не зарегистрированы, то пройдите регистрацию</p>
                 <a asp-controller="Account" asp-action="Register" class="btn btn-light px-5 rounded-pill shadow-sm">Регистрация</a>
@@ -19,7 +19,7 @@
         <div class="row align-items-center">
             <div class="col-lg-5 px-5 mx-auto"><img class="img-fluid mb-4 mb-lg-0 box-shadow border-radius-10" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetInstructionsDirectory(), "perf_menu.png"))"></div>
             <div class="col-lg-6">
-                <i class="fa fa-leaf fa-2x mb-3 text-primary"></i>
+                <i class="fa fa-bars fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Откройте меню</h2>
                 <p class="font-italic text-muted mb-4">После регистрации нажмите вкладку "Создать событие"</p>
                 <a asp-controller="Performance" asp-action="Add" class="btn btn-light px-5 rounded-pill shadow-sm">Создать событие</a>
@@ -31,7 +31,7 @@
     <div class="container py-5">
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 order-2 order-lg-1">
-                <i class="fa fa-bar-chart fa-2x mb-3 text-primary"></i>
+                <i class="fa fa-pencil fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Заполните поля</h2>
                 <p class="font-italic text-muted mb-4">Заполнив поля, нажмите кнопку "Создать"</p>
             </div>
@@ -40,7 +40,7 @@
         <div class="row align-items-center">
             <div class="col-lg-5 px-5 mx-auto"><img class="img-fluid mb-4 mb-lg-0 box-shadow border-radius-10" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetInstructionsDirectory(), "perf_in_list.png"))"></div>
             <div class="col-lg-6">
-                <i class="fa fa-leaf fa-2x mb-3 text-primary"></i>
+                <i class="fa fa-list fa-2x mb-3 text-dark-cyan "></i>
                 <h2 class="font-weight-light">Список событий</h2>
                 <p class="font-italic text-muted mb-4">Ваше событие появится в списке событий MathEvent и станет доступным для просмотра</p>
                 <a asp-controller="Performance" asp-action="Index" class="btn btn-light px-5 rounded-pill shadow-sm">События</a>
