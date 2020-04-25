@@ -4,14 +4,14 @@
 <div class="row">
     <div class="col form-group">
         <h2 class="mb-4">Создайте страницу вашего события!</h2>
-        <hr class="bg-primary block-1" />
+        <hr class="block-1" />
         <p>
             После создания события пользователи сайта смогут записатсья на ваше событие!
         </p>
     </div>
 </div>
 <div class="row">
-    <a class="nav-link h5" asp-controller="Performance" asp-action="Index"><< К списку событий</a>
+    <a class="royal-blue h5" asp-controller="Performance" asp-action="Index"><< К списку событий</a>
 </div>
 <form asp-controller="Performance" asp-action="Add" method="post" enctype="multipart/form-data">
     <div class="text-danger" asp-validation-summary="ModelOnly"></div>
@@ -89,12 +89,12 @@
                 <span asp-validation-for="Annotation" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
-                <input type="submit" class="btn btn-lg btn-success" value="Создать" />
+                <input type="submit" class="btn btn-success" value="Создать событие" />
             </div>
         </div>
     </div>
 </form>
-<hr class="bg-primary block-1 mb-4" />
+<hr class="block-1 mb-4" />
 <div class="row">
     <div class="col-auto"></div>
     <div class="col-md-5">

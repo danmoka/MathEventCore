@@ -45,5 +45,19 @@ namespace MathEvent.Controllers
 
             return filterViewModel;
         }
+
+        [HttpPost]
+        [Route("search")]
+        public FilterCardViewModel FilterBySerchString(FilterCardViewModel filterViewModel)
+        {
+            var searchString = filterViewModel.FilterPatameter;
+            filterViewModel.Cards = filterViewModel.Cards.Where(c =>
+            c.Name.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 ||
+            c.KeyWords.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 ||
+            c.Location.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 ||
+            c.CreatorName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+
+            return filterViewModel;
+        }
     }
 }

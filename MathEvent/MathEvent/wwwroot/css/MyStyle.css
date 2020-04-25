@@ -1,4 +1,77 @@
-﻿/*для того чтобы футер прилип к низу>*/
+﻿:root {
+    --me-main-color: #5299AD;
+    --me-sea-green-crayola: #99E0CE;
+    --me-honeydew: #DFFFE7;
+    --me-dark-cyan: #088A84;
+    --me-dark-cyan-light: #0C9D96;
+    --me-blue-crayola: #83E8ED;
+    --me-royal-blue: #3546DD;
+    --me-green-lawn: #34C924;
+    --me-sea-green-crayola-light: #E1F4EF;
+}
+/*Поиск>*/
+.active-royal-2 input[type=text] {
+    border-bottom: 1px solid var(--me-royal-blue);
+    box-shadow: 0 1px 0 0 var(--me-royal-blue);
+}
+
+.active-royal .fa, .active-royal-2 .fa {
+    color: var(--me-royal-blue);
+}
+
+.fa-search:hover {
+    color: var(--me-blue-crayola);
+}
+/*Поиск>*/
+
+/*Переопределение цветов>*/
+.btn-primary {
+    background-color: var(--me-royal-blue);
+}
+.btn-secondary {
+    background: var(--me-dark-cyan);
+    background-color: var(--me-dark-cyan);
+    border-color: var(--me-dark-cyan);
+}
+
+.btn-secondary:hover {
+    background-color: var(--me-dark-cyan-light);
+    border-color: var(--me-dark-cyan-light);
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active, .show>.btn-secondary.dropdown-toggle {
+    background-color: var(--me-dark-cyan-light);
+    border-color: var(--me-dark-cyan-light);
+}
+
+/*.btn-success {
+    background-color: var(--me-green-lawn);
+    border-color: var(--me-green-lawn);
+}*/
+
+/*<Переопределение цветов*/
+
+.royal-blue {
+    color: var(--me-royal-blue);
+}
+
+.bg-main {
+    background-color: var(--me-main-color);
+}
+.bg-very-light-blue {
+    background-color: var(--me-sea-green-crayola-light);
+    /*rgba(26, 138, 203, 0.70)*/
+}
+.bg-dark-cyan {
+    background-color: var(--me-dark-cyan);
+}
+
+.opacity-8 {
+    opacity: 0.8;
+}
+
+
+/*для того чтобы футер прилип к низу>*/
 html, body {
     height: 100%;
 }
@@ -46,11 +119,6 @@ textarea {
     /*rgba(26, 138, 203, 0.70)*/
 }
 
-.bg-very-light-blue {
-    background: rgba(26, 60, 150, 0.10);
-    /*rgba(26, 138, 203, 0.70)*/
-}
-
 .btn-block {
     display: block;
     width: 100%;
@@ -59,9 +127,10 @@ textarea {
 }
 
 .block-1 {
-    background: #120c5e;
+    background: var(--me-sea-green-crayola);
     width: 100%;
     height: 3px;
+    border: 0;
 }
 
 .login-textbox {

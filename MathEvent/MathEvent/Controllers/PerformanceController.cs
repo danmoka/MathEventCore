@@ -38,23 +38,6 @@ namespace MathEvent.Controllers
                 .Include(p => p.Section)
                 .Include(p => p.Creator).ToListAsync();
 
-            if (!(type == null || type == "Любой"))
-            {
-                performances = performances.Where(p => p.Type == type);
-            }
-
-            switch (period)
-            {
-                case "1":
-                    performances = performances.Where(p => p.Start.Day == DateTime.Now.Day);
-                    break;
-                case "2":
-                    performances = performances.Where(p => p.Start.Month == DateTime.Now.Month);
-                    break;
-                case "3":
-                    performances = performances.Where(p => p.Start.Year == DateTime.Now.Year);
-                    break;
-            }
             var cards = new List<PerformanceViewModel>();
 
             foreach (var performance in performances)
