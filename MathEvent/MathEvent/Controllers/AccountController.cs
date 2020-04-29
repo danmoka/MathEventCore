@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Helpers.Email;
@@ -58,7 +56,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(
+            [Bind("Email", "Name", "Surname", "Password", "PasswordConfirm")] RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -88,13 +87,13 @@ namespace MathEvent.Controllers
                     //return RedirectToAction("Index", "Home");
                 }
 
-                
+
                 foreach (var error in result.Errors)
                     ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
-        }      
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -113,11 +112,11 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login([Bind("UserName", "Password", "RememberMe", "ReturnUrl")] LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
@@ -151,7 +150,7 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(AccountViewModel model)
+        public async Task<IActionResult> Edit([Bind("Name", "Surname", "Info", "ReturnUrl")]AccountViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -183,7 +182,7 @@ namespace MathEvent.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<IActionResult> ForgotPassword([Bind("Email")] ForgotPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -207,7 +206,7 @@ namespace MathEvent.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(string code = null)
+        public IActionResult ResetPassword(string code = null)
         {
             
             if (code == null)
@@ -221,7 +220,8 @@ namespace MathEvent.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword(
+            [Bind("Email", "Password", "PasswordConfirm", "Code")] ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {

@@ -14,7 +14,7 @@ namespace MathEvent.Models.ViewModels
     {
         [Required(ErrorMessage = "Введите логин")]
         [Display(Name = "Логин")]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "Введите пароль")]
         [DataType(DataType.Password)]
