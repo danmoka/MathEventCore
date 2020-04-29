@@ -17,7 +17,7 @@
 
 <div class="container rounded border" style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(2))));
          min-height: 150px;">
-    <div class="row d-flex align-items-center bg-main opacity-8 dark-light">
+    <div class="row d-flex align-items-center bg-main opacity-8 dark-light pb-2">
         <div class="col-6 text-left">
             @{
                 var user = UserManager.GetUserAsync(User).Result;
@@ -31,7 +31,7 @@
             @{
                 if (!UserManager.IsEmailConfirmedAsync(user).Result)
                 {
-                    <a class="btn btn-danger" asp-area="" asp-controller="Account" asp-action="ConfirmEmailRequest">Подтвердить Email</a>
+                    <a class="btn btn-danger" asp-area="" asp-controller="Email" asp-action="ConfirmEmailRequest">Подтвердить Email</a>
                 }
             }
         </div>

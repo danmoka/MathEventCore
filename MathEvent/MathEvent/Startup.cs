@@ -49,7 +49,7 @@ namespace MathEvent
                 .GetSection("EmailConfiguration")
                 .Get<EmailConfiguration>();
 
-            emailConfig.Password = Configuration["Email:Key"];
+            emailConfig.Password = Configuration["EmailSender:Key"];
 
             services.AddSingleton(emailConfig);
             //services.AddHttpClient();

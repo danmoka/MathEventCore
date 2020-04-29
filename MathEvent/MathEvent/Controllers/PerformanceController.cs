@@ -31,6 +31,7 @@ namespace MathEvent.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index(string type, string period)
         {
             IEnumerable<Performance> performances = await _db.Performances
@@ -71,7 +72,14 @@ namespace MathEvent.Controllers
                  .Select(x => new SelectListItem { Text = x, Value = x })
                  .ToList();
             ViewBag.Types = types;
+
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var userSections = await _db.Sections.Where(s => s.ManagerId == user.Id).ToListAsync();
             ViewBag.Sections = new SelectList(userSections, "Id", "Name");
 
@@ -89,6 +97,12 @@ namespace MathEvent.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             performance.CreatorId = user.Id;
             await _db.Performances.AddAsync(performance);
             await _db.SaveChangesAsync();
@@ -97,7 +111,13 @@ namespace MathEvent.Controllers
 
             if (performance.SectionId != null)
             {
-                var section = await _db.Sections.Where(s => s.Id == performance.SectionId).SingleAsync();
+                var section = await _db.Sections.Where(s => s.Id == performance.SectionId).SingleOrDefaultAsync();
+
+                if (section == null)
+                {
+                    return RedirectToAction("Error500", "Error");
+                }
+
                 performanceDataPath = section.DataPath;
             }
             else
@@ -115,7 +135,6 @@ namespace MathEvent.Controllers
 
             performance.DataPath = performanceDataPath;
 
-            // а что если записать файл не получится?
             if (uploadedFile != null)
             {
                 performance.PosterName = Path.GetFileName(uploadedFile.FileName);
@@ -140,7 +159,12 @@ namespace MathEvent.Controllers
         {
             var performance = await _db.Performances.Where(p => p.Id == id)
                 .Include(p => p.Section)
-                .Include(p => p.Creator).SingleAsync();
+                .Include(p => p.Creator).SingleOrDefaultAsync();
+
+            if (performance == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
 
             var card = new PerformanceViewModel
             {
@@ -171,44 +195,14 @@ namespace MathEvent.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Subscribe(int performanceId)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
-            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
-
-            if (ap == null)
-            {
-                ap = new ApplicationUserPerformance()
-                {
-                    ApplicationUserId = user.Id,
-                    PerformanceId = performanceId
-                };
-
-                await _db.ApplicationUserPerformances.AddAsync(ap);
-                var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleAsync(); // или лучше триггер?
-                performance.Traffic++;
-                _db.Performances.Update(performance);
-                await _db.SaveChangesAsync();
-            }
-            else
-            {
-                _db.ApplicationUserPerformances.Remove(ap);
-                var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleAsync(); // или лучше триггер?
-                performance.Traffic--; // если меньше 0 получается, то это ошибка проектирования (наверное) где-то, в бд стоит check(>= 0). Но будет он отрабатывать - неизвестно. Но это не его проблемы, решать эту проблему надо тут.
-                // в модели стоит Range, должен отработать скрипт, что значение меньше 0
-                _db.Performances.Update(performance);
-                await _db.SaveChangesAsync();
-            }
-
-            return RedirectToAction("Index", "Performance", new { performanceId });
-        }
-
-        [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Edit(int performanceId)
         {
-            var performance = await _db.Performances.Where(c => c.Id == performanceId).SingleAsync(); // SingleOrDefault!!!
+            var performance = await _db.Performances.Where(c => c.Id == performanceId).SingleOrDefaultAsync();
+
+            if (performance == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
 
             if (performance.CreatorId != _userManager.GetUserId(User))
             {
@@ -237,7 +231,6 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error400", "Error");
             }
 
-            // что если картинку не удалось загрузить?
             if (uploadedFile != null)
             {
                 var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName));
@@ -258,6 +251,7 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpGet]
         public IActionResult About()
         {
             return View();
@@ -282,7 +276,7 @@ namespace MathEvent.Controllers
                 }
                 
             }
-            await Subscribe(performanceId);
+            await UnsubscribeUsers(performanceId);
             _db.Performances.Remove(performance);
             await _db.SaveChangesAsync();
 
@@ -317,6 +311,18 @@ namespace MathEvent.Controllers
             }
 
             return Json(true);
+        }
+
+        private async Task UnsubscribeUsers(int performanceId)
+        {
+            var applicationUserPerformances = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == performanceId).ToListAsync();
+
+            foreach(var ap in applicationUserPerformances)
+            {
+                _db.ApplicationUserPerformances.Remove(ap);
+            }
+
+            await _db.SaveChangesAsync();
         }
     }
 }

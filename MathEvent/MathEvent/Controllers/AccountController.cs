@@ -29,6 +29,7 @@ namespace MathEvent.Controllers
             _emailSender = new EmailSender(ec);
         }
 
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -57,7 +58,7 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterAsync(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -83,7 +84,7 @@ namespace MathEvent.Controllers
                     await _userManager.AddToRoleAsync(user, "user");
                     await _signInManager.SignInAsync(user, false);
 
-                    await Confirm(user);
+                    return RedirectToAction("ConfirmEmailRequest", "Email");
                     //return RedirectToAction("Index", "Home");
                 }
 
@@ -93,48 +94,20 @@ namespace MathEvent.Controllers
             }
 
             return View(model);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
-        {
-            if (userId == null || code == null)
-            {
-                return RedirectToAction("Error500", "Error");
-            }
-
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
-            {
-                return RedirectToAction("Error500", "Error");
-            }
-
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-
-            if (result.Succeeded)
-                return RedirectToAction("Index", "Home");
-            else
-                return RedirectToAction("Error500", "Error");
-        }
+        }      
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            if (User != null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -185,6 +158,8 @@ namespace MathEvent.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
+            // если user null?
+
             user.Name = model.Name;
             user.Surname = model.Surname;
             await _userManager.UpdateAsync(user);
@@ -195,33 +170,6 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
-        public async Task<IActionResult> ConfirmEmailRequest()
-        {
-            var user = await _userManager.GetUserAsync(User);
-
-            return await Confirm(user);
-        }
-
-        private async Task<IActionResult> Confirm(ApplicationUser user)
-        {
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.Action(
-                "ConfirmEmail",
-                "Account",
-                new { userId = user.Id, code = code },
-                protocol: HttpContext.Request.Scheme);
-
-            var emailMessage = new Message(new string[] { user.Email }, "Подтвердите аккаунт",
-                $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
-            await _emailSender.SendEmailAsync(emailMessage);
-
-            return RedirectToAction("EmailConfrimMessage", "Account");
-        }
-
-        public IActionResult EmailConfrimMessage()
-        {
-            return View();
-        }
 
         [HttpGet]
         [AllowAnonymous]
@@ -229,33 +177,43 @@ namespace MathEvent.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
-                {
-                    return View("ForgotPasswordConfirmation");
-                }
+                return RedirectToAction("Error500", "Error");
+            }
 
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                var message = new Message(new string[] { model.Email }, "Reset Password", $"Для сброса пароля пройдите по ссылке: <a href='{callbackUrl}'>link</a>");
-                await _emailSender.SendEmailAsync(message);
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
+            {
                 return View("ForgotPasswordConfirmation");
             }
-            return View(model);
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            var message = new Message(new string[] { model.Email }, "Reset Password", $"Для сброса пароля пройдите по ссылке: <a href='{callbackUrl}'>link</a>");
+            await _emailSender.SendEmailAsync(message);
+
+            return View("ForgotPasswordConfirmation");
+            
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public async Task<IActionResult> ResetPassword(string code = null)
         {
-            return code == null ? View("Error") : View();
+            
+            if (code == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
+            return View();
         }
 
         [HttpPost]
@@ -267,20 +225,28 @@ namespace MathEvent.Controllers
             {
                 return View(model);
             }
+
+            await _signInManager.SignOutAsync();
+
             var user = await _userManager.FindByEmailAsync(model.Email);
+
             if (user == null)
             {
                 return View("ResetPasswordConfirmation");
             }
+
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+
             if (result.Succeeded)
             {
                 return View("ResetPasswordConfirmation");
             }
+
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+
             return View(model);
         }
 

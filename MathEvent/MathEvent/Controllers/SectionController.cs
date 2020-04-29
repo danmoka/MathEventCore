@@ -22,6 +22,8 @@ namespace MathEvent.Controllers
             _db = db;
             _userManager = userManager;
         }
+        
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
@@ -32,6 +34,12 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Add()
         {
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var userConferences = await _db.Conferences.Where(c => c.ManagerId == user.Id).ToListAsync();
 
             if (userConferences.Count() == 0)
@@ -55,11 +63,23 @@ namespace MathEvent.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             section.ManagerId = user.Id;
             await _db.Sections.AddAsync(section);
             await _db.SaveChangesAsync();
 
-            var conference = await _db.Conferences.Where(c => c.Id == section.ConferenceId).SingleAsync();
+            var conference = await _db.Conferences.Where(c => c.Id == section.ConferenceId).SingleOrDefaultAsync();
+
+            if (conference == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var sectionDataPath = conference.DataPath;
             
             if (!UserDataPathWorker.CreateSubDirectory(ref sectionDataPath, section.Id.ToString()))
@@ -80,8 +100,25 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int sectionId)
         {
-            var section = await _db.Sections.Where(c => c.Id == sectionId).SingleAsync();
+            var section = await _db.Sections.Where(c => c.Id == sectionId).SingleOrDefaultAsync();
+
+            if (section == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            if (section.ManagerId != user.Id)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var userConferences = await _db.Conferences.Where(c => c.ManagerId == user.Id).ToListAsync();
 
             if (userConferences.Count() == 0)
@@ -105,6 +142,19 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error400", "Error");
             }
 
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            if (section.ManagerId != user.Id)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+
             _db.Sections.Update(section);
             await _db.SaveChangesAsync();
 
@@ -115,7 +165,26 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int sectionId)
         {
-            var section = await _db.Sections.Where(p => p.Id == sectionId).SingleAsync();
+            var section = await _db.Sections.Where(p => p.Id == sectionId).SingleOrDefaultAsync();
+
+            if (section == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            if (section.ManagerId != user.Id)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+
             var path = UserDataPathWorker.GetRootPath(section.DataPath);
 
             if (Directory.Exists(path))
@@ -137,6 +206,7 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpGet]
         public IActionResult About()
         {
             return View();

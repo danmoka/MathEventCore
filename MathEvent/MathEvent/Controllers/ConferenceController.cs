@@ -128,7 +128,17 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int conferenceId)
         {
-            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleAsync();
+            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefaultAsync();
+
+            if (conference == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            if (conference.ManagerId != _userManager.GetUserId(User))
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
             return View(conference);
         }
@@ -153,7 +163,13 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int conferenceId)
         {
-            var conference = await _db.Conferences.Where(p => p.Id == conferenceId).SingleAsync();
+            var conference = await _db.Conferences.Where(p => p.Id == conferenceId).SingleOrDefaultAsync();
+
+            if (conference == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var path = UserDataPathWorker.GetRootPath(conference.DataPath);
 
             if (Directory.Exists(path))
@@ -185,11 +201,11 @@ namespace MathEvent.Controllers
         {
             if (start < DateTime.Now)
             {
-                return Json($"Дата {start} меньше текущей даты {DateTime.Now}.");
+                return Json($"Дата {start} меньше текущей даты {DateTime.Now}");
             }
             else if (start > end)
             {
-                return Json($"Дата начала больше даты конца.");
+                return Json($"Дата начала больше даты конца");
             }
 
             return Json(true);
@@ -200,11 +216,11 @@ namespace MathEvent.Controllers
         {
             if (end < DateTime.Now)
             {
-                return Json($"Дата {end} меньше текущей даты {DateTime.Now}.");
+                return Json($"Дата {end} меньше текущей даты {DateTime.Now}");
             }
             else if (start > end)
             {
-                return Json($"Дата начала больше даты конца.");
+                return Json($"Дата начала больше даты конца");
             }
 
             return Json(true);

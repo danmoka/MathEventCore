@@ -9,11 +9,11 @@
             var lastName = UserManager.GetUserAsync(User).Result.Surname;
             var username = $"{firstName} {lastName}";
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     @username
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <form id="manageForm" class="dropdown-item form-inline" asp-controller="Account" asp-action="Index">
+                    <form id="manageForm" class="dropdown-item form-inline" method="get" asp-controller="Account" asp-action="Edit">
                         <button id="manage" type="submit" class="nav-link btn btn-link text-dark">Аккаунт</button>
                     </form>
                     @if (User.IsInRole("admin"))
@@ -31,7 +31,7 @@
                     <form id="addForm" class="dropdown-item form-inline" method="get" asp-controller="Section" asp-action="Add">
                         <button id="add" type="submit" class="nav-link btn btn-link text-dark">Создать секцию</button>
                     </form>
-                    <form id="logoutForm" class="dropdown-item form-inline" asp-controller="Account" asp-action="Logout">
+                    <form id="logoutForm" class="dropdown-item form-inline" method="post" asp-controller="Account" asp-action="Logout">
                         <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Выйти</button>
                     </form>
                 </div>

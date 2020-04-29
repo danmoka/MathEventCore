@@ -18,7 +18,8 @@ namespace MathEvent.Helpers
             "all_together.png",
             "all_together_1.png",
             "all_together_2.png",
-            "all_together_3.png"
+            "all_together_3.png",
+            "back.png"
         };
 
         public static void Init(IWebHostEnvironment webHostEnvironment)
