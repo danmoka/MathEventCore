@@ -45,7 +45,6 @@ namespace MathEvent.Models
         [Display(Name = "Дата начала")]
         public DateTime Start { get; set; }
 
-
         [ForeignKey("Section")]
         [HiddenInput(DisplayValue = false)]
         [Display(Name = "Секция")]
@@ -73,7 +72,7 @@ namespace MathEvent.Models
         [Display(Name = "Афиша")]
         public string PosterName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Некорректное значение")]
         [Range(0, int.MaxValue, ErrorMessage = "Некорректное значение")]
         [Display(Name = "Количество записавшихся")]
         public int Traffic { get; set; }

@@ -1,20 +1,15 @@
-﻿using MathEvent.Models.Validators;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MathEvent.Models
 {
     [Table("Sections")]
-    //[Date]
     public class Section
     {
         [Key]
-        [Required]
         [HiddenInput(DisplayValue = false)]
         public int Id { get; set; }
 
@@ -43,7 +38,7 @@ namespace MathEvent.Models
         [HiddenInput(DisplayValue = false)]
         public string DataPath { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Конференция не определена")]
         [ForeignKey("Conference")]
         [HiddenInput(DisplayValue = false)]
         [Display(Name = "Конференция")]
@@ -60,26 +55,5 @@ namespace MathEvent.Models
 
         [HiddenInput(DisplayValue = false)]
         public ApplicationUser Manager { get; set; }
-
-        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        //{
-        //    List<ValidationResult> errors = new List<ValidationResult>();
-
-        //    if (Start < DateTime.Now)
-        //    {
-        //        errors.Add(new ValidationResult("Дата начала меньше текущей даты!", new List<string>() { "Start" }));
-        //    }
-        //    if (Start > End)
-        //    {
-        //        errors.Add(new ValidationResult("Дата начала больше даты конца",
-        //            new List<string>() { "Start", "End" }));
-        //    }
-        //    if (End < DateTime.Now)
-        //    {
-        //        errors.Add(new ValidationResult("Дата конца меньше текущей даты!", new List<string>() { "End" }));
-        //    }
-
-        //    return errors;
-        //}
     }
 }

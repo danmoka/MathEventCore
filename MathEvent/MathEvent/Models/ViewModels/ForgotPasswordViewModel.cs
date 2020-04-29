@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MathEvent.Models.ViewModels
 {
+    /// <summary>
+    /// Данная модель используется при вводе Email пользователя при смене пароля
+    /// </summary>
     public class ForgotPasswordViewModel
     {
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Введите Email")]
+        [EmailAddress(ErrorMessage = "Некорректный Email")]
+        [Display(Name = "Email")]
         public string Email { get; set; }
     }
 }

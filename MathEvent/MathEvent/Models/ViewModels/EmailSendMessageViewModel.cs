@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace MathEvent.Models.ViewModels
 {
+    /// <summary>
+    /// Данная модель используется для отправки сообщений организатору
+    /// </summary>
     public class EmailSendMessageViewModel
     {
+        [Required(ErrorMessage = "Не удается определить событие")]
+        [HiddenInput(DisplayValue = false)]
         public int PerformanceId { get; set; }
+        [Required(ErrorMessage = "Не удается определить организатора")]
+        [HiddenInput(DisplayValue = false)]
         public string CreatorEmail { get; set; }
 
         [Required(ErrorMessage = "Введите ваш Email")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Некорректный Email")]
         [Display(Name = "Ваш Email")]
         public string UserEmail { get; set; }
 

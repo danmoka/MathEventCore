@@ -177,7 +177,8 @@ namespace MathEvent.Controllers
                 DataPath = performance.DataPath,
                 PosterName = performance.PosterName,
                 Traffic = performance.Traffic,
-                Location = performance.Location
+                Location = performance.Location,
+                Info = performance.Creator.Info
             };
 
             if (_signInManager.IsSignedIn(User))

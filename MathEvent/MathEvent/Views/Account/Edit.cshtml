@@ -33,6 +33,11 @@
                 </div>
                 <span asp-validation-for="Surname" class="text-danger"></span>
             </div>@*<form-group*@
+            <div class="form-group">
+                <label asp-for="Info" class="control-label"></label>
+                <textarea asp-for="Info" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Info" class="text-danger"></span>
+            </div>@*<form-group*@
             <div class="form-group mt-4">
                 <input type="submit" class="btn btn-success" value="Сохранить изменения" />
             </div>

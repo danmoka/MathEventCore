@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MathEvent.Models.ViewModels
 {
+    /// <summary>
+    /// Данная модель используется для отображения событий, а также фильтрации
+    /// Для использования модели НЕ в качестве отображения или фильтрации нужно написать валидацию данных
+    /// </summary>
     public class PerformanceViewModel
     {
         public int Id { get; set; }
@@ -20,5 +21,6 @@ namespace MathEvent.Models.ViewModels
         public string UserId { get; set; }
         public bool IsSignedUp { get; set; }
         public string Type { get; set; }
+        public string Info { get; set; }
     }
 }

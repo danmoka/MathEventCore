@@ -59,6 +59,10 @@
         </div>
         <div class="card-body">
             <p>@Model.CreatorName</p>
+            @if (Model.Info != null)
+            {
+                <p>@Model.Info</p>
+            }
         </div>
     </div>
 </div>

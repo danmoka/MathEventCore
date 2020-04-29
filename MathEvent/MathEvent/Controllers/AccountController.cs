@@ -141,7 +141,8 @@ namespace MathEvent.Controllers
             var model = new AccountViewModel
             {
                 Name = user.Name,
-                Surname = user.Surname
+                Surname = user.Surname,
+                Info = user.Info
             };
 
             return View(model);
@@ -162,6 +163,7 @@ namespace MathEvent.Controllers
 
             user.Name = model.Name;
             user.Surname = model.Surname;
+            user.Info = model.Info;
             await _userManager.UpdateAsync(user);
 
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))

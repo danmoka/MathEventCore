@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MathEvent.Models.ViewModels
 {
+    /// <summary>
+    /// Данная модель используется для отображения секций
+    /// Для использования модели НЕ в качестве отображения нужно написать валидацию данных
+    /// </summary>
     public class SectionViewModel
     {
         public string Name { get; set; }

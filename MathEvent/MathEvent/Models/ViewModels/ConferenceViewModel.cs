@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MathEvent.Models.ViewModels
 {
+    /// <summary>
+    /// Данная модель используется только для отображения конференция
+    /// Для использования модели НЕ в качестве отображения нужно написать валидацию данных
+    /// </summary>
     public class ConferenceViewModel
     {
         public string Name { get; set; }
