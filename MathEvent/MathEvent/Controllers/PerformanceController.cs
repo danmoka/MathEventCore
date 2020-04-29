@@ -32,7 +32,7 @@ namespace MathEvent.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string type, string period)
+        public async Task<IActionResult> Index()
         {
             IEnumerable<Performance> performances = await _db.Performances
                 .Where(p => p.Start.Month >= DateTime.Now.Month)
@@ -89,7 +89,8 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add([Bind("Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId")] Performance performance, IFormFile uploadedFile)
+        public async Task<IActionResult> Add(
+            [Bind("Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId")] Performance performance, IFormFile uploadedFile)
         {
             if (!ModelState.IsValid)
             {
@@ -262,7 +263,19 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int performanceId)
         {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleAsync();
+            //todo: возможность удалять админу
+            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
+
+            if (performance == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            if (performance.CreatorId != _userManager.GetUserId(User))
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var path = UserDataPathWorker.GetRootPath(performance.DataPath);
 
             if (Directory.Exists(path))
@@ -277,7 +290,7 @@ namespace MathEvent.Controllers
                 }
                 
             }
-            await UnsubscribeUsers(performanceId);
+            
             _db.Performances.Remove(performance);
             await _db.SaveChangesAsync();
 

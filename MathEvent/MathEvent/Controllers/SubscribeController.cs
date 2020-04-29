@@ -28,9 +28,12 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public async Task<IActionResult> SignUp(PerformanceViewModel model)
+        public async Task<IActionResult> SignUp(
+            [Bind("Id", "Name", "Annotation", "KeyWords", "Location", "Start",
+            "CreatorName", "DataPath", "PosterName", "Traffic", "UserId",
+            "IsSignedUp", "Type", "Info")]PerformanceViewModel model)
         {
-            var ap = _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId).SingleOrDefault();
+            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId).SingleOrDefaultAsync();
 
             if (ap == null)
             {
@@ -41,19 +44,31 @@ namespace MathEvent.Controllers
                 };
 
                 _db.ApplicationUserPerformances.Add(ap);
-                var performance = _db.Performances.Where(p => p.Id == model.Id).Single(); // или лучше триггер?
+                var performance = await _db.Performances.Where(p => p.Id == model.Id).SingleOrDefaultAsync(); // или лучше триггер?
+
+                if (performance == null)
+                {
+                    return RedirectToAction("Error500", "Error");
+                }
+
                 performance.Traffic++;
                 _db.Performances.Update(performance);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
             }
             else
             {
                 _db.ApplicationUserPerformances.Remove(ap);
-                var performance = _db.Performances.Where(p => p.Id == model.Id).Single(); // или лучше триггер?
+                var performance = await _db.Performances.Where(p => p.Id == model.Id).SingleOrDefaultAsync(); // или лучше триггер?
+
+                if (performance == null)
+                {
+                    return RedirectToAction("Error500", "Error");
+                }
+
                 performance.Traffic--; // если меньше 0 получается, то это ошибка проектирования (наверное) где-то, в бд стоит check(>= 0). Но будет он отрабатывать - неизвестно. Но это не его проблемы, решать эту проблему надо тут.
                 // в модели стоит Range, должен отработать скрипт, что значение меньше 0
                 _db.Performances.Update(performance);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
             }
 
             return Ok();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MathEvent.Models;
 using Microsoft.EntityFrameworkCore;
-using MathEvent.Models.ViewModels;
 using MathEvent.Helpers.Email;
 
 namespace MathEvent.Controllers

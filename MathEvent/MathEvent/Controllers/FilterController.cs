@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using MathEvent.Models;
 using MathEvent.Models.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
@@ -16,7 +11,8 @@ namespace MathEvent.Controllers
     {
         [HttpPost]
         [Route("type")]
-        public FilterCardViewModel FilterByType(FilterCardViewModel filterViewModel)
+        public FilterCardViewModel FilterByType(
+            [Bind("Cards", "FilterParameter")] FilterCardViewModel filterViewModel)
         {
             filterViewModel.Cards = filterViewModel.Cards.Where(c => c.Type == filterViewModel.FilterPatameter).ToList();
 
@@ -25,7 +21,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("period")]
-        public  FilterCardViewModel FilterByPeriod(FilterCardViewModel filterViewModel)
+        public  FilterCardViewModel FilterByPeriod(
+            [Bind("Cards", "FilterParameter")] FilterCardViewModel filterViewModel)
         {
             var period = filterViewModel.FilterPatameter;
             switch (period)
@@ -48,7 +45,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("search")]
-        public FilterCardViewModel FilterBySerchString(FilterCardViewModel filterViewModel)
+        public FilterCardViewModel FilterBySerchString(
+            [Bind("Cards", "FilterParameter")] FilterCardViewModel filterViewModel)
         {
             var searchString = filterViewModel.FilterPatameter;
             filterViewModel.Cards = filterViewModel.Cards.Where(c =>

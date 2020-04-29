@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers.Email;
 using MathEvent.Models;
@@ -50,7 +48,8 @@ namespace MathEvent.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Send(EmailSendMessageViewModel model)
+        public async Task<IActionResult> Send(
+            [Bind("PerformanceId", "CreatorEmail", "UserEmail", "Message", "Content")] EmailSendMessageViewModel model)
         {
             var creatorEmail = model.CreatorEmail;
             var content = model.Content;
@@ -65,12 +64,7 @@ namespace MathEvent.Controllers
             }
 
             var message = $"Сообщение от пользователя MathEvent!\n";
-            
-            if (performance != null)
-            {
-                message += $"Отправлено со страницы события: \"{performance.Name}\"\n";
-            }
-
+            message += $"Отправлено со страницы события: \"{performance.Name}\"\n";
             message += $"Сообщение: {userMessage}\n";
             message += $"Для ответа пользователю используйте: {userEmail}\n";
             message += $"На данное сообщение не отвечайте!";

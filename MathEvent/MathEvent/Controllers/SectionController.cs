@@ -55,7 +55,8 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add([Bind("Name", "Location", "Start", "End", "ConferenceId")] Section section)
+        public async Task<IActionResult> Add(
+            [Bind("Name", "Location", "Start", "End", "ConferenceId")] Section section)
         {
             if (!ModelState.IsValid)
             {
@@ -134,8 +135,8 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id", "Name", "Location", "Start", "End", "DataPath", 
-            "ConferenceId", "ManagerId")] Section section)
+        public async Task<IActionResult> Edit(
+            [Bind("Id", "Name", "Location", "Start", "End", "DataPath", "ConferenceId", "ManagerId")] Section section)
         {
             if (!ModelState.IsValid)
             {
@@ -183,7 +184,6 @@ namespace MathEvent.Controllers
             {
                 return RedirectToAction("Error500", "Error");
             }
-
 
             var path = UserDataPathWorker.GetRootPath(section.DataPath);
 

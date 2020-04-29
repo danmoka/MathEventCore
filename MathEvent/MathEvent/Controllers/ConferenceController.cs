@@ -24,6 +24,7 @@ namespace MathEvent.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var conferences = await _db.Conferences
@@ -104,6 +105,12 @@ namespace MathEvent.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             conference.ManagerId = user.Id;
             await _db.Conferences.AddAsync(conference);
             await _db.SaveChangesAsync();
@@ -146,7 +153,8 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id, Name", "Location", "Start", "End", "ManagerId")] Conference conference)
+        public async Task<IActionResult> Edit(
+            [Bind("Id, Name", "Location", "Start", "End", "ManagerId")] Conference conference)
         {
             if (!ModelState.IsValid)
             {
@@ -166,6 +174,11 @@ namespace MathEvent.Controllers
             var conference = await _db.Conferences.Where(p => p.Id == conferenceId).SingleOrDefaultAsync();
 
             if (conference == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            if (conference.ManagerId != _userManager.GetUserId(User))
             {
                 return RedirectToAction("Error500", "Error");
             }
