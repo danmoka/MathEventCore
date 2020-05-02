@@ -15,7 +15,7 @@ namespace MathEvent.Models
 
         [Required(ErrorMessage = "Введите название секции")]
         [StringLength(300, MinimumLength = 3, ErrorMessage = "Длина названия секции должна быть от 3 до 300 символов")]
-        [Display(Name = "Секция")]
+        [Display(Name = "Название")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Введите адрес секции")]

@@ -10,41 +10,45 @@
     </div>
 </div>
 
-<div class="row d-flex align-items-top">
-    <div class="col-md-5">
-        <form method="post" asp-controller="Account" asp-action="Edit" asp-route-returnUrl="@Model.ReturnUrl">
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">&#9999</span>
+
+<form method="post" asp-controller="Account" asp-action="Edit" asp-route-returnUrl="@Model.ReturnUrl">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-5">
+            <div class="container input-bg-image rounded py-3 mb-2">
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#9999</span>
+                        </div>
+                        <input asp-for="Name" class="form-control" />
                     </div>
-                    <input asp-for="Name" class="form-control" />
-                </div>
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>@*<form-group*@
-            <div class="form-group">
-                <label asp-for="Surname" class="control-label"></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">&#9999</span>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label asp-for="Surname" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#9999</span>
+                        </div>
+                        <input asp-for="Surname" class="form-control" />
                     </div>
-                    <input asp-for="Surname" class="form-control" />
+                    <span asp-validation-for="Surname" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label asp-for="Info" class="control-label"></label>
+                    <textarea asp-for="Info" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Info" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-row form-group d-flex align-items-end justify-content-between mx-auto mt-4">
+                    <a class="btn btn-primary ml-1 mr-4" asp-controller="Account" asp-action="ForgotPassword">Сменить пароль</a>
+                    <input type="submit" class="btn btn-success" value="Сохранить изменения" />
                 </div>
-                <span asp-validation-for="Surname" class="text-danger"></span>
-            </div>@*<form-group*@
-            <div class="form-group">
-                <label asp-for="Info" class="control-label"></label>
-                <textarea asp-for="Info" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Info" class="text-danger"></span>
-            </div>@*<form-group*@
-            <div class="form-group mt-4">
-                <input type="submit" class="btn btn-success" value="Сохранить изменения" />
             </div>
-        </form>
-        <a class="main-link text-right" asp-controller="Account" asp-action="ForgotPassword">Сменить пароль</a>
+        </div>
     </div>
-</div>
+</form>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

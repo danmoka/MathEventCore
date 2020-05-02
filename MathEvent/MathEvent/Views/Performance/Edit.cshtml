@@ -1,117 +1,117 @@
 ﻿@model MathEvent.Models.Performance
-@using MathEvent.Helpers
 
 <div class="row">
     <div class="col form-group">
-        <h2 class="mb-4">Измените ваше событие</h2>
+        <h2 class="mb-4">Редактирование события</h2>
         <hr class="block-1" />
     </div>
 </div>
-<div class="row">
+<div class="row container mb-2">
     <a class="main-link h5" asp-controller="Account" asp-action="Index"><< В кабинет</a>
 </div>
 <form asp-controller="Performance" asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="text-danger" asp-validation-summary="ModelOnly"></div>
     <div class="row d-flex align-items-top">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">&#127991</span>
-                    </div>
-                    <input asp-for="Name" class="form-control" />
-                </div>
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>@*<form-group*@
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">&#9997</span>
-                    </div>
-                    <select asp-for="Type" class="custom-select form-control" asp-items="ViewBag.Types"></select>
-                </div>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>@*<form-group*@
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">&#127970</span>
-                    </div>
-                    <input asp-for="Location" class="form-control" />
-                </div>
-                <span asp-validation-for="Location" class="text-danger"></span>
-            </div>@*<form-group*@
-            <div class="form-group">
-                <label asp-for="Start" class="control-label"></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">&#128198</span>
-                    </div>
-                    <input asp-for="Start" class="form-control" />
-                </div>
-                <span asp-validation-for="Start" class="text-danger"></span>
-            </div>@*<form-group*@
-            @if (((SelectList)ViewBag.Sections).Count() > 0)
-            {
+        <div class="col-md-5">
+            <div class="container input-bg-image rounded py-3 mb-2">
                 <div class="form-group">
-                    <label asp-for="SectionId" class="control-label"></label>
+                    <label asp-for="Name" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#128047</span>
+                            <span class="input-group-text">&#127991</span>
                         </div>
-                        <select class="custom-select form-control" asp-for="SectionId" asp-items="ViewBag.Sections">
-                            <option value=@null>Без секции</option>
-                        </select>
+                        <input asp-for="Name" class="form-control" />
                     </div>
-                    <span asp-validation-for="SectionId" class="text-danger"></span>
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>@*<form-group*@
-            }
-            <div class="form-group">
-                <input asp-for="Id" class="form-control" type="hidden" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input asp-for="CreatorId" class="form-control" type="hidden" />
-                <span asp-validation-for="CreatorId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input asp-for="DataPath" class="form-control" type="hidden" />
-                <span asp-validation-for="DataPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input asp-for="PosterName" class="form-control" type="hidden" />
-                <span asp-validation-for="PosterName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input asp-for="Traffic" class="form-control" type="hidden" />
-                <span asp-validation-for="Traffic" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <h6>Загрузите новую афишу вашего события</h6>
-                <input type="file" name="uploadedFile" accept="image/*" /><br>
+                <div class="form-group">
+                    <label asp-for="Type" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#9997</span>
+                        </div>
+                        <select asp-for="Type" class="custom-select form-control" asp-items="ViewBag.Types"></select>
+                    </div>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label asp-for="Location" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#127970</span>
+                        </div>
+                        <input asp-for="Location" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label asp-for="Start" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#128198</span>
+                        </div>
+                        <input asp-for="Start" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Start" class="text-danger"></span>
+                </div>@*<form-group*@
+                @if (((SelectList)ViewBag.Sections).Count() > 0)
+                {
+                    <div class="form-group">
+                        <label asp-for="SectionId" class="control-label"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">&#128047</span>
+                            </div>
+                            <select class="custom-select form-control" asp-for="SectionId" asp-items="ViewBag.Sections">
+                                <option value=@null>Без секции</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="SectionId" class="text-danger"></span>
+                    </div>@*<form-group*@
+                }
+                <div class="form-group">
+                    <input asp-for="Id" class="form-control" type="hidden" />
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="CreatorId" class="form-control" type="hidden" />
+                    <span asp-validation-for="CreatorId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="DataPath" class="form-control" type="hidden" />
+                    <span asp-validation-for="DataPath" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="PosterName" class="form-control" type="hidden" />
+                    <span asp-validation-for="PosterName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Traffic" class="form-control" type="hidden" />
+                    <span asp-validation-for="Traffic" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <h6>Загрузите новую афишу вашего события</h6>
+                    <input type="file" name="uploadedFile" accept="image/*" /><br>
+                </div>
             </div>
         </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label asp-for="KeyWords" class="control-label"></label>
-                <textarea asp-for="KeyWords" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="KeyWords" class="text-danger"></span>
+        <div class="col-md-7">
+            <div class="container input-bg-image rounded py-3">
+                <div class="form-group">
+                    <label asp-for="KeyWords" class="control-label"></label>
+                    <textarea asp-for="KeyWords" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="KeyWords" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Annotation" class="control-label"></label>
+                    <textarea asp-for="Annotation" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Annotation" class="text-danger"></span>
+                </div>
+                <div class="form-row form-group d-flex align-items-end mt-4">
+                    <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>
+                    <input type="submit" class="btn btn-success" value="Сохранить изменения" />
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Annotation" class="control-label"></label>
-                <textarea asp-for="Annotation" class="form-control" rows="5"></textarea>
-                <span asp-validation-for="Annotation" class="text-danger"></span>
-            </div>
-            <div class="form-row form-group d-flex align-items-end mt-4">
-                <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>
-                <input type="submit" class="btn btn-success" value="Сохранить изменения" />
-            </div>
-        </div>
-        <div class="col-md-3">
-            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
         </div>
     </div>
 </form>

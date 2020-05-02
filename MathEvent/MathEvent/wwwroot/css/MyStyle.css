@@ -11,6 +11,52 @@
     --me-sea-green-crayola-light: #E1F4EF;
     --me-murena: #1B5E70;
 }
+
+.me-border-image {
+    border: 20px solid transparent;
+    border-image-source: url("/Images/input_back2.png");
+    border-image-repeat: round;
+    border-image-slice: 27 27 27 27;
+    border-image-width: 10px 10px 10px 10px;
+    border-image-outset: 0px 0px 0px 0px;
+    border-image-repeat: stretch stretch;
+}
+
+.rounded-corners-gradient-borders {
+    border: double 4px transparent;
+    border-radius: 20px;
+    background-image: url("/Images/input_back.png");
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+}
+
+/*Список>*/
+.me-list {
+    border-top: 20px solid var(--me-dark-cyan);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.me-ol {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.me-li {
+    border-bottom: 1px solid #c4c4c4;
+    margin-bottom: 10px;
+}
+/*<Список*/
+
+.input-bg-image {
+    background-image: url("/Images/input_back_new.png"); 
+    background-size: cover;
+}
+
+.head-bg-image {
+    background-image: url("/Images/back_new.png");
+    background-size:cover;
+}
+
 /*Поиск>*/
 .active-royal-2 input[type=text] {
     border-bottom: 1px solid var(--me-royal-blue);

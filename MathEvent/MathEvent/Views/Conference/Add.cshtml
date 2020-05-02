@@ -3,89 +3,98 @@
 
 <div class="row">
     <div class="col form-group">
-        <h2 class="mb-4">Создайте страницу вашей конференции</h2>
+        <h2 class="mb-4">Создание конференции</h2>
         <hr class="block-1" />
         <p>
             После создания конференции вы сможете добавить на неё секции и события
         </p>
     </div>
 </div>
-<div class="row">
+<div class="row container mb-2">
     <a class="main-link h5" asp-controller="Conference" asp-action="Index"><< К списку конференций</a>
 </div>
 <form asp-controller="Conference" asp-action="Add" method="post" enctype="multipart/form-data">
     <div class="text-danger" asp-validation-summary="ModelOnly"></div>
     <div class="row d-flex align-items-top">
-        <div class="col-md-5">
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">&#127991</span>
+        <div class="col-md-6">
+            <div class="container input-bg-image rounded py-3 mb-2">
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#127991</span>
+                        </div>
+                        <input asp-for="Name" class="form-control" />
                     </div>
-                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label asp-for="Location" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#127970</span>
+                        </div>
+                        <input asp-for="Location" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label asp-for="Start" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#128198</span>
+                        </div>
+                        <input asp-for="Start" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Start" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label asp-for="End" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">&#128198</span>
+                        </div>
+                        <input asp-for="End" class="form-control" />
+                    </div>
+                    <span asp-validation-for="End" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-group mt-4">
+                    <input type="submit" class="btn btn-success" value="Создать конференцию" />
                 </div>
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>@*<form-group*@
-        <div class="form-group">
-            <label asp-for="Location" class="control-label"></label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">&#127970</span>
-                </div>
-                <input asp-for="Location" class="form-control" />
-            </div>
-            <span asp-validation-for="Location" class="text-danger"></span>
-        </div>@*<form-group*@
-        <div class="form-group">
-            <label asp-for="Start" class="control-label"></label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">&#128198</span>
-                </div>
-                <input asp-for="Start" class="form-control" />
-            </div>
-            <span asp-validation-for="Start" class="text-danger"></span>
-        </div>@*<form-group*@
-        <div class="form-group">
-            <label asp-for="End" class="control-label"></label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">&#128198</span>
-                </div>
-                <input asp-for="End" class="form-control" />
-            </div>
-            <span asp-validation-for="End" class="text-danger"></span>
-        </div>@*<form-group*@
-            <div class="form-group mt-4">
-                <input type="submit" class="btn btn-success" value="Создать конференцию" />
             </div>
         </div>
-        <div class="col-md-5">
-            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "hex_left.png"))">
+        <div class="col-md-6">
+            <div class="container bg-white me-list pb-4">
+                <h5 class="mt-2 text-dark-cyan">Обратите внимание</h5>
+                <hr class="bg-dark-cyan mb-4 mt-0 d-inline-block mx-auto" style="width: 60px" />
+                <ol class="me-ol">
+                    <li class="me-li">После создания конференции вы сможете добавить на неё <a asp-controller="Section" asp-action="Add">секции</a></li>
+                    <li class="me-li">Конференция отобразится в списке всех <a asp-controller="Conference" asp-action="Index">конференций MathEvent</a></li>
+                    <li class="me-li">Отредактировать или удалить конференцию можно в <a asp-controller="Account" asp-action="Index">Кабинете</a></li>
+                </ol>
+            </div>
         </div>
     </div>
 </form>
-<hr class="block-1 mb-4" />
+@*<hr class="block-1 mb-4" />
 <div class="row">
     <div class="col-auto"></div>
     <div class="col-md-5">
-        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "plus_right.png"))">
+        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_right.png"))">
     </div>
     <div class="col-md-5">
-        <div class="card bg-light">
-            <div class="card-body">
-                <h4 class="card-title">Обратите внимание </h4>
-                <ul class="card-text">
-                    <li>После создания конференции вы сможете добавить на неё секции</li>
-                    <li>Конференция отобразиться в списке всех <a asp-controller="Conference" asp-action="Index">конференций MathEvent</a></li>
-                    <li>Отредактировать или удалить конференцию можно в <a asp-controller="Account" asp-action="Index">Кабинете</a></li>
-                </ul>
-            </div>
+        <div class="container bg-white me-list pb-4">
+            <h5 class="mt-2 text-dark-cyan">Обратите внимание</h5>
+            <hr class="bg-dark-cyan mb-4 mt-0 d-inline-block mx-auto" style="width: 60px" />
+            <ol class="me-ol">
+                <li class="me-li">После создания конференции вы сможете добавить на неё <a asp-controller="Section" asp-action="Add">секции</a></li>
+                <li class="me-li">Конференция отобразиться в списке всех <a asp-controller="Conference" asp-action="Index">конференций MathEvent</a></li>
+                <li class="me-li">Отредактировать или удалить конференцию можно в <a asp-controller="Account" asp-action="Index">Кабинете</a></li>
+            </ol>
         </div>
     </div>
     <div class="col-auto"></div>
-</div>
+</div>*@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
