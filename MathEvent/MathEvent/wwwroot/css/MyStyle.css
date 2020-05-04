@@ -30,6 +30,39 @@
     background-clip: content-box, border-box;
 }
 
+/*Загрузка файла на сервер>*/
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.upload-btn-wrapper:hover .upload-btn{
+    background-color: var(--me-dark-cyan);
+    border-color: var(--me-dark-cyan);
+    color: var(--me-sea-green-crayola-light);
+    
+}
+
+.upload-btn {
+    border: 2px solid var(--me-main-color);
+    color: var(--me-main-color);
+    background-color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+}
+/*<Загрузка файла на сервер*/
+
 /*Список>*/
 .me-list {
     border-top: 20px solid var(--me-dark-cyan);
@@ -49,12 +82,20 @@
 
 .input-bg-image {
     background-image: url("/Images/input_back_new.png"); 
-    background-size: cover;
+    background-size: cover; 
 }
 
 .head-bg-image {
-    background-image: url("/Images/back_new.png");
-    background-size:cover;
+    background-image: url("/Images/head_back_new.png");
+    background-size: cover;
+    min-height: 150px;
+}
+
+.jmb-bg-image {
+    background-image: url("/Images/jumb_back_new.png");
+    background-size: cover;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 /*Поиск>*/

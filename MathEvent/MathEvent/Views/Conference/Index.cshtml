@@ -2,10 +2,11 @@
 @using MathEvent.Components
 @using MathEvent.Helpers
 
-<div class="jumbotron jumbotron-image shadow"
-     style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(3))));
-     min-height: 150px;">
-</div>
+<header class="head-bg-image rounded shadow text-center py-5 mb-2">
+    <div class="container">
+        <h1 class="display-4 text-white">Конференции</h1>
+    </div>
+</header>
 <div class="container">
     @{
         if (Model.Count() < 1)
@@ -78,7 +79,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-2">
-                                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">
+                                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_left.png"))">
                                         </div>
                                     }
                                 }

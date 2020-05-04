@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using MathEvent.Helpers;
 using MathEvent.Helpers.Email;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
@@ -63,15 +65,22 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            var message = $"Сообщение от пользователя MathEvent!\n";
-            message += $"Отправлено со страницы события: \"{performance.Name}\"\n";
-            message += $"Сообщение: {userMessage}\n";
-            message += $"Для ответа пользователю используйте: {userEmail}\n";
-            message += $"На данное сообщение не отвечайте!";
+            var body = string.Empty;
+
+            using (StreamReader sr = new StreamReader(
+                UserDataPathWorker.GetRootPath(
+                    UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetEmailTemplateDirectory(), "SimpleMessage.html"))))
+            {
+                body = await sr.ReadToEndAsync();
+            }
+
+            body = body.Replace("{PerformanceName}", performance.Name);
+            body = body.Replace("{Message}", userMessage);
+            body = body.Replace("{UserEmail}", userEmail);
 
             try
             {
-                var emailMessage = new Message(new string[] { creatorEmail }, content, message);
+                var emailMessage = new Message(new string[] { creatorEmail }, content, body);
                 await _emailSender.SendEmailAsync(emailMessage);
             }
             catch

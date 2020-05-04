@@ -13,14 +13,7 @@ namespace MathEvent.Helpers
         private static string _slash = "/";
         private static string _imageDirectory = "Images";
         private static string _instructionsDirectory = "Images/Instructions";
-        private static List<string> _backgroundImages = new List<string>
-        {
-            "all_together.png",
-            "all_together_1.png",
-            "all_together_2.png",
-            "all_together_3.png",
-            "back.png"
-        };
+        private static string _emailTemplatesDirectory = "EmailTemplate";
 
         public static void Init(IWebHostEnvironment webHostEnvironment)
         {
@@ -129,18 +122,6 @@ namespace MathEvent.Helpers
             return $"{path1}{_slash}{path2}";
         }
 
-        public static string GetBackgroundImage(int index)
-        {
-            try
-            {
-                return _backgroundImages[index];
-            }
-            catch
-            {
-                return _backgroundImages[0];
-            }
-        }
-
         public static string GetImagesDirectory()
         {
             return _imageDirectory;
@@ -149,6 +130,11 @@ namespace MathEvent.Helpers
         public static string GetInstructionsDirectory()
         {
             return _instructionsDirectory;
+        }
+
+        public static string GetEmailTemplateDirectory()
+        {
+            return _emailTemplatesDirectory;
         }
     }
 }

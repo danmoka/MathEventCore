@@ -2,9 +2,10 @@
 @using MathEvent.Components
 @using MathEvent.Helpers
 
-<div class="jumbotron jumbotron-image shadow"
-     style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(3))));
-     min-height: 150px;">
-</div>
+<header class="head-bg-image rounded shadow text-center py-5 mb-2">
+    <div class="container">
+        <h1 class="display-4 text-white">События</h1>
+    </div>
+</header>
 
 @(await Html.RenderComponentAsync<PerformanceList>(RenderMode.ServerPrerendered, new { Performances = Model, IsKeyWordsHidden = false}))

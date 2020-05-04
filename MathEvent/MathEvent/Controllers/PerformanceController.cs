@@ -152,7 +152,7 @@ namespace MathEvent.Controllers
 
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Performance");
         }
 
         [HttpGet]

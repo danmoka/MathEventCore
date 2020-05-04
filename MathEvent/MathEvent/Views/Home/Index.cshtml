@@ -3,11 +3,7 @@
 @using MathEvent.Components 
 
 <div class="container py-4">
-    <div class="jumbotron jumbotron-image shadow"
-         style="background-image: url(@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), UserDataPathWorker.GetBackgroundImage(4))));
-         padding-left: 2px;
-         padding-right: 2px;
-         background-size: cover;">
+    <div class="jumbotron jmb-bg-image shadow">
         <div class="display-4 text-white bg-main opacity-8 dark-light mb-4 pl-4">MathEvent - powered by МатФак</div>
         @Html.ActionLink("Создать событие >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-primary opacity-8 text-white ml-4" })
     </div>
