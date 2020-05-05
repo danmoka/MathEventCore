@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
@@ -75,8 +76,10 @@ namespace MathEvent.Controllers
             }
 
             body = body.Replace("{PerformanceName}", performance.Name);
+            body = body.Replace("{Content}", content);
             body = body.Replace("{Message}", userMessage);
             body = body.Replace("{UserEmail}", userEmail);
+            body = body.Replace("{Date}", DateTime.Now.Year.ToString());
 
             try
             {
@@ -114,8 +117,20 @@ namespace MathEvent.Controllers
                 new { userId = user.Id, code = code },
                 protocol: HttpContext.Request.Scheme);
 
-            var emailMessage = new Message(new string[] { user.Email }, "Подтвердите аккаунт",
-                $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
+            var body = string.Empty;
+
+            using (StreamReader sr = new StreamReader(
+                UserDataPathWorker.GetRootPath(
+                    UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetEmailTemplateDirectory(), "EmailConfirmMessage.html"))))
+            {
+                body = await sr.ReadToEndAsync();
+            }
+
+            body = body.Replace("{Link}", callbackUrl);
+            body = body.Replace("{SocialMedia}", "https://ru-ru.facebook.com/");
+            body = body.Replace("{Date}", DateTime.Now.Year.ToString());
+
+            var emailMessage = new Message(new string[] { user.Email }, "Подтвердите аккаунт", body);
             await _emailSender.SendEmailAsync(emailMessage);
 
             return RedirectToAction("EmailConfirmMessage", "Email");
