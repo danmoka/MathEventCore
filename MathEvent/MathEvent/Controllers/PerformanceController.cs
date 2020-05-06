@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
@@ -139,16 +140,13 @@ namespace MathEvent.Controllers
             if (uploadedFile != null)
             {
                 performance.PosterName = Path.GetFileName(uploadedFile.FileName);
-                using var fileStream = new FileStream(UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName)), FileMode.Create);
-                await uploadedFile.CopyToAsync(fileStream);
             }
             else
             {
                 performance.PosterName = Path.GetFileName(UserDataPathWorker.GetDefaultImagePath());
-                using var deafaultImg = new FileStream(UserDataPathWorker.GetRootPath(UserDataPathWorker.GetDefaultImagePath()), FileMode.Open);
-                using var fileStream = new FileStream(UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName)), FileMode.Create);
-                await deafaultImg.CopyToAsync(fileStream);
             }
+
+            await UserDataPathWorker.UploadImage(uploadedFile, performance.DataPath, performance.PosterName);
 
             await _db.SaveChangesAsync();
 
@@ -226,7 +224,7 @@ namespace MathEvent.Controllers
         [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind("Id", "Name", "Location", "Type", "KeyWords", "Annotation", "Start", "SectionId",
-            "CreatorId", "DataPath", "PosterName", "Traffic")] Performance performance, IFormFile uploadedFile)
+            "CreatorId", "DataPath", "PosterName", "Traffic")] Performance performance, IFormFile uploadedFile, IFormFile uploadedProceedings)
         {
             if (!ModelState.IsValid)
             {
@@ -243,8 +241,13 @@ namespace MathEvent.Controllers
                 }
 
                 performance.PosterName = Path.GetFileName(uploadedFile.FileName);
-                using var fileStream = new FileStream(UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName)), FileMode.Create);
-                await uploadedFile.CopyToAsync(fileStream);
+                await UserDataPathWorker.UploadImage(uploadedFile, performance.DataPath, performance.PosterName);
+            }
+
+            if (uploadedProceedings != null)
+            {
+                performance.ProceedingsName = Path.GetFileName(uploadedProceedings.FileName);
+                await UserDataPathWorker.UploadFile(uploadedProceedings, performance.DataPath, performance.ProceedingsName);
             }
 
             _db.Performances.Update(performance);
@@ -295,6 +298,22 @@ namespace MathEvent.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Account");
+        }
+
+        public async Task<IActionResult> DownloadProceedings(int performanceId)
+        {
+            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
+
+            if (performance != null)
+            {
+                var filePath = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(
+                    performance.DataPath, performance.ProceedingsName));
+                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+
+                return File(fileBytes, "application/pdf", performance.ProceedingsName);
+            }
+
+            return BadRequest();
         }
 
         [AcceptVerbs("Get", "Post")]

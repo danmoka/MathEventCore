@@ -1,4 +1,5 @@
 ﻿@model MathEvent.Models.Performance
+@using MathEvent.Components;
 
 <div class="row">
     <div class="col form-group">
@@ -108,6 +109,16 @@
                     <label asp-for="Annotation" class="control-label"></label>
                     <textarea asp-for="Annotation" class="form-control" rows="5"></textarea>
                     <span asp-validation-for="Annotation" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="d-inline-flex align-items-top">
+                        <div class="upload-btn-wrapper">
+                            <button class="upload-btn">Загрузите материалы события</button>
+                            <input type="file" name="uploadedProceedings" accept="application/pdf" /><br>
+                        </div>
+                        @(await Html.RenderComponentAsync<DeleteProceendings>(RenderMode.ServerPrerendered, new { PerformanceId = Model.Id }))
+                    </div>
+                    <p>Только в формате pdf</p>
                 </div>
                 <div class="form-row form-group d-flex align-items-end mt-4">
                     <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>

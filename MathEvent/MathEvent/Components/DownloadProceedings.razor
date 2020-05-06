@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using System.Net.Http
+
+@inject NavigationManager NavigationManager
+
+<input type="button" class="btn btn-block download-btn" @onclick="Download" value="Скачать материалы события" />
+
+@code {
+    [Parameter] public int PerformanceId { get; set; }
+
+    protected void Download()
+    {
+        var client = new HttpClient();
+        client.BaseAddress = new Uri("https://localhost:44305/");
+        NavigationManager.NavigateTo($"https://localhost:44305/api/Proceedings/downloadProceedings?performanceId={PerformanceId}", true);
+    }
+}

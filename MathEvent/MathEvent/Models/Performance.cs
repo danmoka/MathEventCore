@@ -72,6 +72,10 @@ namespace MathEvent.Models
         [Display(Name = "Афиша")]
         public string PosterName { get; set; }
 
+        [HiddenInput(DisplayValue = false)]
+        [Display(Name = "Материалы")]
+        public string ProceedingsName { get; set; }
+
         [Required(ErrorMessage = "Некорректное значение")]
         [Range(0, int.MaxValue, ErrorMessage = "Некорректное значение")]
         [Display(Name = "Количество записавшихся")]

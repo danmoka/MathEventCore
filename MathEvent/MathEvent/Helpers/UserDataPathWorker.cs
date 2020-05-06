@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats;
 
 namespace MathEvent.Helpers
 {
@@ -14,6 +19,8 @@ namespace MathEvent.Helpers
         private static string _imageDirectory = "Images";
         private static string _instructionsDirectory = "Images/Instructions";
         private static string _emailTemplatesDirectory = "EmailTemplate";
+        private static int _imageWidth = 900;
+        private static int _imageHeight = 600;
 
         public static void Init(IWebHostEnvironment webHostEnvironment)
         {
@@ -94,6 +101,38 @@ namespace MathEvent.Helpers
 
             parentDir = ConcatPaths(parentDir, newDirName);
             return CreateDirectory(parentDir);
+        }
+
+        public static async Task UploadFile(IFormFile file, string path, string fileName)
+        {
+            if (file != null)
+            {
+                using var fileStream = new FileStream(GetRootPath(Path.Combine(path, fileName)), FileMode.Create);
+                await file.CopyToAsync(fileStream);
+            }
+        }
+
+        public static async Task UploadImage(IFormFile file, string path, string fileName)
+        {
+            if (file != null)
+            {
+                using var outStream = new FileStream(GetRootPath(Path.Combine(path, fileName)), FileMode.Create);
+                var inStream = file.OpenReadStream();
+                var image = Image.Load(inStream, out IImageFormat format);
+
+                if (image.Size().Width > _imageWidth || image.Size().Height > _imageHeight)
+                {
+                    image.Mutate(x => x.Resize(_imageWidth, _imageHeight));
+                }
+
+                image.Save(outStream, format);
+            }
+            else
+            {
+                using var deafaultImg = new FileStream(GetRootPath(GetDefaultImagePath()), FileMode.Open);
+                using var fileStream = new FileStream(GetRootPath(Path.Combine(path, GetDefaultImagePath())), FileMode.Create);
+                await deafaultImg.CopyToAsync(fileStream);
+            }
         }
 
         /// <summary>

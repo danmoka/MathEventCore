@@ -30,8 +30,10 @@
                     <div class="col">
                         @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { traffic = Model.Traffic, card = Model }))
                         @Html.RouteLink("Написать организатору", new { controller = "Email", action = "Index", performanceId = Model.Id }, new { @class = "btn btn-block btn-info md-4" })
+                        <div class="mt-4">
+                            @(await Html.RenderComponentAsync<DownloadProceedings>(RenderMode.ServerPrerendered, new { PerformanceId = Model.Id }))
+                        </div>
                     </div>
-                   
                 </div>
             </div>
         </div>

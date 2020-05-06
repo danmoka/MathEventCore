@@ -48,7 +48,7 @@
     border: 2px solid var(--me-main-color);
     color: var(--me-main-color);
     background-color: white;
-    padding: 8px 20px;
+    padding: 3px 20px;
     border-radius: 8px;
     font-size: 20px;
     font-weight: bold;
@@ -62,6 +62,24 @@
     opacity: 0;
 }
 /*<Загрузка файла на сервер*/
+
+/*<Скачать файл с сервера*/
+.download-btn {
+    border: 2px solid var(--me-main-color);
+    color: var(--me-main-color);
+    background-color: white;
+    padding: 3px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.download-btn:hover {
+    background-color: var(--me-dark-cyan);
+    border-color: var(--me-dark-cyan);
+    color: var(--me-sea-green-crayola-light);
+}
+/*Скачать файл с сервера>*/
 
 /*Список>*/
 .me-list {
