@@ -300,22 +300,6 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
-        public async Task<IActionResult> DownloadProceedings(int performanceId)
-        {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
-
-            if (performance != null)
-            {
-                var filePath = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(
-                    performance.DataPath, performance.ProceedingsName));
-                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-
-                return File(fileBytes, "application/pdf", performance.ProceedingsName);
-            }
-
-            return BadRequest();
-        }
-
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckStartDate(DateTime start, int? sectionId)
         {

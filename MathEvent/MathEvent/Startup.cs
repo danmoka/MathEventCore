@@ -43,15 +43,18 @@ namespace MathEvent
 
             services.AddServerSideBlazor();
 
-            
-
             var emailConfig = Configuration
                 .GetSection("EmailConfiguration")
                 .Get<EmailConfiguration>();
 
             emailConfig.Password = Configuration["EmailSender:Key"];
-
             services.AddSingleton(emailConfig);
+
+            services.AddHttpClient<ClientService, ClientService>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration["BaseUrl"]);
+            });
+
             //services.AddHttpClient();
             //// Server Side Blazor doesn't register HttpClient by default
             //if (!services.Any(x => x.ServiceType == typeof(HttpClient)))

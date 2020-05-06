@@ -7,9 +7,10 @@
 @using MathEvent.Models
 @using MathEvent.Models.ViewModels
 @using MathEvent.Helpers
-@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Mvc 
 
 @inject NavigationManager NavigationManager
+@inject ClientService ClientService
 
 <div id="carouselIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
     <div class="carousel-inner">
@@ -45,11 +46,12 @@
 @code {
     [Parameter]
     public List<PerformanceViewModel> Performances { get; set; }
+    private HttpClient _client;
 
-    private HttpClient _client = new HttpClient
+    protected override void OnInitialized()
     {
-        BaseAddress = new Uri("https://localhost:44305/")
-    };
+        _client = ClientService.Client;
+    }
 
     public void GoToCard(int id)
     {

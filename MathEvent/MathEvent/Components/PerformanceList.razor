@@ -11,17 +11,18 @@
 @using MathEvent.Components
 
 @inject NavigationManager NavigationManager
-@{Init();}
+@inject ClientService ClientService
+
 <div class="container bg-light box-shadow mb-2">
     <div class="row d-flex justify-content-between py-1">
         <div class="d-inline-flex">
-            <select class="btn btn-secondary opacity-8 dropdown-toggle mr-2" @onchange="@ChangeType">
+            <select class="btn btn-secondary opacity-8 dropdown-toggle mr-2" value="@Type" @onchange="@ChangeType">
                 <option value="Любой">Любой</option>
                 <option value="Доклад">Доклад</option>
                 <option value="Мастер-класс">Мастер-класс</option>
                 <option value="Семинар">Семинар</option>
             </select>
-            <select class="btn btn-secondary opacity-8 dropdown-toggle mr-2" @onchange="@ChangePeriod">
+            <select class="btn btn-secondary opacity-8 dropdown-toggle mr-2" value="@Period" @onchange="@ChangePeriod">
                 <option value="За всё время">За всё время</option>
                 <option value="Сегодня">Сегодня</option>
                 <option value="В этом месяце">В этом месяце</option>
@@ -87,10 +88,17 @@
     public string Type { get; set; } = "Любой";
     public string Period { get; set; } = "За всё время";
     public string SearchString { get; set; } = "";
-    private HttpClient _client = new HttpClient
+    private HttpClient _client;
+
+    protected override void OnInitialized()
     {
-        BaseAddress = new Uri("https://localhost:44305/")
-    };
+        _client = ClientService.Client;
+
+        if (_performancesOriginal == null)
+        {
+            _performancesOriginal = Performances;
+        }
+    }
 
     public void GoToCard(int id)
     {
@@ -146,14 +154,6 @@
         }
 
         Performances = filteredCards;
-    }
-
-    private void Init()
-    {
-        if (_performancesOriginal == null)
-        {
-            _performancesOriginal = Performances;
-        }
     }
 
     private async Task<List<PerformanceViewModel>> FilterAction(List<PerformanceViewModel> cardViewModels, string parameter, string route)

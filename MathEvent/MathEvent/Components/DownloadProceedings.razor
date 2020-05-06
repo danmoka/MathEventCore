@@ -3,18 +3,30 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components
 @using System.Net.Http
+@using Newtonsoft.Json
+@using MathEvent.Helpers
 
 @inject NavigationManager NavigationManager
+@inject ClientService ClientService
 
-<input type="button" class="btn btn-block download-btn" @onclick="Download" value="Скачать материалы события" />
+<input type="button" class="btn btn-block download-btn" @onclick="Download" value="Скачать материалы события" hidden="@(!_isActive)" />
 
 @code {
     [Parameter] public int PerformanceId { get; set; }
+    private bool _isActive = false;
+    private HttpClient _client;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _client = ClientService.Client;
+
+        var response = await _client.GetAsync($"/api/Proceedings/isFileExists?performanceId={PerformanceId}");
+        var result = await response.Content.ReadAsStringAsync();
+        _isActive = JsonConvert.DeserializeObject<bool>(result);
+    }
 
     protected void Download()
     {
-        var client = new HttpClient();
-        client.BaseAddress = new Uri("https://localhost:44305/");
-        NavigationManager.NavigateTo($"https://localhost:44305/api/Proceedings/downloadProceedings?performanceId={PerformanceId}", true);
+        NavigationManager.NavigateTo($"{_client.BaseAddress}/api/Proceedings/downloadProceedings?performanceId={PerformanceId}", true);
     }
 }

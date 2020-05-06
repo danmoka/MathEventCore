@@ -4,45 +4,45 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components
 @using MathEvent.Models.ViewModels
+@using MathEvent.Helpers
 @using System.Net.Http
 @using System.ComponentModel
 @using Newtonsoft.Json
 @using System.Text
+
 @inject NavigationManager NavigationManager
+@inject ClientService ClientService
 
 <h6>Участников: @Count()</h6>
-<input type="button" class="btn btn-block btn-success" @onclick="SignUp" value="@CurrentButtonValue()" />        
+<input type="button" class="btn btn-block btn-success" @onclick="SignUp" value="@CurrentButtonValue()" />
 
 @code {
     [Parameter] public PerformanceViewModel card { get; set; }
     [Parameter] public int traffic { get; set; }
+    private HttpClient _client;
 
-    //int count = 0;
+    protected override void OnInitialized()
+    {
+        _client = ClientService.Client;
+    }
 
     protected async Task SignUp()
     {
         var model = JsonConvert.SerializeObject(card);
         var content = new StringContent(model, Encoding.UTF8, "application/json");
-        var client = new HttpClient();
-        client.BaseAddress = new Uri("https://localhost:44305/");
 
         if (!card.IsSignedUp)
         {
-            //current = "Отписаться";
             traffic++;
             card.IsSignedUp = !card.IsSignedUp;
         }
         else
         {
             traffic--;
-            //current = "Записаться";
             card.IsSignedUp = !card.IsSignedUp;
         }
 
-        var response = await client.PostAsync("api/Subscribe/signup", content);
-        //var c = await client.GetAsync($"https://localhost:44305/api/Subscribe?id={id}&userId={userId}");
-        //NavigationManager.NavigateTo("https://localhost:44305/Home/Index", true);
-
+        var response = await _client.PostAsync("api/Subscribe/signup", content);
         Count();
     }
 

@@ -71,5 +71,19 @@ namespace MathEvent.Controllers
 
             return BadRequest();
         }
+
+        [HttpGet]
+        [Route("isFileExists")]
+        public async Task<bool> IsFileExists(int performanceId)
+        {
+            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
+
+            if (string.IsNullOrEmpty(performance.ProceedingsName))
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

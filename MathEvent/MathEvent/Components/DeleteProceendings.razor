@@ -2,17 +2,24 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components
+@using MathEvent.Helpers
 @using System.Net.Http
 
-<input type="button" class="btn btn-danger mx-2" @onclick="DeleteProceedings" value="Удалить" />
+@inject ClientService ClientService
+
+<input type="button" class="btn btn-danger mx-2" @onclick="DeleteProceedings" value="Удалить"/>
+
 @code {
     [Parameter] public int PerformanceId { get; set; }
+    private HttpClient _client;
+
+    protected override void OnInitialized()
+    {
+        _client = ClientService.Client;
+    }
 
     protected async Task DeleteProceedings()
     {
-        var client = new HttpClient();
-        client.BaseAddress = new Uri("https://localhost:44305/");
-
-        await client.GetAsync($"/api/Proceedings/deleteProceedings?performanceId={PerformanceId}");
+        await _client.GetAsync($"/api/Proceedings/deleteProceedings?performanceId={PerformanceId}");
     }
 }
