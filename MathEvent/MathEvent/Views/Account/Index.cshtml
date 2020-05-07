@@ -15,8 +15,8 @@
     </div>
 </div>
 
-<div class="container head-bg-image rounded border">
-    <div class="row d-flex align-items-center bg-main opacity-8 dark-light pb-2">
+<div class="container">
+    <div class="row d-flex align-items-center justify-content-between bg-main rounded border pb-2 pr-4">
         <div class="col-6 text-left">
             @{
                 var user = UserManager.GetUserAsync(User).Result;
@@ -35,7 +35,7 @@
             }
         </div>
             <div class="col-1 text-right">
-                <a class="btn btn-outline-light" asp-area="" asp-controller="Account" asp-action="Edit">&#9999</a>
+                <a class="footer-link text-sea-crayola" asp-area="" asp-controller="Account" asp-action="Edit"><i class="fas fa-2x fa-user-edit"></i></a>
             </div>
         </div>
     </div>
@@ -73,7 +73,7 @@
                                 <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
                             </div>
                             <div class="col text-right">
-                                <a class="btn" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit">&#9999</a>
+                                <a class="edit-link" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
                             </div>
                         </div>
                         <div class="row rounded-bottom border p-4">
@@ -103,7 +103,7 @@
                                                     <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
                                                 </div>
                                                 <div class="col text-right p-3 ">
-                                                    <a class="btn" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit">&#9999</a>
+                                                    <a class="edit-link" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
                                                 </div>
                                             </div>
                                             <div class="row rounded-bottom border p-2">

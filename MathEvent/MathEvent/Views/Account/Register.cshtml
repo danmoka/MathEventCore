@@ -12,7 +12,10 @@
 <div class="row d-flex py-4 mt-4 justify-content-center">
     <div class="col-8 col-sm-6 col-md-4">
         <form method="post" asp-controller="Account" asp-action="Register">
-            <div class="container input-bg-image rounded pt-4">
+            <div class="container input-bg-image rounded">
+                <div class="form-row mb-2">
+                    <hr class="block-1" />
+                </div>
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div class="form-row">
                     <div class="form-group btn-block">
@@ -44,11 +47,11 @@
                         <span class="text-danger" asp-validation-for="PasswordConfirm"></span>
                     </div>
                 </div>
-                <div class="form-row">                    
-                        <input type="submit" value="Зарегистрироваться" class="btn btn-block btn-success mb-4" />
+                <div class="form-row">
+                    <input type="submit" value="Зарегистрироваться" class="btn btn-block btn-success mb-4" />
                 </div>
                 <div class="form-row">
-                        @Html.ActionLink("У меня уже есть аккаунт", "Login", "Account", new { area = "" }, new { @class = "btn btn-block btn-primary mb-4" })
+                    @Html.ActionLink("У меня уже есть аккаунт", "Login", "Account", new { area = "" }, new { @class = "btn btn-block btn-primary mb-4" })
                 </div>
             </div>
         </form>

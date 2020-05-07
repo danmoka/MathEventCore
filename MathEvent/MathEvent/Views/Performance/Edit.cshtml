@@ -19,7 +19,7 @@
                     <label asp-for="Name" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#127991</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tags"></i></span>
                         </div>
                         <input asp-for="Name" class="form-control" />
                     </div>
@@ -29,7 +29,7 @@
                     <label asp-for="Type" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#9997</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tasks"></i></span>
                         </div>
                         <select asp-for="Type" class="custom-select form-control" asp-items="ViewBag.Types"></select>
                     </div>
@@ -39,7 +39,7 @@
                     <label asp-for="Location" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#127970</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-map-marked-alt"></i></span>
                         </div>
                         <input asp-for="Location" class="form-control" />
                     </div>
@@ -49,7 +49,7 @@
                     <label asp-for="Start" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#128198</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-clock"></i></span>
                         </div>
                         <input asp-for="Start" class="form-control" />
                     </div>
@@ -61,7 +61,7 @@
                         <label asp-for="SectionId" class="control-label"></label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">&#128047</span>
+                                <span class="input-group-text text-sea-crayola"><i class="fas fa-cheese"></i></span>
                             </div>
                             <select class="custom-select form-control" asp-for="SectionId" asp-items="ViewBag.Sections">
                                 <option value=@null>Без секции</option>
@@ -92,9 +92,19 @@
                 </div>
                 <div class="form-group">
                     <div class="upload-btn-wrapper">
-                        <button class="upload-btn">Загрузите новую афишу вашего события</button>
+                        <button class="upload-btn">Загрузить изображение-афишу события</button>
                         <input type="file" name="uploadedFile" accept="image/*" /><br>
                     </div>
+                </div>
+                <div class="form-group">
+                    <div class="d-flex align-items-top justify-content-between">
+                        <div class="upload-btn-wrapper">
+                            <button class="upload-btn">Загрузить материалы</button>
+                            <input type="file" name="uploadedProceedings" accept="application/pdf" /><br>
+                        </div>
+                        @(await Html.RenderComponentAsync<DeleteProceendings>(RenderMode.ServerPrerendered, new { PerformanceId = Model.Id }))
+                    </div>
+                    <p>Только в формате pdf</p>
                 </div>
             </div>
         </div>
@@ -109,16 +119,6 @@
                     <label asp-for="Annotation" class="control-label"></label>
                     <textarea asp-for="Annotation" class="form-control" rows="5"></textarea>
                     <span asp-validation-for="Annotation" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <div class="d-inline-flex align-items-top">
-                        <div class="upload-btn-wrapper">
-                            <button class="upload-btn">Загрузите материалы события</button>
-                            <input type="file" name="uploadedProceedings" accept="application/pdf" /><br>
-                        </div>
-                        @(await Html.RenderComponentAsync<DeleteProceendings>(RenderMode.ServerPrerendered, new { PerformanceId = Model.Id }))
-                    </div>
-                    <p>Только в формате pdf</p>
                 </div>
                 <div class="form-row form-group d-flex align-items-end mt-4">
                     <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')" asp-route-performanceId="@Model.Id" asp-area="" asp-controller="Performance" asp-action="Delete">Удалить</a>

@@ -8,13 +8,12 @@
     },
     {
       "provider": "unpkg",
-      "library": "bootstrap@latest",
-      "destination": "wwwroot/bootstrap/"
-    },
-    {
-      "provider": "unpkg",
       "library": "bootstrap@4.4.1",
       "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "font-awesome@5.13.0",
+      "destination": "wwwroot/lib/font-awesome/"
     }
   ]
 }

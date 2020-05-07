@@ -8,10 +8,10 @@
     <div class="container py-5">
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 order-2 order-lg-1">
-                <i class="fa fa-sign-in fa-2x mb-3 text-dark-cyan"></i>
+                <i class="fas fa-sign-in-alt fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Зарегистрируйтесь!</h2>
                 <p class="font-italic text-muted mb-4">Если вы еще не зарегистрированы, то пройдите регистрацию</p>
-                <a asp-controller="Account" asp-action="Register" class="btn btn-light px-5 rounded-pill shadow-sm">Регистрация</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-light">Регистрация</a>
             </div>
             <div class="col-lg-5 px-5 mx-auto order-1 order-lg-2"><img class="img-fluid mb-4 mb-lg-0 box-shadow border-radius-10" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetInstructionsDirectory(), "perf_reg.png"))"></div>
         </div>
@@ -21,7 +21,7 @@
                 <i class="fa fa-bars fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Откройте меню</h2>
                 <p class="font-italic text-muted mb-4">После регистрации нажмите вкладку "Создать конференцию"</p>
-                <a asp-controller="Conference" asp-action="Add" class="btn btn-light px-5 rounded-pill shadow-sm">Создать конференцию</a>
+                <a asp-controller="Conference" asp-action="Add" class="btn btn-light">Создать конференцию</a>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
     <div class="container py-5">
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 order-2 order-lg-1">
-                <i class="fa fa-pencil fa-2x mb-3 text-dark-cyan"></i>
+                <i class="fas fa-pen fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Заполните поля</h2>
                 <p class="font-italic text-muted mb-4">Заполнив поля, нажмите кнопку "Создать"</p>
             </div>
@@ -42,7 +42,7 @@
                 <i class="fa fa-list fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Список конференций</h2>
                 <p class="font-italic text-muted mb-4">Ваша конференция появится в списке конференций MathEvent и станет доступной для просмотра. Конференция будет пустой, пока вы не добавите секции и события</p>
-                <a asp-controller="Conference" asp-action="Index" class="btn btn-light px-5 rounded-pill shadow-sm">Конференции</a>
+                <a asp-controller="Conference" asp-action="Index" class="btn btn-light">Конференции</a>
             </div>
         </div>
     </div>

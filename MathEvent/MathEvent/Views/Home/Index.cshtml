@@ -4,17 +4,17 @@
 
 <div class="container py-4">
     <div class="jumbotron jmb-bg-image shadow">
-        <div class="display-4 text-white bg-main opacity-8 dark-light mb-4 pl-4">MathEvent - powered by МатФак</div>
-        @Html.ActionLink("Создать событие >>", "Add", "Performance", new { area = "" }, new { @class = "btn btn-primary opacity-8 text-white ml-4" })
+        <div class="display-4 text-white bg-main opacity-8 dark-light mb-4 pl-4 pb-2">MathEvent - powered by МатФак</div>
+        <a class="btn btn-lg btn-jumb ml-4" asp-controller="Performance" asp-action="Add">Создать событие >></a>
     </div>
 </div>
 <div class="container">
-    <div class="row mb-2">
+    <div class="row mt-4">
         <div class="col-2 text-left">
             <hr class="mx-auto block-1" />
         </div>
         <div class="col-10 text-left">
-            <h2 class="font-weight-light">Ближайшие события!</h2>
+            <h4>Ближайшие события</h4>
         </div>
     </div>
 </div>

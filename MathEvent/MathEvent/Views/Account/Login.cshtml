@@ -11,38 +11,41 @@
     </div>
 </div>
 <div class="row d-flex py-4 mt-4 justify-content-center">
-    <div class="col-8 col-sm-6 col-md-4 input-bg-image rounded pt-4">
+    <div class="col-8 col-sm-6 col-md-4 input-bg-image rounded">
+        <div class="form-row mb-2">
+            <hr class="block-1" />
+        </div>
         <form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
-                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
-                <div class="form-row">
-                    <div class="form-group btn-block mx-auto">
-                        <input class="form-control" asp-for="UserName" placeholder="Адрес электронной почты" />
-                        <span class="text-danger" asp-validation-for="UserName"></span>
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="form-row">
+                <div class="form-group btn-block mx-auto">
+                    <input class="form-control" asp-for="UserName" placeholder="Адрес электронной почты" />
+                    <span class="text-danger" asp-validation-for="UserName"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group btn-block mx-auto">
+                    <input class="form-control" type="password" asp-for="Password" placeholder="Пароль" />
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group btn-block mx-auto">
+                    <div class="checkbox">
+                        <input class="checkbox" asp-for="RememberMe" />
+                        <label asp-for="RememberMe"></label>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group btn-block mx-auto">
-                        <input class="form-control" type="password" asp-for="Password" placeholder="Пароль" />
-                        <span class="text-danger" asp-validation-for="Password"></span>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group btn-block mx-auto">
-                        <div class="checkbox">
-                            <input class="checkbox" asp-for="RememberMe" />
-                            <label asp-for="RememberMe"></label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <input type="submit" value="Войти" class="btn btn-block btn-success mb-4" />
-                </div>
-                <div class="form-row">
-                    @Html.ActionLink("Регистрация нового пользователя", "Register", "Account", new { area = "" }, new { @class = "btn btn-block btn-primary mb-4" })
-                </div>
-                <div class="row d-flex justify-content-center mb-4">
-                    <a class="text-center" asp-controller="Account" asp-action="ForgotPassword">Забыли пароль?</a>
-                </div>
+            </div>
+            <div class="form-row">
+                <input type="submit" value="Войти" class="btn btn-block btn-success mb-4" />
+            </div>
+            <div class="form-row">
+                @Html.ActionLink("Регистрация нового пользователя", "Register", "Account", new { area = "" }, new { @class = "btn btn-block btn-primary mb-4" })
+            </div>
+            <div class="row d-flex justify-content-center mb-4">
+                <a class="text-center" asp-controller="Account" asp-action="ForgotPassword">Забыли пароль?</a>
+            </div>
         </form>
     </div>
 </div>

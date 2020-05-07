@@ -22,7 +22,7 @@
                     <label asp-for="Name" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#127991</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tags"></i></span>
                         </div>
                         <input asp-for="Name" class="form-control" />
                     </div>
@@ -32,7 +32,7 @@
                     <label asp-for="Type" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#9997</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tasks"></i></span>
                         </div>
                         <select asp-for="Type" class="custom-select form-control" asp-items="ViewBag.Types"></select>
                     </div>
@@ -42,7 +42,7 @@
                     <label asp-for="Location" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#127970</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-map-marked-alt"></i></span>
                         </div>
                         <input asp-for="Location" class="form-control" />
                     </div>
@@ -52,7 +52,7 @@
                     <label asp-for="Start" class="control-label"></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">&#128198</span>
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-clock"></i></span>
                         </div>
                         <input asp-for="Start" class="form-control" />
                     </div>
@@ -64,7 +64,7 @@
                         <label asp-for="SectionId" class="control-label"></label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">&#128047</span>
+                                <span class="input-group-text text-sea-crayola"><i class="fas fa-cheese"></i></span>
                             </div>
                             <select class="custom-select form-control" asp-for="SectionId" asp-items="ViewBag.Sections">
                                 <option value=@null>Без секции</option>
@@ -94,7 +94,7 @@
                     <span asp-validation-for="Annotation" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-4">
-                    <input type="submit" class="btn btn-success" value="Создать событие" />
+                    <input type="submit" class="btn btn-success border-white-rounded" value="Создать событие" />
                 </div>
             </div>
         </div>

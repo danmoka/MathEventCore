@@ -4,12 +4,21 @@
     --me-honeydew: #DFFFE7;
     --me-dark-cyan: #088A84;
     --me-dark-cyan-light: #0C9D96;
-    --me-blue-crayola: #83E8ED;
+    --me-blue: #2B959A;
+    --me-blue-light: #B9F3F6;
     --me-royal-blue: #3546DD;
-    --me-royal-blue-light: #6673EE;
-    --me-green-lawn: #34C924;
+    --me-royal-blue-light: #A3CDF5;
+    --me-green-lawn: #1EA346;
+    --me-green-lawn-light: #5CFA8C;
     --me-sea-green-crayola-light: #E1F4EF;
     --me-murena: #1B5E70;
+    --me-danger-light: #FAAEC1;
+    --me-danger: #F46E90;
+    --me-shadow-cryola: #80A89E;
+    --me-shadow-primary: #8D92B9;
+    --me-shadow-green-lawn: #87BA97;
+    --me-shadow-blue: #76AFB2;
+    --me-shadow-danger: #B76C7F;
 }
 
 .me-border-image {
@@ -68,9 +77,10 @@
     border: 2px solid var(--me-main-color);
     color: var(--me-main-color);
     background-color: white;
-    padding: 3px 20px;
-    border-radius: 8px;
-    font-size: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 10px;
+    font-size: 17px;
     font-weight: bold;
 }
 
@@ -99,7 +109,7 @@
 /*<Список*/
 
 .input-bg-image {
-    background-image: url("/Images/input_back_new.png"); 
+    background-image: url("/Images/input_back_final.png"); 
     background-size: cover; 
 }
 
@@ -110,66 +120,162 @@
 }
 
 .jmb-bg-image {
-    background-image: url("/Images/jumb_back_new.png");
+    background-image: url("/Images/jumb_back_new_1.png");
     background-size: cover;
     padding-left: 2px;
     padding-right: 2px;
 }
 
 /*Поиск>*/
-.active-royal-2 input[type=text] {
-    border-bottom: 1px solid var(--me-royal-blue);
-    box-shadow: 0 1px 0 0 var(--me-royal-blue);
+.search-2 input[type=text] {
+    border-bottom: 1px solid var(--me-main-color);
+    box-shadow: 0 1px 0 0 var(--me-main-color);
 }
 
-.active-royal .fa, .active-royal-2 .fa {
-    color: var(--me-royal-blue);
+.search .fa, .search-2 .fa {
+    color: var(--me-main-color);
 }
 
 .fa-search:hover {
-    color: var(--me-blue-crayola);
+    color: var(--me-sea-green-crayola);
 }
 /*Поиск>*/
 
 /*Переопределение цветов>*/
+.btn-primary, .btn-light, .btn-success, .btn-info, .btn-danger, .btn-jumb {
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.btn-primary:hover, .btn-success:hover, .btn-info:hover, .btn-danger:hover, .btn-jumb:hover, .btn-light:hover {
+    color: white;
+}
+
 .btn-primary {
-    background-color: var(--me-royal-blue);
+    background-color: var(--me-royal-blue-light);
+    border-color: var(--me-royal-blue-light);
+    color: black;
+    box-shadow: var(--me-shadow-primary) 1px 3px 7px;
 }
 
 .btn-primary:hover {
-    background-color: var(--me-royal-blue-light);
-    border-color: var(--me-royal-blue-light);
+    background-color: var(--me-royal-blue);
+    border-color: var(--me-royal-blue);
+    box-shadow: var(--me-shadow-primary) 1px 5px 7px;
 }
 
+.btn-jumb {
+    background-color: var(--me-royal-blue);
+    border-color: var(--me-royal-blue);
+    color: white;
+    box-shadow: var(--me-shadow-primary) 1px 3px 7px;
+}
+
+.btn-jumb:hover {
+    background-color: var(--me-royal-blue-light);
+    border-color: var(--me-royal-blue-light);
+    box-shadow: var(--me-shadow-primary) 1px 5px 7px;
+}
+
+.btn-success {
+    background-color: var(--me-green-lawn-light);
+    border-color: var(--me-green-lawn-light);
+    color: black;
+    box-shadow: var(--me-shadow-green-lawn) 1px 3px 7px;
+}
+
+.btn-success:hover {
+    background-color: var(--me-green-lawn);
+    border-color: var(--me-green-lawn);
+    box-shadow: var(--me-shadow-green-lawn) 1px 5px 7px;
+}
+
+.btn-info {
+    background-color: var(--me-blue-light);
+    border-color: var(--me-blue-light);
+    color: black;
+    box-shadow: var(--me-shadow-blue) 1px 3px 7px;
+}
+
+.btn-info:hover {
+    background-color: var(--me-blue);
+    border-color: var(--me-blue);
+    box-shadow: var(--me-shadow-blue) 1px 5px 7px;
+}
+
+.btn-danger {
+    background-color: var(--me-danger-light);
+    border-color: var(--me-danger-light);
+    color: black;
+    box-shadow: var(--me-shadow-danger) 1px 3px 7px;
+}
+
+.btn-danger:hover {
+    background-color: var(--me-danger);
+    border-color: var(--me-danger);
+    box-shadow: var(--me-shadow-danger) 1px 5px 7px;
+}
+
+/*<btn-secondary*/
 .btn-secondary {
-    background-color: var(--me-dark-cyan);
-    border-color: var(--me-dark-cyan);
+  color: #fff;
+  background-color: var(--me-dark-cyan);
+  border-color: var(--me-dark-cyan);
 }
 
 .btn-secondary:hover {
-    background-color: var(--me-dark-cyan-light);
-    border-color: var(--me-dark-cyan-light);
+  color: #fff;
+  background-color: var(--me-dark-cyan-light);
+  border-color: var(--me-dark-cyan-light);
 }
 
-.btn-secondary:not(:disabled):not(.disabled):active, .show>.btn-secondary.dropdown-toggle {
-    background-color: var(--me-dark-cyan-light);
-    border-color: var(--me-dark-cyan-light);
+.btn-secondary:focus, .btn-secondary.focus {
+  color: #fff;
+  background-color: var(--me-dark-cyan-light);
+  border-color: var(--me-dark-cyan-light);
+  box-shadow: 0 0 0 0.2rem rgba(8, 138, 132, 0.29);
 }
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+  color: #fff;
+  background-color: var(--me-sea-green-crayola-light);
+  border-color: var(--me-sea-green-crayola-light);
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,
+.show > .btn-secondary.dropdown-toggle {
+  color: #fff;
+  background-color: var(--me-dark-cyan-light);
+  border-color: var(--me-dark-cyan-light);
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus,
+.show > .btn-secondary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem var(--me-murena);
+  }
+/*btn-secondary>*/
 
 .btn-light {
     background-color: var(--me-sea-green-crayola-light);
     border-color: var(--me-sea-green-crayola-light);
+    color: black;
+    box-shadow: var(--me-shadow-cryola) 1px 3px 7px;
 }
 
 .btn-light:hover {
     background-color: var(--me-sea-green-crayola);
-    border-color: var(--me-sea-green-crayola-light);
-    color: white;
+    border-color: var(--me-sea-green-crayola);
+    box-shadow: var(--me-shadow-cryola) 1px 5px 7px;
 }
 
 .input-group-text {
-    background-color: var(--me-sea-green-crayola-light);
+    background-color: var(--me-main-color);
+    width: 46px;
+    height: 38px;
 }
+
 /*.btn-success {
     background-color: var(--me-green-lawn);
     border-color: var(--me-green-lawn);
@@ -203,6 +309,10 @@
     color: var(--me-royal-blue)
 }
 
+.text-sea-crayola {
+    color: var(--me-sea-green-crayola-light)
+}
+
 .opacity-8 {
     opacity: 0.8;
 }
@@ -218,6 +328,15 @@
 }
 /*<Стиль ссылок футера>*/
 
+.edit-link:link, .edit-link:visited {
+    color: var(--me-dark-cyan);
+}
+
+.edit-link:hover {
+    color: var(--me-dark-cyan-light);
+    text-decoration: none;
+}
+
 .main-link:link, main-link:visited {
     color: var(--me-royal-blue);
 }
@@ -225,6 +344,13 @@
 .main-link:hover {
     color: var(--me-royal-blue-light);
     text-decoration: none;
+}
+
+.nav-link {
+    color: var(--me-main-color);
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.2;
 }
 
 
@@ -236,6 +362,12 @@
 /* selected link */
 .footer-link:active {
     color: whitesmoke;
+}
+
+.control-label {
+    color: var(--me-murena);
+    font-size: 1.1rem;
+    font-weight: 500;
 }
 
 /*для того чтобы футер прилип к низу>*/
