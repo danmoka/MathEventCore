@@ -15,15 +15,11 @@ namespace MathEvent.Controllers
     [ApiController]
     public class SubscribeController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationContext _db;
 
-        public SubscribeController(ApplicationContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public SubscribeController(ApplicationContext db)
         {
             _db = db;
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         [HttpPost]
@@ -31,7 +27,7 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> SignUp(
             [Bind("Id", "Name", "Annotation", "KeyWords", "Location", "Start",
             "CreatorName", "DataPath", "PosterName", "Traffic", "UserId",
-            "IsSignedUp", "Type", "Info")]PerformanceViewModel model)
+            "IsSubscribed", "Type", "Info")]PerformanceViewModel model)
         {
             var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId).SingleOrDefaultAsync();
 

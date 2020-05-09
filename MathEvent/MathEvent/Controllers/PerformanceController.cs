@@ -81,7 +81,7 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            var userSections = await _db.Sections.Where(s => s.ManagerId == user.Id).ToListAsync();
+            var userSections = await _db.Sections.ToListAsync();
             ViewBag.Sections = new SelectList(userSections, "Id", "Name");
 
             return View();
@@ -187,7 +187,7 @@ namespace MathEvent.Controllers
 
                 var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == id && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
 
-                card.IsSignedUp = ap != null;
+                card.IsSubscribed = ap != null;
             }
 
             return View(card);
@@ -204,7 +204,7 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            if (performance.CreatorId != _userManager.GetUserId(User))
+            if (!IsPerformanceModifier(performanceId).Result)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -214,10 +214,37 @@ namespace MathEvent.Controllers
                  .ToList();
             ViewBag.Types = types;
             var user = await _userManager.GetUserAsync(User);
-            var userSections = await _db.Sections.Where(s => s.ManagerId == user.Id).ToListAsync();
+            var userSections = await _db.Sections.ToListAsync();
             ViewBag.Sections = new SelectList(userSections, "Id", "Name");
 
             return View(performance);
+        }
+
+        private async Task<bool> IsPerformanceModifier(int performanceId)
+        {
+            var performance = await _db.Performances.Where(c => c.Id == performanceId)
+                .Include(s => s.Section)
+                .SingleOrDefaultAsync();
+            var isModifier = false;
+            
+            if (performance == null)
+            {
+                return isModifier;
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (performance.CreatorId == user.Id)
+            {
+                isModifier |= true;
+            }
+
+            if (performance.Section.ManagerId == user.Id)
+            {
+                isModifier |= true;
+            }
+
+            return isModifier;
         }
 
         [HttpPost]

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MathEvent.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using MathEvent.Models.ViewModels;
 
 namespace MathEvent.Controllers
 {
@@ -29,7 +31,7 @@ namespace MathEvent.Controllers
 
             if (performance == null)
             {
-                return; ;
+                return;
             }
 
             var file = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.ProceedingsName));
@@ -72,18 +74,52 @@ namespace MathEvent.Controllers
             return BadRequest();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("isFileExists")]
-        public async Task<bool> IsFileExists(int performanceId)
+        public async Task<bool> IsFileExists(PerformanceViewModel performanceViewModel)
         {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
+            var performance = await _db.Performances.Where(p => p.Id == performanceViewModel.Id)
+                .Include(s => s.Section)
+                .SingleOrDefaultAsync();
 
-            if (string.IsNullOrEmpty(performance.ProceedingsName))
+            var isExist = false;
+
+            if (performance == null)
             {
                 return false;
             }
 
-            return true;
+            if (!string.IsNullOrEmpty(performance.ProceedingsName))
+            {
+                isExist = true;
+            }
+
+            var isModifier = IsPerformanceModifier(performance, performanceViewModel.UserId);
+
+            return isModifier && isExist;
+        }
+
+        private bool IsPerformanceModifier(Performance performance, string userId)
+        {
+            var isModifier = false;
+
+            if (performance == null)
+            {
+                return isModifier;
+            }
+
+            if (performance.CreatorId == userId)
+            {
+                isModifier |= true;
+            }
+
+            if (performance.Section != null && 
+                performance.Section.ManagerId == userId)
+            {
+                isModifier |= true;
+            }
+
+            return isModifier;
         }
     }
 }

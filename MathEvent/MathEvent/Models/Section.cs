@@ -15,12 +15,12 @@ namespace MathEvent.Models
 
         [Required(ErrorMessage = "Введите название секции")]
         [StringLength(300, MinimumLength = 3, ErrorMessage = "Длина названия секции должна быть от 3 до 300 символов")]
-        [Display(Name = "Название")]
+        [Display(Name = "Название", Prompt = "Современные проблемы криптографии")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Введите адрес секции")]
         [StringLength(400, MinimumLength = 3, ErrorMessage = "Длина поля адрес должна быть от 3 до 400 символов")]
-        [Display(Name = "Адрес")]
+        [Display(Name = "Адрес", Prompt = "Ярославль, ул. Союзная 141, ауд. 441")]
         public string Location { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время начала")]

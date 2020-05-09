@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
 using MathEvent.Helpers.Email;
+using System.Security.Claims;
 
 namespace MathEvent
 {
@@ -54,6 +55,8 @@ namespace MathEvent
             {
                 client.BaseAddress = new Uri(Configuration["BaseUrl"]);
             });
+
+            services.Configure<IdentityOptions>(options => options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
             //services.AddHttpClient();
             //// Server Side Blazor doesn't register HttpClient by default

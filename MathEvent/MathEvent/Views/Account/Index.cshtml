@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<MathEvent.Models.Conference>
 @using Microsoft.AspNetCore.Identity
 @using MathEvent.Helpers
-@using MathEvent.Components 
+@using MathEvent.Components
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
@@ -34,11 +34,11 @@
                 }
             }
         </div>
-            <div class="col-1 text-right">
-                <a class="footer-link text-sea-crayola" asp-area="" asp-controller="Account" asp-action="Edit"><i class="fas fa-2x fa-user-edit"></i></a>
-            </div>
+        <div class="col-1 text-right">
+            <a class="footer-link text-sea-crayola" asp-area="" asp-controller="Account" asp-action="Edit"><i class="fas fa-2x fa-user-edit"></i></a>
         </div>
     </div>
+</div>
 
 <div class="row mt-4">
     <div class="col-2 text-left">
@@ -99,7 +99,7 @@
                                         <div class="col-md-9 mb-2">
                                             <div class="row d-flex align-items-center input-bg-image rounded-top p-1 shadow">
                                                 <div class="col text-left">
-                                                    <h5>@sectionName</h5>
+                                                    <h6>@sectionName</h6>
                                                     <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
                                                 </div>
                                                 <div class="col text-right p-3 ">
@@ -150,6 +150,48 @@
                     </div>
                 </div>
             }
+        }
+    }
+</div>
+<div class="row mt-4">
+    <div class="col-2 text-left">
+        <hr class="mx-auto block-1" />
+    </div>
+    <div class="col-10 text-left">
+        <h4>События на сторонних конференциях</h4>
+    </div>
+</div>
+<div class="row">
+    @{
+        if (((IEnumerable<Performance>)ViewBag.ForeignPerformances).Count() < 1)
+        {
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-4">
+                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered))
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-9">
+                <div class="card-columns">
+                    @foreach (var performance in (IEnumerable<Performance>)ViewBag.ForeignPerformances)
+                    {
+                        <div class="card">
+                            <img class="card-img-top" src="@Url.Content(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.PosterName))" />
+                            <div class="card-body">
+                                <h5 class="card-title">@performance.Name</h5>
+                                <a class="btn btn-info" asp-route-performanceId="@performance.Id" asp-area="" asp-controller="Performance" asp-action="Edit">Изменить</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-md-3">
+                @*<img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "triangle_left.png"))">*@
+            </div>
         }
     }
 </div>

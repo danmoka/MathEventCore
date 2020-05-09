@@ -5,6 +5,8 @@
 @using System.Net.Http
 @using Newtonsoft.Json
 @using MathEvent.Helpers
+@using MathEvent.Models.ViewModels
+@using System.Text
 
 @inject NavigationManager NavigationManager
 @inject ClientService ClientService
@@ -12,21 +14,23 @@
 <input type="button" class="btn btn-block download-btn" @onclick="Download" value="Скачать материалы события" hidden="@(!_isActive)" />
 
 @code {
-    [Parameter] public int PerformanceId { get; set; }
+    [Parameter] public PerformanceViewModel Performance { get; set; }
     private bool _isActive = false;
     private HttpClient _client;
 
     protected override async Task OnInitializedAsync()
     {
         _client = ClientService.Client;
-
-        var response = await _client.GetAsync($"/api/Proceedings/isFileExists?performanceId={PerformanceId}");
+        var model = JsonConvert.SerializeObject(Performance);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("api/Proceedings/isFileExists", content);
         var result = await response.Content.ReadAsStringAsync();
+
         _isActive = JsonConvert.DeserializeObject<bool>(result);
     }
 
     protected void Download()
     {
-        NavigationManager.NavigateTo($"{_client.BaseAddress}/api/Proceedings/downloadProceedings?performanceId={PerformanceId}", true);
+        NavigationManager.NavigateTo($"{_client.BaseAddress}/api/Proceedings/downloadProceedings?performanceId={Performance.Id}", true);
     }
 }

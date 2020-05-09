@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Helpers.Email;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg;
 
 namespace MathEvent.Controllers
 {
@@ -44,6 +46,23 @@ namespace MathEvent.Controllers
                 .Where(ap => ap.ApplicationUserId == user.Id)
                 .Include(p => p.Performance).ToListAsync();
             ViewBag.SubscribedPerformances = subsribedPerformances;
+
+            var foreignPerformances = new List<Performance>();
+            var foreignSections = _db.Sections.Where(s => s.ManagerId != user.Id)
+                .Include(s => s.Performances);
+
+            foreach (var section in foreignSections)
+            {
+                foreach (var performance in section.Performances)
+                {
+                    if (performance.CreatorId == user.Id)
+                    {
+                        foreignPerformances.Add(performance);
+                    }
+                }
+            }
+
+            ViewBag.ForeignPerformances = foreignPerformances;
 
             return View(conferences);
         }

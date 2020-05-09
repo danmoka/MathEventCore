@@ -70,7 +70,8 @@ namespace MathEvent.Controllers
                             DataPath = performance.DataPath,
                             PosterName = performance.PosterName,
                             Traffic = performance.Traffic,
-                            Type = performance.Type
+                            Type = performance.Type,
+                            Location = performance.Location
                         };
 
                         performanceViewModels.Add(performanceViewModel);

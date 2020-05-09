@@ -15,12 +15,12 @@ namespace MathEvent.Models
 
         [Required(ErrorMessage = "Введите название")]
         [StringLength(300, MinimumLength = 3, ErrorMessage = "Длина названия должна быть от 3 до 300 символов")]
-        [Display(Name = "Название")]
+        [Display(Name = "Название", Prompt = "Международная молодежная научно-практическая конференция «Путь в науку»")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Введите адрес, где будет проходить конференция")]
         [StringLength(400, MinimumLength = 3, ErrorMessage = "Длина поля адрес должна быть от 3 до 400 символов")]
-        [Display(Name = "Адрес")]
+        [Display(Name = "Адрес", Prompt = "Математический факультет ЯрГУ им. П.Г. Демидова")]
         public string Location { get; set; }
 
         [Required(ErrorMessage = "Выберите дату и время начала")]

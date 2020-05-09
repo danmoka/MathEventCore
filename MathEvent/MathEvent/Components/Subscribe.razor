@@ -9,16 +9,19 @@
 @using System.ComponentModel
 @using Newtonsoft.Json
 @using System.Text
+@using Microsoft.AspNetCore.Identity
+@using MathEvent.Models
 
 @inject NavigationManager NavigationManager
 @inject ClientService ClientService
 
 <h6>Участников: @Count()</h6>
-<input type="button" class="btn btn-block btn-success" @onclick="SignUp" value="@CurrentButtonValue()" />
+<input type="button" class="btn btn-block btn-success" @onclick="SignUp" value="@CurrentButtonValue()"/>
 
 @code {
-    [Parameter] public PerformanceViewModel card { get; set; }
-    [Parameter] public int traffic { get; set; }
+    [Parameter] public PerformanceViewModel Card { get; set; }
+    [Parameter] public int Traffic { get; set; }
+    [Parameter] public bool IsSignIn { get; set; }
     private HttpClient _client;
 
     protected override void OnInitialized()
@@ -28,32 +31,37 @@
 
     protected async Task SignUp()
     {
-        var model = JsonConvert.SerializeObject(card);
-        var content = new StringContent(model, Encoding.UTF8, "application/json");
-
-        if (!card.IsSignedUp)
+        if (!IsSignIn)
         {
-            traffic++;
-            card.IsSignedUp = !card.IsSignedUp;
+            NavigationManager.NavigateTo($"{_client.BaseAddress}Account/Login", true);
+        }
+
+        var model = JsonConvert.SerializeObject(Card);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("api/Subscribe/signup", content);
+
+        if (!Card.IsSubscribed)
+        {
+            Traffic++;
+            Card.IsSubscribed = !Card.IsSubscribed;
         }
         else
         {
-            traffic--;
-            card.IsSignedUp = !card.IsSignedUp;
+            Traffic--;
+            Card.IsSubscribed = !Card.IsSubscribed;
         }
 
-        var response = await _client.PostAsync("api/Subscribe/signup", content);
         Count();
     }
 
     protected int Count()
     {
-        return traffic;
+        return Traffic;
     }
 
     protected string CurrentButtonValue()
     {
-        if (card.IsSignedUp)
+        if (Card.IsSubscribed)
         {
             return "Отписаться";
         }

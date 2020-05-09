@@ -19,7 +19,7 @@ namespace MathEvent.Models.ViewModels
         public string PosterName { get; set; }
         public int Traffic { get; set; }
         public string UserId { get; set; }
-        public bool IsSignedUp { get; set; }
+        public bool IsSubscribed { get; set; }
         public string Type { get; set; }
         public string Info { get; set; }
     }
