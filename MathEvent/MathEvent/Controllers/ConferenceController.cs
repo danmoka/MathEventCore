@@ -39,6 +39,7 @@ namespace MathEvent.Controllers
             {
                 var conferenceViewModel = new ConferenceViewModel
                 {
+                    Id = conference.Id,
                     Name = conference.Name,
                     Location = conference.Location,
                     Start = conference.Start
@@ -205,6 +206,7 @@ namespace MathEvent.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpGet]
         public IActionResult About()
         {
             return View();

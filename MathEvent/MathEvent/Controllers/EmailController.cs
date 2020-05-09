@@ -70,7 +70,7 @@ namespace MathEvent.Controllers
 
             using (StreamReader sr = new StreamReader(
                 UserDataPathWorker.GetRootPath(
-                    UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetEmailTemplateDirectory(), "SimpleMessage.html"))))
+                    UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetEmailTemplatesDirectory(), "SimpleMessage.html"))))
             {
                 body = await sr.ReadToEndAsync();
             }
@@ -121,7 +121,7 @@ namespace MathEvent.Controllers
 
             using (StreamReader sr = new StreamReader(
                 UserDataPathWorker.GetRootPath(
-                    UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetEmailTemplateDirectory(), "EmailConfirmMessage.html"))))
+                    UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetEmailTemplatesDirectory(), "EmailConfirmMessage.html"))))
             {
                 body = await sr.ReadToEndAsync();
             }

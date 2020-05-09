@@ -19,6 +19,7 @@ namespace MathEvent.Helpers
         private static string _imageDirectory = "Images";
         private static string _instructionsDirectory = "Images/Instructions";
         private static string _emailTemplatesDirectory = "EmailTemplate";
+        private static string _pdfTemplatesDirectory = "wwwroot/PdfTemplate";
         private static int _imageWidth = 900;
         private static int _imageHeight = 600;
 
@@ -171,9 +172,14 @@ namespace MathEvent.Helpers
             return _instructionsDirectory;
         }
 
-        public static string GetEmailTemplateDirectory()
+        public static string GetEmailTemplatesDirectory()
         {
             return _emailTemplatesDirectory;
+        }
+
+        public static string GetPdfTemplatesDirectory()
+        {
+            return _pdfTemplatesDirectory;
         }
     }
 }

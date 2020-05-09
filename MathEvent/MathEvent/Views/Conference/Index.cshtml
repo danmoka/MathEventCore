@@ -29,6 +29,7 @@
                             <div class="col text-left">
                                 <h4>@conference.Name</h4>
                                 <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+                                <a class="btn btn-info" asp-route-conferenceId="@conference.Id" asp-controller="Pdf" asp-action="GetTimeTable">скачать</a>
                             </div>
                         </div>
                         <div class="row rounded-bottom border p-4">

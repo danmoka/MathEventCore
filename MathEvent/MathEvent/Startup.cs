@@ -1,24 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
-using MathEvent.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MathEvent.Models;
 using MathEvent.Helpers;
-using Microsoft.AspNetCore.Http;
-using System.Net.Http;
-using Microsoft.AspNetCore.Components;
 using MathEvent.Helpers.Email;
 using System.Security.Claims;
+using Wkhtmltopdf.NetCore;
 
 namespace MathEvent
 {
@@ -57,7 +49,7 @@ namespace MathEvent
             });
 
             services.Configure<IdentityOptions>(options => options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
-
+            services.AddWkhtmltopdf(Configuration["wkhtmltopdf"]);
             //services.AddHttpClient();
             //// Server Side Blazor doesn't register HttpClient by default
             //if (!services.Any(x => x.ServiceType == typeof(HttpClient)))

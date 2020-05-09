@@ -9,6 +9,7 @@ namespace MathEvent.Models.ViewModels
     /// </summary>
     public class ConferenceViewModel
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
         public DateTime Start { get; set; }
