@@ -22,9 +22,13 @@ namespace MathEvent.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTimeTable(int conferenceId)
+        public async Task<IActionResult> TimeTable(int conferenceId)
         {
-            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefaultAsync();
+            var conference = await _db.Conferences.Where(c => c.Id == conferenceId)
+                .Include(c => c.Sections)
+                .ThenInclude(s => s.Performances)
+                .SingleOrDefaultAsync();
+
             return await _generatePdf.GetPdf(UserDataPathWorker.ConcatPaths(
                 UserDataPathWorker.GetPdfTemplatesDirectory(), "ConferenceTimeTable.cshtml"), conference);
         }

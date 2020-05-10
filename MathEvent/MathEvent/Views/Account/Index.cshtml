@@ -72,7 +72,8 @@
                                 <h4>@conference.Name</h4>
                                 <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
                             </div>
-                            <div class="col text-right">
+                            <div class="col d-flex justify-content-end align-items-center">
+                                <a class="btn download-btn mr-4" asp-route-conferenceId="@conference.Id" asp-controller="Pdf" asp-action="TimeTable">Программа</a>
                                 <a class="edit-link" asp-route-conferenceId="@conference.Id" asp-area="" asp-controller="Conference" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
                             </div>
                         </div>

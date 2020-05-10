@@ -1,0 +1,47 @@
+﻿@model MathEvent.Models.Conference
+<div class="row">
+    <div class="col form-group">
+        <h2 class="mb-4">Программа конференции "@Model.Name"</h2>
+        <hr class="block-1" style="background-color: #00ff90"/>
+        <p>
+            Начало: <strong>@Model.Start.ToString("dd/MM/yyyy HH:mm")</strong><br />
+            Конец: <strong>@Model.End.ToString("dd/MM/yyyy HH:mm")</strong><br />
+            Где: @Model.Location
+        </p>
+    </div>
+</div>
+
+@foreach(var section in Model.Sections)
+{
+    var sectionName = section.Name;
+    var sectionStart = section.Start;
+    var sectionEnd = section.End;
+    var sectionAddress = section.Location;
+    <div class="container" style="padding-left: 30px; margin-top: 30px;">
+        <h3>Секция: @sectionName</h3>
+            <p>
+                Начало: <strong>@sectionStart.ToString("dd/MM/yyyy HH:mm")</strong>
+                 Конец: <strong>@sectionEnd.ToString("dd/MM/yyyy HH:mm")</strong><br />
+                Где: @sectionAddress
+            </p>
+            <div class="container" style="padding-left: 30px; margin-top: 25px;">
+                @foreach (var performance in section.Performances)
+                {
+                    var performanceName = performance.Name;
+                    var performanceType = performance.Type;
+                    var performanceStart = performance.Start;
+                    var performanceAddress = performance.Location;
+                    <div class="container" style="margin-top:25px;
+                        border-left: 3px solid #5299AD;
+                        padding-left: 10px;
+                        margin-left: 10px;">
+                        <h3>@performanceType: @performanceName</h3>
+                        <p>
+                            Начало: <strong>@performanceStart.ToString("dd/MM/yyyy HH:mm")</strong><br />
+                            Где: @performanceAddress
+                        </p>
+                    </div>
+                }
+            </div>
+    </div>
+}
