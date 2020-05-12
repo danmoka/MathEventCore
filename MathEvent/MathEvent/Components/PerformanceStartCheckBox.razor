@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using MathEvent.Models.ViewModels
+@using MathEvent.Helpers
+@using System.Net.Http
+@using System.ComponentModel
+@using Newtonsoft.Json
+@using System.Text
+@using Microsoft.AspNetCore.Identity
+@using MathEvent.Models
+
+@inject ApplicationContext ApplicationContext
+
+
+<input type="datetime" class="form-control" value="@Time" @onchange="@Update"/>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" @onchange="@SetSectionTime">
+    <label class="form-check-label" for="defaultCheck1">
+        Default checkbox
+    </label>
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public DateTime Time { get; set; }
+    private DateTime OldStart { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var performance = ApplicationContext.Performances.Where(p => p.Id == Id).SingleOrDefault();
+        Time = performance.Start;
+        OldStart = Time;
+    }
+
+    protected void Update(ChangeEventArgs e)
+    {
+        var performance = ApplicationContext.Performances.Where(p => p.Id == Id).SingleOrDefault();
+        performance.Start = Time;
+
+        ApplicationContext.Performances.Update(performance);
+        ApplicationContext.SaveChanges();
+    }
+
+    protected void SetSectionTime(ChangeEventArgs e)
+    {
+        if ((bool)e.Value)
+        {
+            var performance = ApplicationContext.Performances.Where(p => p.Id == Id).SingleOrDefault();
+            var section = ApplicationContext.Sections.Where(s => s.Id == performance.SectionId).SingleOrDefault();
+            Time = section.Start;
+
+        }
+        else
+        {
+            Time = OldStart;
+        }
+
+    }
+}

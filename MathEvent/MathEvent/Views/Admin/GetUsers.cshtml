@@ -1,0 +1,17 @@
+﻿@model IEnumerable<MathEvent.Models.ApplicationUser>
+
+<div class="container">
+    @{ 
+        foreach(var user in Model)
+        {
+            <div class="row border-left-main mt-2">
+                <div class="col-8">
+                    <h5>@user.Name @user.Surname</h5>
+                </div>
+                <div class="col-4 d-flex justify-content-end align-items-center">
+                    <a class="edit-link" asp-route-userEmail="@user.Email" asp-controller="Admin" asp-action="Send"><i class="fa fa-2x fa-envelope-open"></i></a>
+                </div>
+            </div>
+        }
+    }
+</div>

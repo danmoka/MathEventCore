@@ -33,7 +33,7 @@ namespace MathEvent.Models
         public ICollection<Section> Sections { get; set; }
 
         [HiddenInput(DisplayValue = false)]
-        public ICollection<Performance> CreatedPerformances { get; set; }
+        public ICollection<Performance> Performances { get; set; }
 
         [HiddenInput(DisplayValue = false)]
         public ICollection<Conference> Conferences { get; set; }

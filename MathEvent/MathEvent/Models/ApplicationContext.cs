@@ -41,7 +41,7 @@ namespace MathEvent.Models
 
             builder.Entity<Performance>()
                 .HasOne(p => p.Creator)
-                .WithMany(c => c.CreatedPerformances)
+                .WithMany(c => c.Performances)
                 .HasForeignKey(p => p.CreatorId);
 
             builder.Entity<ApplicationUserPerformance>().HasKey(ap => new { ap.ApplicationUserId, ap.PerformanceId });

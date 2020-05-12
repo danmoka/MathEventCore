@@ -1,0 +1,52 @@
+﻿@model IEnumerable<MathEvent.Models.Conference>
+
+<div class="container">
+    @{ 
+        foreach(var conference in Model)
+        {
+            <div class="row d-flex align-items-center p-1">
+                    <div class="col-8 text-left">
+                        <h4>Конференция: "@conference.Name"</h4>
+                    </div>
+                    <div class="col-4 text-right">
+                        <a class="edit-link" asp-route-conferenceId="@conference.Id" asp-controller="Conference" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
+                    </div>
+            </div>
+            <div class="mt-2 pl-4">
+                @{
+                    foreach (var section in conference.Sections)
+                    {
+                        var sectionName = section.Name;
+                        var sectionId = section.Id;
+                        <div class="row d-flex align-items-center p-1">
+                            <div class="col-8 text-left">
+                                <h5>Секция: "@sectionName"</h5>
+                            </div>
+                            <div class="col-4 text-right">
+                                <a class="edit-link" asp-route-sectionId="@sectionId" asp-controller="Section" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
+                            </div>
+                        </div>
+                        <div class="mt-2 pl-4">
+                            @{
+                                foreach (var performance in section.Performances)
+                                {
+                                    var performanceName = performance.Name;
+                                    var performanceId = performance.Id;
+                                    var performanceType = performance.Type;
+                                    <div class="row border-left-main d-flex align-items-center p-1 mt-2">
+                                        <div class="col-8 text-left">
+                                            <h6>@performanceType: "@performanceName"</h6>
+                                        </div>
+                                        <div class="col-4 text-right">
+                                            <a class="edit-link" asp-route-performanceId="@performanceId" asp-controller="Performance" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+    }
+</div>

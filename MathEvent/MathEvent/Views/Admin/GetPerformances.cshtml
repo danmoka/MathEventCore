@@ -1,0 +1,24 @@
+﻿@model IEnumerable<MathEvent.Models.Performance>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            @{ 
+                foreach(var performance in Model)
+                {
+                        <div class="row d-flex align-items-center border-left-main mt-2 p-1">
+                            <div class="col-8 text-left">
+                                <h5>@performance.Name</h5>
+                            </div>
+                            <div class="col-2">
+                                <a class="btn download-btn ml-4" asp-route-id="@performance.Id" asp-controller="Performance" asp-action="Card">Подробнее</a>
+                            </div>
+                            <div class="col-2 text-right">
+                                <a class="edit-link" asp-route-performanceId="@performance.Id" asp-controller="Performance" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
+                            </div>
+                        </div>
+                }
+            }
+        </div>
+    </div>
+</div> 

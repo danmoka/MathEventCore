@@ -144,7 +144,7 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            if (conference.ManagerId != _userManager.GetUserId(User))
+            if (!await IsConferenceModifier(conference.Id))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -163,7 +163,24 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error400", "Error");
             }
 
-            _db.Conferences.Update(conference);
+            var dbConference = await _db.Conferences.Where(c => c.Id == conference.Id).SingleOrDefaultAsync();
+
+            if (dbConference == null)
+            {
+                return RedirectToAction("Error400", "Error");
+            }
+
+            if (!await IsConferenceModifier(dbConference.Id))
+            {
+                return RedirectToAction("Error400", "Error");
+            }
+
+            dbConference.Name = conference.Name;
+            dbConference.Location = conference.Location;
+            dbConference.Start = conference.Start;
+            dbConference.End = conference.End;
+
+            _db.Conferences.Update(dbConference);
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Account");
@@ -180,7 +197,7 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            if (conference.ManagerId != _userManager.GetUserId(User))
+            if (! await IsConferenceModifier(conferenceId))
             {
                 return RedirectToAction("Error500", "Error");
             }
@@ -240,6 +257,32 @@ namespace MathEvent.Controllers
             }
 
             return Json(true);
+        }
+
+        private async Task<bool> IsConferenceModifier(int conferenceId)
+        {
+            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefaultAsync();
+
+            var isModifier = false;
+
+            if (conference == null)
+            {
+                return isModifier;
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (conference.ManagerId == user.Id)
+            {
+                isModifier |= true;
+            }
+
+            if (User.IsInRole("admin"))
+            {
+                isModifier |= true;
+            }
+
+            return isModifier;
         }
     }
 }

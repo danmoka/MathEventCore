@@ -26,15 +26,13 @@
                 <div class="row mb-4">
                     <div class="col-md-12">
                         <div class="row d-flex align-items-center input-bg-image rounded shadow p-1">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="container text-left">
+                                <div class="col text-left">
                                     <h4>@conference.Name</h4>
                                     <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
                                 </div>
-                                <div class="container text-right">
+                                <div class="col text-right">
                                     <a class="btn download-btn" asp-route-conferenceId="@conference.Id" asp-controller="Pdf" asp-action="TimeTable">Программа</a>
                                 </div>
-                            </div>
                         </div>
                         <div class="row rounded-bottom border p-4">
                             @{

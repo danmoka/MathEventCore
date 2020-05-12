@@ -1,4 +1,5 @@
-﻿using MathEvent.Models;
+﻿using MathEvent.Helpers;
+using MathEvent.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -30,10 +31,19 @@ namespace MathEvent.Initializers
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
                 var admin = new ApplicationUser { Name = "Админ", Surname = "Админ", Email = adminEmail, UserName = adminEmail };
+                admin.DataPath = UserDataPathWorker.CreateNewUserPath(admin.Id);
                 var result = await userManager.CreateAsync(admin, adminPassword);
 
                 if (result.Succeeded)
+                {
                     await userManager.AddToRoleAsync(admin, "admin");
+
+                    if (!UserDataPathWorker.CreateDirectory(admin.DataPath))
+                    {
+                        await userManager.DeleteAsync(admin);
+                    }
+                }
+
             }
         }
     }

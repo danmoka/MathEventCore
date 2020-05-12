@@ -8,6 +8,25 @@
             var firstName = UserManager.GetUserAsync(User).Result.Name;
             var lastName = UserManager.GetUserAsync(User).Result.Surname;
             var username = $"{firstName} {lastName}";
+            if (User.IsInRole("admin"))
+            {
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Админ-панель
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                        <form class="dropdown-item form-inline" method="get" asp-controller="Admin" asp-action="GetPerformances">
+                            <button id="list" type="submit" class="nav-link btn btn-link text-dark">События</button>
+                        </form>
+                        <form class="dropdown-item form-inline" method="get" asp-controller="Admin" asp-action="GetConferences">
+                            <button id="list" type="submit" class="nav-link btn btn-link text-dark">Конференции</button>
+                        </form>
+                        <form class="dropdown-item form-inline" method="get" asp-controller="Admin" asp-action="GetUsers">
+                            <button id="users" type="submit" class="nav-link btn btn-link text-dark">Пользователи</button>
+                        </form>
+                    </div>
+                </li>
+            }
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     @username
@@ -16,12 +35,6 @@
                     <form id="manageForm" class="dropdown-item form-inline" method="get" asp-controller="Account" asp-action="Edit">
                         <button id="manage" type="submit" class="nav-link btn btn-link text-dark">Аккаунт</button>
                     </form>
-                    @if (User.IsInRole("admin"))
-                    {
-                        <form id="administrationForm" class="dropdown-item form-inline" asp-controller="Admin" asp-action="Index">
-                            <button id="administration" type="submit" class="nav-link btn btn-link text-dark">Админ-панель</button>
-                        </form>
-                    }
                     <form id="addForm" class="dropdown-item form-inline" method="get" asp-controller="Performance" asp-action="Add">
                         <button id="add" type="submit" class="nav-link btn btn-link text-dark">Создать событие</button>
                     </form>

@@ -204,7 +204,7 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            if (!IsPerformanceModifier(performanceId).Result)
+            if (! await IsPerformanceModifier(performanceId))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -213,38 +213,10 @@ namespace MathEvent.Controllers
                  .Select(x => new SelectListItem { Text = x, Value = x })
                  .ToList();
             ViewBag.Types = types;
-            var user = await _userManager.GetUserAsync(User);
             var userSections = await _db.Sections.ToListAsync();
             ViewBag.Sections = new SelectList(userSections, "Id", "Name");
 
             return View(performance);
-        }
-
-        private async Task<bool> IsPerformanceModifier(int performanceId)
-        {
-            var performance = await _db.Performances.Where(c => c.Id == performanceId)
-                .Include(s => s.Section)
-                .SingleOrDefaultAsync();
-            var isModifier = false;
-            
-            if (performance == null)
-            {
-                return isModifier;
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-
-            if (performance.CreatorId == user.Id)
-            {
-                isModifier |= true;
-            }
-
-            if (performance.Section.ManagerId == user.Id)
-            {
-                isModifier |= true;
-            }
-
-            return isModifier;
         }
 
         [HttpPost]
@@ -258,26 +230,46 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error400", "Error");
             }
 
+            var dbPerformance = await _db.Performances.Where(p => p.Id == performance.Id).SingleOrDefaultAsync();
+            
+            if (dbPerformance == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
+            if (! await IsPerformanceModifier(dbPerformance.Id))
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             if (uploadedFile != null)
             {
-                var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName));
+                var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(dbPerformance.DataPath, dbPerformance.PosterName));
 
                 if (System.IO.File.Exists(imageToBeDeleted))
                 {
                     System.IO.File.Delete(imageToBeDeleted);
                 }
 
-                performance.PosterName = Path.GetFileName(uploadedFile.FileName);
-                await UserDataPathWorker.UploadImage(uploadedFile, performance.DataPath, performance.PosterName);
+                dbPerformance.PosterName = Path.GetFileName(uploadedFile.FileName);
+                await UserDataPathWorker.UploadImage(uploadedFile, dbPerformance.DataPath, dbPerformance.PosterName);
             }
 
             if (uploadedProceedings != null)
             {
-                performance.ProceedingsName = Path.GetFileName(uploadedProceedings.FileName);
-                await UserDataPathWorker.UploadFile(uploadedProceedings, performance.DataPath, performance.ProceedingsName);
+                dbPerformance.ProceedingsName = Path.GetFileName(uploadedProceedings.FileName);
+                await UserDataPathWorker.UploadFile(uploadedProceedings, dbPerformance.DataPath, dbPerformance.ProceedingsName);
             }
 
-            _db.Performances.Update(performance);
+            dbPerformance.KeyWords = performance.KeyWords;
+            dbPerformance.Annotation = performance.Annotation;
+            dbPerformance.Location = performance.Location;
+            dbPerformance.Name = performance.Name;
+            dbPerformance.SectionId = performance.SectionId;
+            dbPerformance.Type = performance.Type;
+            dbPerformance.Start = performance.Start;
+
+            _db.Entry(dbPerformance).State = EntityState.Modified;
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Account");
@@ -301,7 +293,7 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            if (performance.CreatorId != _userManager.GetUserId(User))
+            if (! await IsPerformanceModifier(performanceId))
             {
                 return RedirectToAction("Error500", "Error");
             }
@@ -367,6 +359,40 @@ namespace MathEvent.Controllers
             }
 
             await _db.SaveChangesAsync();
+        }
+
+        private async Task<bool> IsPerformanceModifier(int performanceId)
+        {
+            var performance = await _db.Performances.Where(p => p.Id == performanceId)
+                .Include(s => s.Section)
+                .SingleOrDefaultAsync();
+
+            var isModifier = false;
+
+            if (performance == null)
+            {
+                return isModifier;
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (performance.CreatorId == user.Id)
+            {
+                isModifier |= true;
+            }
+
+            if (performance.Section != null && 
+                performance.Section.ManagerId == user.Id)
+            {
+                isModifier |= true;
+            }
+
+            if (User.IsInRole("admin"))
+            {
+                isModifier |= true;
+            }
+
+            return isModifier;
         }
     }
 }
