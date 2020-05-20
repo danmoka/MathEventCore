@@ -21,6 +21,25 @@
     --me-shadow-danger: #B76C7F;
 }
 
+.pop-container {
+    position: relative;
+}
+
+.btn-pop {
+    width: 90px;
+}
+
+.popconfirm {
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--me-sea-green-crayola);
+    position: absolute;
+    top: -50px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
 .me-border-image {
     border: 20px solid transparent;
     border-image-source: url("/Images/input_back2.png");
@@ -44,6 +63,7 @@
     position: relative;
     overflow: hidden;
     display: inline-block;
+    width: 100%;
 }
 
     .upload-btn-wrapper:hover .upload-btn {

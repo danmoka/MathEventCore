@@ -15,7 +15,7 @@
 @inject ApplicationContext ApplicationContext
 
 
-<input type="datetime" class="form-control" value="@Time" @onchange="@Update"/>
+<input type="datetime" class="form-control" @bind-value="@Performance.Start"/>
 <div class="form-check">
     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" @onchange="@SetSectionTime">
     <label class="form-check-label" for="defaultCheck1">
@@ -24,38 +24,32 @@
 </div>
 
 @code {
-    [Parameter] public int Id { get; set; }
-    [Parameter] public DateTime Time { get; set; }
-    private DateTime OldStart { get; set; }
+    [Parameter] public PerformanceViewModel Performance { get; set; }
+    private DateTime OldTime { get; set; }
 
     protected override void OnInitialized()
     {
-        var performance = ApplicationContext.Performances.Where(p => p.Id == Id).SingleOrDefault();
-        Time = performance.Start;
-        OldStart = Time;
-    }
-
-    protected void Update(ChangeEventArgs e)
-    {
-        var performance = ApplicationContext.Performances.Where(p => p.Id == Id).SingleOrDefault();
-        performance.Start = Time;
-
-        ApplicationContext.Performances.Update(performance);
-        ApplicationContext.SaveChanges();
+        if (Performance.Start == null)
+        {
+            OldTime = DateTime.Now;
+        }
+        else
+        {
+            OldTime = Performance.Start;
+        }
     }
 
     protected void SetSectionTime(ChangeEventArgs e)
     {
         if ((bool)e.Value)
         {
-            var performance = ApplicationContext.Performances.Where(p => p.Id == Id).SingleOrDefault();
-            var section = ApplicationContext.Sections.Where(s => s.Id == performance.SectionId).SingleOrDefault();
-            Time = section.Start;
+            var section = ApplicationContext.Sections.Where(s => s.Id == Performance.SectionId).SingleOrDefault();
+            Performance.Start = section.Start;
 
         }
         else
         {
-            Time = OldStart;
+            Performance.Start = OldTime;
         }
 
     }

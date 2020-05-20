@@ -69,11 +69,6 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Add()
         {
-            var types = DataFactory.GetPerformanceTypes().GetValues()
-                 .Select(x => new SelectListItem { Text = x, Value = x })
-                 .ToList();
-            ViewBag.Types = types;
-
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
@@ -81,77 +76,122 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
-            var userSections = await _db.Sections.ToListAsync();
-            ViewBag.Sections = new SelectList(userSections, "Id", "Name");
+            var performance = new PerformanceViewModel
+            {
+                UserId = user.Id,
+                UserDataPath = user.DataPath
+            };
 
-            return View();
+            return View(performance);
         }
 
-        [HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(
-            [Bind("Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId")] Performance performance, IFormFile uploadedFile)
-        {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("Error400", "Error");
-            }
+        //[HttpPost]
+        //[Authorize]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Add(
+        //    [Bind("Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionStartAndLocation")] PerformanceViewModel model, IFormFile uploadedFile)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return RedirectToAction("Error400", "Error");
+        //    }
 
-            var user = await _userManager.GetUserAsync(User);
+        //    //if (!model.IsSectionStartAndLocation)
+        //    //{
+        //    //    if (model.Start == null || String.IsNullOrEmpty(model.Location))
+        //    //    {
+        //    //        ModelState.AddModelError(string.Empty, "Адрес или время начала не введены. Введите или выставьте флажок");
+        //    //        var userSections = await _db.Sections.ToListAsync();
+        //    //        ViewBag.Sections = new SelectList(userSections, "Id", "Name");
+        //    //        var types = DataFactory.GetPerformanceTypes().GetValues()
+        //    //            .Select(x => new SelectListItem { Text = x, Value = x })
+        //    //            .ToList();
+        //    //        ViewBag.Types = types;
 
-            if (user == null)
-            {
-                return RedirectToAction("Error500", "Error");
-            }
+        //    //        return View(model);
+        //    //    }
+        //    //}
+        //    //else
+        //    //{
+        //    //    if (model.SectionId == null)
+        //    //    {
+        //    //        ModelState.AddModelError(string.Empty, "Секция не выбрана. Выберите или снимите флажок");
+        //    //        var userSections = await _db.Sections.ToListAsync();
+        //    //        ViewBag.Sections = new SelectList(userSections, "Id", "Name");
+        //    //        var types = DataFactory.GetPerformanceTypes().GetValues()
+        //    //            .Select(x => new SelectListItem { Text = x, Value = x })
+        //    //            .ToList();
+        //    //        ViewBag.Types = types;
 
-            performance.CreatorId = user.Id;
-            await _db.Performances.AddAsync(performance);
-            await _db.SaveChangesAsync();
+        //    //        return View(model);
+        //    //    }
+        //    //}
 
-            string performanceDataPath;
+        //    //var user = await _userManager.GetUserAsync(User);
 
-            if (performance.SectionId != null)
-            {
-                var section = await _db.Sections.Where(s => s.Id == performance.SectionId).SingleOrDefaultAsync();
+        //    //if (user == null)
+        //    //{
+        //    //    return RedirectToAction("Error500", "Error");
+        //    //}
 
-                if (section == null)
-                {
-                    return RedirectToAction("Error500", "Error");
-                }
+        //    //var performance = new Performance
+        //    //{
+        //    //    Name = model.Name,
+        //    //    Type = model.Type,
+        //    //    KeyWords = model.KeyWords,
+        //    //    Annotation = model.Annotation,
+        //    //    CreatorId = user.Id,
+        //    //    Start = model.Start,
+        //    //    Location = model.Location,
+        //    //    SectionId = model.SectionId == -1 ? null : model.SectionId
+        //    //};
 
-                performanceDataPath = section.DataPath;
-            }
-            else
-            {
-                performanceDataPath = user.DataPath;
-            }
+        //    //if (model.SectionId != null)
+        //    //{
+        //    //    var section = await _db.Sections.Where(s => s.Id == performance.SectionId).SingleOrDefaultAsync();
 
-            if(!UserDataPathWorker.CreateSubDirectory(ref performanceDataPath, performance.Id.ToString()))
-            {
-                _db.Performances.Remove(performance);
-                await _db.SaveChangesAsync();
+        //    //    if (section == null)
+        //    //    {
+        //    //        return RedirectToAction("Error500", "Error");
+        //    //    }
 
-                return RedirectToAction("Error500", "Error");
-            }
+        //    //    performance.DataPath = section.DataPath;
+        //    //}
+        //    //else
+        //    //{
+        //    //    performance.DataPath = user.DataPath;
+        //    //}
 
-            performance.DataPath = performanceDataPath;
+        //    //await _db.Performances.AddAsync(performance);
+        //    //await _db.SaveChangesAsync();
 
-            if (uploadedFile != null)
-            {
-                performance.PosterName = Path.GetFileName(uploadedFile.FileName);
-            }
-            else
-            {
-                performance.PosterName = Path.GetFileName(UserDataPathWorker.GetDefaultImagePath());
-            }
+        //    //string performanceDataPath = performance.DataPath;
 
-            await UserDataPathWorker.UploadImage(uploadedFile, performance.DataPath, performance.PosterName);
+        //    //if(!UserDataPathWorker.CreateSubDirectory(ref performanceDataPath, performance.Id.ToString()))
+        //    //{
+        //    //    _db.Performances.Remove(performance);
+        //    //    await _db.SaveChangesAsync();
 
-            await _db.SaveChangesAsync();
+        //    //    return RedirectToAction("Error500", "Error");
+        //    //}
 
-            return RedirectToAction("Index", "Performance");
-        }
+        //    //performance.DataPath = performanceDataPath;
+
+        //    //if (uploadedFile != null)
+        //    //{
+        //    //    performance.PosterName = Path.GetFileName(uploadedFile.FileName);
+        //    //}
+        //    //else
+        //    //{
+        //    //    performance.PosterName = Path.GetFileName(UserDataPathWorker.GetDefaultImagePath());
+        //    //}
+
+        //    //await UserDataPathWorker.UploadImage(uploadedFile, performance.DataPath, performance.PosterName);
+
+        //    //await _db.SaveChangesAsync();
+
+        //    return RedirectToAction("Index", "Performance");
+        //}
 
         [HttpGet]
         public async Task<IActionResult> Card(int id)
@@ -177,7 +217,9 @@ namespace MathEvent.Controllers
                 PosterName = performance.PosterName,
                 Traffic = performance.Traffic,
                 Location = performance.Location,
-                Info = performance.Creator.Info
+                Info = performance.Creator.Info,
+                Type = performance.Type,
+                SectionId = performance.SectionId
             };
 
             if (_signInManager.IsSignedIn(User))
@@ -204,19 +246,33 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             if (! await IsPerformanceModifier(performanceId))
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var types = DataFactory.GetPerformanceTypes().GetValues()
-                 .Select(x => new SelectListItem { Text = x, Value = x })
-                 .ToList();
-            ViewBag.Types = types;
-            var userSections = await _db.Sections.ToListAsync();
-            ViewBag.Sections = new SelectList(userSections, "Id", "Name");
+            var performanceModel = new PerformanceViewModel
+            {
+                Id = performance.Id,
+                Type = performance.Type,
+                Name = performance.Name,
+                Annotation = performance.Annotation,
+                KeyWords = performance.KeyWords,
+                Start = performance.Start,
+                UserId = user.Id,
+                Location = performance.Location,
+                SectionId = performance.SectionId,
+                DataPath = performance.DataPath
+            };
 
-            return View(performance);
+            return View(performanceModel);
         }
 
         [HttpPost]
@@ -225,52 +281,52 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Edit([Bind("Id", "Name", "Location", "Type", "KeyWords", "Annotation", "Start", "SectionId",
             "CreatorId", "DataPath", "PosterName", "Traffic")] Performance performance, IFormFile uploadedFile, IFormFile uploadedProceedings)
         {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("Error400", "Error");
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return RedirectToAction("Error400", "Error");
+            //}
 
-            var dbPerformance = await _db.Performances.Where(p => p.Id == performance.Id).SingleOrDefaultAsync();
+            //var dbPerformance = await _db.Performances.Where(p => p.Id == performance.Id).SingleOrDefaultAsync();
             
-            if (dbPerformance == null)
-            {
-                return RedirectToAction("Error500", "Error");
-            }
+            //if (dbPerformance == null)
+            //{
+            //    return RedirectToAction("Error500", "Error");
+            //}
 
-            if (! await IsPerformanceModifier(dbPerformance.Id))
-            {
-                return RedirectToAction("Error500", "Error");
-            }
+            //if (! await IsPerformanceModifier(dbPerformance.Id))
+            //{
+            //    return RedirectToAction("Error500", "Error");
+            //}
 
-            if (uploadedFile != null)
-            {
-                var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(dbPerformance.DataPath, dbPerformance.PosterName));
+            //if (uploadedFile != null)
+            //{
+            //    var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(dbPerformance.DataPath, dbPerformance.PosterName));
 
-                if (System.IO.File.Exists(imageToBeDeleted))
-                {
-                    System.IO.File.Delete(imageToBeDeleted);
-                }
+            //    if (System.IO.File.Exists(imageToBeDeleted))
+            //    {
+            //        System.IO.File.Delete(imageToBeDeleted);
+            //    }
 
-                dbPerformance.PosterName = Path.GetFileName(uploadedFile.FileName);
-                await UserDataPathWorker.UploadImage(uploadedFile, dbPerformance.DataPath, dbPerformance.PosterName);
-            }
+            //    dbPerformance.PosterName = Path.GetFileName(uploadedFile.FileName);
+            //    await UserDataPathWorker.UploadImage(uploadedFile, dbPerformance.DataPath, dbPerformance.PosterName);
+            //}
 
-            if (uploadedProceedings != null)
-            {
-                dbPerformance.ProceedingsName = Path.GetFileName(uploadedProceedings.FileName);
-                await UserDataPathWorker.UploadFile(uploadedProceedings, dbPerformance.DataPath, dbPerformance.ProceedingsName);
-            }
+            //if (uploadedProceedings != null)
+            //{
+            //    dbPerformance.ProceedingsName = Path.GetFileName(uploadedProceedings.FileName);
+            //    await UserDataPathWorker.UploadFile(uploadedProceedings, dbPerformance.DataPath, dbPerformance.ProceedingsName);
+            //}
 
-            dbPerformance.KeyWords = performance.KeyWords;
-            dbPerformance.Annotation = performance.Annotation;
-            dbPerformance.Location = performance.Location;
-            dbPerformance.Name = performance.Name;
-            dbPerformance.SectionId = performance.SectionId;
-            dbPerformance.Type = performance.Type;
-            dbPerformance.Start = performance.Start;
+            //dbPerformance.KeyWords = performance.KeyWords;
+            //dbPerformance.Annotation = performance.Annotation;
+            //dbPerformance.Location = performance.Location;
+            //dbPerformance.Name = performance.Name;
+            //dbPerformance.SectionId = performance.SectionId;
+            //dbPerformance.Type = performance.Type;
+            //dbPerformance.Start = performance.Start;
 
-            _db.Entry(dbPerformance).State = EntityState.Modified;
-            await _db.SaveChangesAsync();
+            //_db.Entry(dbPerformance).State = EntityState.Modified;
+            //await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Account");
         }
@@ -344,6 +400,110 @@ namespace MathEvent.Controllers
             if (!DataFactory.GetPerformanceTypes().GetValues().Contains(type))
             {
                 return Json($"Тип {type} не существует");
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckLocation(string location, bool isSectionStartAndLocation)
+        {
+            if (!isSectionStartAndLocation && String.IsNullOrEmpty(location))
+            {
+                return Json($"Выберите адрес");
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckStart(DateTime start, bool isSectionStartAndLocation)
+        {
+            if (!isSectionStartAndLocation && start == null)
+            {
+                return Json($"Выберите время начала");
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult CheckSection(int? sectionId, bool isSectionStartAndLocation)
+        {
+            if (isSectionStartAndLocation && sectionId == null)
+            {
+                return Json($"Выберите секцию");
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> CheckStartAndLocation(bool isSectionStartAndLocation, DateTime start, string location, int? sectionId)
+        {
+            if (!isSectionStartAndLocation)
+            {
+                if (start == null)
+                {
+                    return Json($"Выберите время начала");
+                }
+
+                if (String.IsNullOrEmpty(location))
+                {
+                    return Json($"Веберите адрес");
+                }
+            }
+            else
+            {
+                if (sectionId == null)
+                {
+                    return Json($"Выберите секцию");
+                }
+
+                var section = await _db.Sections.Where(s => s.Id == sectionId).SingleOrDefaultAsync();
+
+                if (section == null)
+                {
+                    return Json($"Не удалось найти секцию");
+                }
+
+                if (section.Start == null)
+                {
+                    return Json($"Не удалось найти время начала секции");
+                }
+
+                if (section.Location == null)
+                {
+                    return Json($"Не удалось найти адрес секции");
+                }
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> CheckSectionExistance(int? sectionId, bool isSectionStartAndLocation)
+        {
+            if (isSectionStartAndLocation && sectionId == null)
+            {
+                return Json($"Выберите секцию");
+            }
+
+            var section = await _db.Sections.Where(s => s.Id == sectionId).SingleOrDefaultAsync();
+
+            if (section == null)
+            {
+                return Json($"Не удалось найти секцию");
+            }
+
+            if (section.Start == null)
+            {
+                return Json($"Не удалось найти время начала секции");
+            }
+
+            if (section.Location == null)
+            {
+                return Json($"Не удалось найти адрес секции");
             }
 
             return Json(true);

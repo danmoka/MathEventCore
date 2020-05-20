@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="pop-container">
+    @if (Show)
+    {
+        <div class="popconfirm" style="width: @Width">
+                <div class="container">
+                    <div class="row">
+                        <div class="col text-center">
+                            <h5 class="mt-2 text-dark-cyan">Обратите внимание</h5>
+                            <p>@Message</p>
+                            <button type="button" class="btn btn-danger btn-pop" @onclick="() => Confirmation(true)">Да</button>
+                            <button type="button" class="btn btn-primary btn-pop mr-2" @onclick="() => Confirmation(false)">Нет</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    }
+    <button type="button" class="btn btn-danger mr-2" @onclick="ShowPop">@ActionName</button>
+</div>
+@code {
+    public bool Show { get; set; }
+    [Parameter] public string Message { get; set; } = "Вы уверены?";
+    [Parameter] public string ActionName { get; set; } = "Сделать";
+    [Parameter] public EventCallback<bool> ConfirmedChanged { get; set; }
+    [Parameter] public string Width { get; set; } = "250px";
+
+    public async Task Confirmation(bool value)
+    {
+        Show = false;
+        await ConfirmedChanged.InvokeAsync(value);
+    }
+
+    public void ShowPop()
+    {
+        Show = true;
+    }
+}

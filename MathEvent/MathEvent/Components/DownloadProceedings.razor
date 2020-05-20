@@ -8,7 +8,6 @@
 @using MathEvent.Models.ViewModels
 @using System.Text
 
-@inject NavigationManager NavigationManager
 @inject ClientService ClientService
 
 <input type="button" class="btn btn-block download-btn" @onclick="Download" value="Скачать материалы события" hidden="@(!_isActive)" />
@@ -29,8 +28,9 @@
         _isActive = JsonConvert.DeserializeObject<bool>(result);
     }
 
-    protected void Download()
+    protected async Task Download()
     {
-        NavigationManager.NavigateTo($"{_client.BaseAddress}/api/Proceedings/downloadProceedings?performanceId={Performance.Id}", true);
+        await _client.GetAsync($"/api/Proceedings/downloadProceedings?performanceId={Performance.Id}");
+        //NavigationManager.NavigateTo($"{_client.BaseAddress}/api/Proceedings/downloadProceedings?performanceId={Performance.Id}", true);
     }
 }

@@ -1,0 +1,352 @@
+﻿@using MathEvent.Helpers.Db
+@using MathEvent.Models.ViewModels
+@using System.IO
+@using System.Net.Http
+@using System.Text
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using Newtonsoft.Json
+@using MathEvent.Helpers
+@using BlazorInputFile
+@using MathEvent.Helpers.File
+
+@inject NavigationManager NavigationManager
+@inject DbService DbService
+@inject ClientService ClientService
+@inject IFileUpload FileUpload
+
+<div class="main-form-label text-danger" hidden="@(_showErrorMessage)">
+    <p>@_message</p>
+</div>
+<EditForm Model="@PerformanceModel" OnValidSubmit="EditPerformance">
+    <FluentValidator></FluentValidator>
+    <div class="row d-flex align-items-top">
+        <div class="col-md-5">
+            <div class="container input-bg-image rounded py-3 mb-2">
+                <div class="form-group">
+                    <label class="control-label">Название</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input class="form-control" @bind="@PerformanceModel.Name" placeholder="Кольца многочленов" />
+                    </div>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => PerformanceModel.Name)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label class="control-label">Тип</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tasks"></i></span>
+                        </div>
+                        <InputSelect class="custom-select form-control" @bind-Value="@PerformanceModel.Type">
+                            <option value="Доклад">Доклад</option>
+                            <option value="Семинар">Семинар</option>
+                            <option value="Мастер-класс">Мастер-класс</option>
+                        </InputSelect>
+                    </div>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => PerformanceModel.Type)" />
+                    </div>
+                </div>@*<form-group*@
+                @if (_sections.Count() > 0)
+                {
+                    <div class="form-group">
+                        <div class="form-check">
+                            @*<InputCheckbox @bind-Value="@_state" @onchange="@(() => HandleCheck(new ChangeEventArgs { Value = _state}))"></InputCheckbox>*@
+                            <input class="form-check-input" type="checkbox" @bind="@State" />
+                            <label class="form-check-label">Установить данные секции</label>
+                        </div>
+                    </div>@*<form-group*@
+                    <div class="form-group">
+                        <label class="control-label">Секция</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text text-sea-crayola"><i class="fas fa-cheese"></i></span>
+                            </div>
+                            <select class="custom-select form-control" @bind="@SectionId">
+                                @foreach (var sec in _sections)
+                                {
+                                    <option value="@sec.Key">@sec.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>@*<form-group*@
+                }
+                <div class="form-group">
+                    <label class="control-label">Начало</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-clock"></i></span>
+                        </div>
+                        <input class="form-control"
+                               @bind="@Date"
+                               @bind:format="yyyy-MM-ddTHH:mm"
+                               type="datetime-local" disabled="@State" />
+                    </div>
+                    <p>дата фальш: @_date</p>
+                    <p>дата настоящая: @PerformanceModel.Start</p>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => PerformanceModel.Start)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label class="control-label">Адрес</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-map-marked-alt"></i></span>
+                        </div>
+                        <input class="form-control" @bind="@PerformanceModel.Location" disabled="@State"
+                               placeholder="Ярославль, ул. Союзная 141, ауд. 441" />
+                    </div>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => PerformanceModel.Location)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <div class="upload-btn-wrapper">
+                        <button class="upload-btn btn-block">@_imageName</button>
+                        <InputFile OnChange="@HandleImage"></InputFile>
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <div class="d-flex align-items-top justify-content-between">
+                        <div class="upload-btn-wrapper">
+                            <button class="upload-btn btn-block">@_fileName</button>
+                            <InputFile OnChange="@HandleFile"></InputFile>
+                        </div>
+                        <DeleteProceendings PerformanceId="@PerformanceModel.Id"></DeleteProceendings>
+                    </div>
+                    <p>.pdf .doc .docx .tex</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="container rounded input-bg-image py-3">
+                <div class="form-group">
+                    <label class="control-label">Ключевые слова</label>
+                    <textarea class="form-control" rows="3" @bind="@PerformanceModel.KeyWords" placeholder="Неприводимые многочлены"></textarea>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => PerformanceModel.KeyWords)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label class="control-label">Описание</label>
+                    <textarea class="form-control" rows="5" @bind="@PerformanceModel.Annotation"
+                              placeholder="На данном мастер-классе мы рассмотрим неприводимые многочлены над кольцом полиномов"></textarea>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => PerformanceModel.Annotation)" />
+                    </div>
+                </div>
+                <div class="form-row form-group d-flex align-items-end mt-4">
+                    <DeleteWithConfirmComponent 
+                                                ConfirmedChanged="Delete" 
+                                                Message="Вы действительно хотите удалить событие?"
+                                                ActionName="Удалить"
+                                                Width="380px"></DeleteWithConfirmComponent>
+                    <input type="submit" class="btn btn-success" value="Сохранить изменения" />
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public PerformanceViewModel PerformanceModel { get; set; }
+    private List<KeyValuePair<int, string>> _sections { get; set; }
+    private bool _showErrorMessage = true;
+    private string _message = string.Empty;
+    private bool _state;
+    public bool State
+    {
+        get { return _state; }
+        set
+        {
+            _state = (bool)value;
+            HandleCheck(_state);
+        }
+    }
+    private HttpClient _client;
+    private IFileListEntry _image;
+    private string _imageName = "Загрузить афишу события";
+    private IFileListEntry _file;
+    private string _fileName = "Загрузить материалы";
+    private DateTime _date;
+    public DateTime Date
+    {
+        get { return _date; }
+        set
+        {
+            _date = value;
+            HandleStartDate(value);
+        }
+    }
+    private int _sectionId;
+    public int SectionId
+    {
+        get { return _sectionId; }
+        set
+        {
+            _sectionId = value;
+            HandleSelect(_sectionId);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _client = ClientService.Client;
+        Date = PerformanceModel.Start;
+
+        if (PerformanceModel.SectionId != null)
+        {
+            SectionId = (int) PerformanceModel.SectionId;
+        }
+        else
+        {
+            SectionId = -1;
+        }
+
+        _sections = new List<KeyValuePair<int, string>>();
+        _sections.Add(new KeyValuePair<int, string>(-1, "Без секции"));
+        var sections = DbService.GetSections();
+
+        foreach (var section in sections)
+        {
+            _sections.Add(new KeyValuePair<int, string>(section.Id, section.Name));
+        }
+    }
+
+    public void Delete(bool isSureToDelete)
+    {
+        if (isSureToDelete)
+        {
+            // удаление
+            NavigationManager.NavigateTo($"Performance/Index", true);
+        }
+    }
+
+    private void HandleStartDate(DateTime value)
+    {
+        PerformanceModel.Start = value;
+    }
+
+    private void HandleFile(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+
+        if (IsDoc(file))
+        {
+            _file = file;
+            _fileName = _file.Name;
+        }
+        else
+        {
+            _fileName = "Данный формат не поддерживается";
+        }
+    }
+
+    private void HandleImage(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+
+        if (IsImage(file))
+        {
+            _image = file;
+            _imageName = _image.Name;
+        }
+        else
+        {
+            _imageName = "Данный формат не поддерживается!";
+
+        }
+    }
+
+    private void HandleCheck(bool value)
+    {
+        if (value)
+        {
+            var sectionId = PerformanceModel.SectionId;
+
+            if (sectionId == null)
+            {
+                SectionId = _sections[_sections.Count() - 1].Key;
+            }
+            else
+            {
+                var section = DbService.GetSection((int)PerformanceModel.SectionId);
+                PerformanceModel.Location = section.Location;
+                Date = section.Start;
+            }
+        }
+    }
+
+    private void HandleSelect(int value)
+    {
+        if (value == -1)
+        {
+            PerformanceModel.SectionId = null;
+            State = false;
+        }
+        else
+        {
+            PerformanceModel.SectionId = value;
+
+            if (State)
+            {
+                var section = DbService.GetSection((int)PerformanceModel.SectionId);
+                PerformanceModel.Location = section.Location;
+                Date = section.Start;
+            }
+        }
+    }
+
+    private async Task EditPerformance()
+    {
+        var model = JsonConvert.SerializeObject(PerformanceModel);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("api/performances/edit", content);
+
+        var responseResult = await response.Content.ReadAsStringAsync();
+
+        _message = responseResult;
+        _showErrorMessage = string.IsNullOrEmpty(responseResult);
+
+        if (!_showErrorMessage)
+        {
+            return;
+        }
+
+        if (_image != null)
+        {
+            await FileUpload.UploadImageForPerformanceAsync(_image, PerformanceModel.Id);
+        }
+
+        if (_file != null)
+        {
+            await FileUpload.UploadFileAsync(_file, PerformanceModel.Id);
+        }
+
+        NavigationManager.NavigateTo($"Performance/Index", true);
+    }
+
+    private bool IsImage(IFileListEntry file)
+    {
+        var ext = Path.GetExtension(file.Name);
+        return string.Compare(ext, ".png", StringComparison.Ordinal) == 0 ||
+               string.Compare(ext, ".jpeg", StringComparison.Ordinal) == 0 ||
+               string.Compare(ext, ".jpg", StringComparison.Ordinal) == 0;
+    }
+
+    private bool IsDoc(IFileListEntry file)
+    {
+        var ext = Path.GetExtension(file.Name);
+        return string.Compare(ext, ".doc", StringComparison.Ordinal) == 0 ||
+               string.Compare(ext, ".docx", StringComparison.Ordinal) == 0 ||
+               string.Compare(ext, ".tex", StringComparison.Ordinal) == 0 ||
+               string.Compare(ext, ".pdf", StringComparison.Ordinal) == 0;
+    }
+}

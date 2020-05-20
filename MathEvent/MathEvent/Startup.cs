@@ -11,6 +11,11 @@ using MathEvent.Helpers;
 using MathEvent.Helpers.Email;
 using System.Security.Claims;
 using Wkhtmltopdf.NetCore;
+using MathEvent.Helpers.Db;
+using MathEvent.Helpers.File;
+using MathEvent.Models.ViewModels;
+using MathEvent.Helpers.FluentValidator;
+using FluentValidation;
 
 namespace MathEvent
 {
@@ -50,6 +55,9 @@ namespace MathEvent
 
             services.Configure<IdentityOptions>(options => options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
             services.AddWkhtmltopdf(Configuration["wkhtmltopdf"]);
+            services.AddTransient<DbService>();
+            services.AddScoped<IFileUpload, FileUpload>();
+            services.AddTransient<IValidator<PerformanceViewModel>, PerformanceValidator>();
             //services.AddHttpClient();
             //// Server Side Blazor doesn't register HttpClient by default
             //if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
