@@ -44,6 +44,8 @@ namespace MathEvent.Helpers.File
                 }
 
                 await UserDataPathWorker.UploadImage(file, performance.DataPath, performance.PosterName);
+
+                _db.Performances.Update(performance);
                 await _db.SaveChangesAsync();
             }
         }
@@ -66,8 +68,29 @@ namespace MathEvent.Helpers.File
                         fileName = name + ext;
                     }
 
+                    if (!string.IsNullOrEmpty(performance.ProceedingsName))
+                    {
+                        var filePath = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.ProceedingsName));
+                        
+                        // перенести в UserDataPathWorker
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            try
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                            catch
+                            {
+                                return;
+                            }
+
+                            performance.ProceedingsName = null;
+                        }
+                    }
+
                     performance.ProceedingsName = fileName;
                     await UserDataPathWorker.UploadFile(file, performance.DataPath, performance.ProceedingsName);
+                    await _db.SaveChangesAsync();
                 }
             }
         }

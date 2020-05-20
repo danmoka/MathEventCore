@@ -58,6 +58,7 @@ namespace MathEvent
             services.AddTransient<DbService>();
             services.AddScoped<IFileUpload, FileUpload>();
             services.AddTransient<IValidator<PerformanceViewModel>, PerformanceValidator>();
+            services.AddTransient<IValidator<SectionViewModel>, SectionValidator>();
             //services.AddHttpClient();
             //// Server Side Blazor doesn't register HttpClient by default
             //if (!services.Any(x => x.ServiceType == typeof(HttpClient)))

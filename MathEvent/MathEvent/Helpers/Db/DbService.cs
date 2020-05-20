@@ -25,5 +25,15 @@ namespace MathEvent.Helpers.Db
         {
             return _db.Sections.ToList();
         }
+
+        public List<Conference> GetUserConferences(string managerId, List<string> userRoles)
+        {
+            if (userRoles.Contains("admin"))
+            {
+                return _db.Conferences.ToList();
+            }
+
+            return _db.Conferences.Where(c => c.ManagerId == managerId).ToList();
+        }
     }
 }

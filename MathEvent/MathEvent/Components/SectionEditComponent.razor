@@ -1,0 +1,155 @@
+﻿@using MathEvent.Models.ViewModels
+@using System.IO
+@using System.Net.Http
+@using System.Text
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using Newtonsoft.Json
+@using MathEvent.Helpers.Db
+@using MathEvent.Helpers
+@using System.Net
+
+@inject NavigationManager NavigationManager
+@inject DbService DbService
+@inject ClientService ClientService
+
+<EditForm Model="@SectionModel" OnValidSubmit="EditSection">
+    <FluentValidator></FluentValidator>
+    <div class="row d-flex align-items-top">
+        <div class="col-md-6">
+            <div class="container input-bg-image rounded py-3">
+                <div class="form-group">
+                    <label class="control-label">Название</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input class="form-control" @bind="@SectionModel.Name" placeholder="Современные проблемы криптографии" />
+                    </div>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => SectionModel.Name)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label class="control-label">Адрес</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-map-marked-alt"></i></span>
+                        </div>
+                        <input class="form-control" @bind="@SectionModel.Location" placeholder="Ярославль, ул. Союзная 141, ауд. 441" />
+                    </div>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => SectionModel.Location)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label class="control-label">Дата начала</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-clock"></i></span>
+                        </div>
+                        <input class="form-control"
+                               @bind="@SectionModel.Start"
+                               @bind:format="yyyy-MM-ddTHH:mm"
+                               type="datetime-local" />
+                    </div>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => SectionModel.Start)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label class="control-label">Дата конца</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="far fa-clock"></i></span>
+                        </div>
+                        <input class="form-control"
+                               @bind="@SectionModel.End"
+                               @bind:format="yyyy-MM-ddTHH:mm"
+                               type="datetime-local" />
+                    </div>
+                    <div class="main-form-label text-danger">
+                        <ValidationMessage For="@(() => SectionModel.End)" />
+                    </div>
+                </div>@*<form-group*@
+                <div class="form-group">
+                    <label class="control-label">Конференция</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-sea-crayola"><i class="fas fa-users"></i></span>
+                        </div>
+                        <InputSelect class="custom-select form-control" @bind-Value="@SectionModel.ConferenceId">
+                            @foreach (var conf in _conferences)
+                            {
+                                <option value="@conf.Key">@conf.Value</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <span asp-validation-for="ConferenceId" class="text-danger"></span>
+                </div>@*<form-group*@
+                <div class="form-row form-group d-flex align-items-end mt-4">
+                    <DeleteWithConfirmComponent ConfirmedChanged="Delete"
+                                                Message="Вы действительно хотите удалить секцию? Все события секции будут удалены."
+                                                ActionName="Удалить"
+                                                Width="380px"></DeleteWithConfirmComponent>
+                    <input type="submit" class="btn btn-success" value="Сохранить изменения" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <img class="w-75 need-hide" src="@UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_edit.png")">
+        </div>
+    </div>
+</EditForm>
+@code {
+    [Parameter] public SectionViewModel SectionModel { get; set; }
+    private List<KeyValuePair<int, string>> _conferences;
+    private HttpClient _client;
+
+    protected override void OnInitialized()
+    {
+        _conferences = new List<KeyValuePair<int, string>>();
+        _client = ClientService.Client;
+
+        foreach (var conf in DbService.GetUserConferences(SectionModel.UserId, SectionModel.UserRoles)) // разнести данные юзера и секции
+        {
+            _conferences.Add(new KeyValuePair<int, string>(conf.Id, conf.Name));
+        }
+    }
+
+    private async Task EditSection()
+    {
+        var model = JsonConvert.SerializeObject(SectionModel);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("api/sections/edit", content);
+        var responseResult = await response.Content.ReadAsStringAsync();
+        var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+        ResolveStatusCode(statusCode, "Account/Index");
+    }
+
+    public async Task Delete(bool isSureToDelete)
+    {
+        if (isSureToDelete)
+        {
+            var model = JsonConvert.SerializeObject(SectionModel);
+            var content = new StringContent(model, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("api/sections/delete", content);
+            var responseResult = await response.Content.ReadAsStringAsync();
+            var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+            ResolveStatusCode(statusCode, "Account/Index");
+        }
+    }
+
+    private void ResolveStatusCode(HttpStatusCode statusCode, string okUrl)
+    {
+        if (statusCode != HttpStatusCode.OK)
+        {
+            NavigationManager.NavigateTo($"error/{(int)statusCode}", true);
+
+            return;
+        }
+
+        NavigationManager.NavigateTo($"{okUrl}", true); // в кабинет
+    }
+}

@@ -219,8 +219,9 @@ namespace MathEvent.Controllers
                 Location = performance.Location,
                 Info = performance.Creator.Info,
                 Type = performance.Type,
-                SectionId = performance.SectionId
+                SectionId = performance.SectionId,
             };
+
 
             if (_signInManager.IsSignedIn(User))
             {
@@ -230,6 +231,8 @@ namespace MathEvent.Controllers
                 var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == id && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
 
                 card.IsSubscribed = ap != null;
+                card.UserId = user.Id;
+                card.UserRoles = (List<string>) await _userManager.GetRolesAsync(user);
             }
 
             return View(card);
@@ -267,6 +270,7 @@ namespace MathEvent.Controllers
                 KeyWords = performance.KeyWords,
                 Start = performance.Start,
                 UserId = user.Id,
+                UserRoles = (List<string>) await _userManager.GetRolesAsync(user),
                 Location = performance.Location,
                 SectionId = performance.SectionId,
                 DataPath = performance.DataPath

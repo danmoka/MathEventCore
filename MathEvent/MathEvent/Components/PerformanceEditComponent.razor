@@ -10,18 +10,16 @@
 @using MathEvent.Helpers
 @using BlazorInputFile
 @using MathEvent.Helpers.File
+@using System.Net 
 
 @inject NavigationManager NavigationManager
 @inject DbService DbService
 @inject ClientService ClientService
 @inject IFileUpload FileUpload
 
-<div class="main-form-label text-danger" hidden="@(_showErrorMessage)">
-    <p>@_message</p>
-</div>
 <EditForm Model="@PerformanceModel" OnValidSubmit="EditPerformance">
     <FluentValidator></FluentValidator>
-    <div class="row d-flex align-items-top">
+    <div class="row d-flex align-items-top mb-4">
         <div class="col-md-5">
             <div class="container input-bg-image rounded py-3 mb-2">
                 <div class="form-group">
@@ -87,8 +85,6 @@
                                @bind:format="yyyy-MM-ddTHH:mm"
                                type="datetime-local" disabled="@State" />
                     </div>
-                    <p>дата фальш: @_date</p>
-                    <p>дата настоящая: @PerformanceModel.Start</p>
                     <div class="main-form-label text-danger">
                         <ValidationMessage For="@(() => PerformanceModel.Start)" />
                     </div>
@@ -113,14 +109,16 @@
                     </div>
                 </div>@*<form-group*@
                 <div class="form-group">
-                    <div class="d-flex align-items-top justify-content-between">
                         <div class="upload-btn-wrapper">
                             <button class="upload-btn btn-block">@_fileName</button>
                             <InputFile OnChange="@HandleFile"></InputFile>
                         </div>
-                        <DeleteProceendings PerformanceId="@PerformanceModel.Id"></DeleteProceendings>
-                    </div>
                     <p>.pdf .doc .docx .tex</p>
+                    <DeleteWithConfirmComponent ConfirmedChanged="DeleteProceedings"
+                                                    Message="Вы действительно хотите удалить материалы?"
+                                                    ActionName="Удалить материалы"
+                                                    Class="btn btn-block btn-danger"
+                                                    Width="380px"></DeleteWithConfirmComponent>
                 </div>
             </div>
         </div>
@@ -157,9 +155,6 @@
 @code {
     [Parameter]
     public PerformanceViewModel PerformanceModel { get; set; }
-    private List<KeyValuePair<int, string>> _sections { get; set; }
-    private bool _showErrorMessage = true;
-    private string _message = string.Empty;
     private bool _state;
     public bool State
     {
@@ -170,11 +165,6 @@
             HandleCheck(_state);
         }
     }
-    private HttpClient _client;
-    private IFileListEntry _image;
-    private string _imageName = "Загрузить афишу события";
-    private IFileListEntry _file;
-    private string _fileName = "Загрузить материалы";
     private DateTime _date;
     public DateTime Date
     {
@@ -195,9 +185,17 @@
             HandleSelect(_sectionId);
         }
     }
+    private List<KeyValuePair<int, string>> _sections;
+    private IFileListEntry _image;
+    private string _imageName;
+    private IFileListEntry _file;
+    private string _fileName;
+    private HttpClient _client;
 
     protected override void OnInitialized()
     {
+        _imageName = "Загрузить афишу события";
+        _fileName = "Загрузить материалы";
         _client = ClientService.Client;
         Date = PerformanceModel.Start;
 
@@ -220,12 +218,53 @@
         }
     }
 
-    public void Delete(bool isSureToDelete)
+    private async Task EditPerformance()
+    {
+        var model = JsonConvert.SerializeObject(PerformanceModel);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("api/performances/edit", content);
+        var responseResult = await response.Content.ReadAsStringAsync();
+        var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+
+        if (statusCode == HttpStatusCode.OK)
+        {
+            if (_image != null)
+            {
+                await FileUpload.UploadImageForPerformanceAsync(_image, PerformanceModel.Id);
+            }
+
+            if (_file != null)
+            {
+                await FileUpload.UploadFileAsync(_file, PerformanceModel.Id);
+            }
+        }
+
+        ResolveStatusCode(statusCode, "Account/Index");
+    }
+
+    private async Task Delete(bool isSureToDelete)
     {
         if (isSureToDelete)
         {
-            // удаление
-            NavigationManager.NavigateTo($"Performance/Index", true);
+            var model = JsonConvert.SerializeObject(PerformanceModel);
+            var content = new StringContent(model, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("api/performances/delete", content);
+            var responseResult = await response.Content.ReadAsStringAsync();
+            var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+            ResolveStatusCode(statusCode, "Account/Index");
+        }
+    }
+
+    private async Task DeleteProceedings(bool isSureToDelete)
+    {
+        if (isSureToDelete)
+        {
+            var model = JsonConvert.SerializeObject(PerformanceModel);
+            var content = new StringContent(model, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"/api/Proceedings/deleteProceedings", content);
+            var responseResult = await response.Content.ReadAsStringAsync();
+            var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+            ResolveStatusCode(statusCode, null);
         }
     }
 
@@ -304,35 +343,6 @@
         }
     }
 
-    private async Task EditPerformance()
-    {
-        var model = JsonConvert.SerializeObject(PerformanceModel);
-        var content = new StringContent(model, Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync("api/performances/edit", content);
-
-        var responseResult = await response.Content.ReadAsStringAsync();
-
-        _message = responseResult;
-        _showErrorMessage = string.IsNullOrEmpty(responseResult);
-
-        if (!_showErrorMessage)
-        {
-            return;
-        }
-
-        if (_image != null)
-        {
-            await FileUpload.UploadImageForPerformanceAsync(_image, PerformanceModel.Id);
-        }
-
-        if (_file != null)
-        {
-            await FileUpload.UploadFileAsync(_file, PerformanceModel.Id);
-        }
-
-        NavigationManager.NavigateTo($"Performance/Index", true);
-    }
-
     private bool IsImage(IFileListEntry file)
     {
         var ext = Path.GetExtension(file.Name);
@@ -348,5 +358,20 @@
                string.Compare(ext, ".docx", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".tex", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".pdf", StringComparison.Ordinal) == 0;
+    }
+
+    private void ResolveStatusCode(HttpStatusCode statusCode, string okUrl)
+    {
+        if (statusCode != HttpStatusCode.OK)
+        {
+            NavigationManager.NavigateTo($"error/{(int) statusCode}", true);
+
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(okUrl))
+        {
+            NavigationManager.NavigateTo($"{okUrl}", true);
+        }
     }
 }

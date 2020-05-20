@@ -65,4 +65,74 @@ namespace MathEvent.Helpers.FluentValidator
             return false;
         }
     }
+
+    public class SectionValidator : AbstractValidator<SectionViewModel>
+    {
+        private readonly ApplicationContext _db;
+
+        public SectionValidator(ApplicationContext db)
+        {
+            _db = db;
+
+            RuleFor(s => s.Name)
+                .NotNull().WithMessage("Введите название")
+                .NotEmpty().WithMessage("Название не должно быть пустым")
+                .MinimumLength(3).WithMessage("Минимальная длина 3 символа")
+                .MaximumLength(300).WithMessage("Маскимальная длина 300 символов");
+
+            RuleFor(s => s.Location)
+                .NotNull().WithMessage("Введите адрес")
+                .NotEmpty().WithMessage("Адрес не должн быть пустым")
+                .MinimumLength(3).WithMessage("Минимальная длина 3 символа")
+                .MaximumLength(400).WithMessage("Маскимальная длина 400 символов");
+
+            RuleFor(s => s.Start)
+                .NotNull().WithMessage("Введите дату")
+                .NotEmpty().WithMessage("Дата не должна быть пустой")
+                .GreaterThan(DateTime.Now).WithMessage("Дата меньше текущей")
+                .Must((fooArgs, start) => IsCorrectStart(fooArgs.ConferenceId, start)).WithMessage("Дата начала выходит за рамки конференции")
+                .Must((fooArgs, start) => IsStartLessThanEnd(fooArgs.End, start)).WithMessage("Дата начала больше даты конца");
+
+            RuleFor(s => s.End)
+                .NotNull().WithMessage("Введите дату")
+                .NotEmpty().WithMessage("Дата не должна быть пустой")
+                .GreaterThan(DateTime.Now).WithMessage("Дата меньше текущей")
+                .Must((fooArgs, end) => IsCorrectEnd(fooArgs.ConferenceId, end)).WithMessage("Дата конца выходит за рамки конференции")
+                .Must((fooArgs, end) => IsEndGreaterThanStart(fooArgs.Start, end)).WithMessage("Дата конца меньше даты начала");
+        }
+
+        private bool IsStartLessThanEnd(DateTime end, DateTime start)
+        {
+            return start < end;
+        }
+
+        private bool IsCorrectStart(int conferenceId, DateTime start)
+        {
+            var conference = _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefault();
+
+            if (conference != null)
+            {
+                return start > conference.Start && start < conference.End;
+            }
+
+            return false;
+        }
+
+        private bool IsEndGreaterThanStart(DateTime start, DateTime end)
+        {
+            return end > start;
+        }
+
+        private bool IsCorrectEnd(int conferenceId, DateTime end)
+        {
+            var conference = _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefault();
+
+            if (conference != null)
+            {
+                return end > conference.Start && end < conference.End;
+            }
+
+            return false;
+        }
+    }
 }

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MathEvent.Helpers;
+using System.IO;
+using System.Net;
 
 namespace MathEvent.Controllers
 {
@@ -25,8 +27,13 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("edit")]
-        public async Task<string> EditPerformance(PerformanceViewModel performanceModel)
+        public async Task<HttpStatusCode> EditPerformance(PerformanceViewModel performanceModel)
         {
+            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId, performanceModel.UserRoles))
+            {
+                return HttpStatusCode.Forbidden;
+            }
+
             var performance = await _db.Performances.Where(p => p.Id == performanceModel.Id).SingleOrDefaultAsync();
 
             if (performance != null)
@@ -36,7 +43,7 @@ namespace MathEvent.Controllers
                 performance.Annotation = performanceModel.Annotation;
                 performance.KeyWords = performanceModel.KeyWords;
                 performance.Start = performanceModel.Start;
-                performance.CreatorId = performanceModel.UserId;
+                //performance.CreatorId = performanceModel.UserId;
                 performance.Location = performanceModel.Location;
                 performance.SectionId = performanceModel.SectionId;
                 performance.DataPath = performanceModel.DataPath;
@@ -44,17 +51,16 @@ namespace MathEvent.Controllers
                 _db.Performances.Update(performance);
                 await _db.SaveChangesAsync();
 
-                return string.Empty;
+                return HttpStatusCode.OK;
             }
 
-            return "Не удалось обновить событие";
+            return HttpStatusCode.NotFound;
         }
 
         [HttpPost]
         [Route("create")]
         public async Task<PerformanceViewModel> CreatePerformance(PerformanceViewModel performanceModel)
         {
-
             var performance = new Performance
             {
                 Name = performanceModel.Name,
@@ -75,11 +81,6 @@ namespace MathEvent.Controllers
                 {
                     performance.DataPath = section.DataPath;
                 }
-                else
-                {
-                    //хотя такого не должно быть
-                    performance.DataPath = performanceModel.UserDataPath;
-                }
             }
             else
             {
@@ -95,8 +96,6 @@ namespace MathEvent.Controllers
             {
                 _db.Performances.Remove(performance);
                 await _db.SaveChangesAsync();
-
-                //ошибка
             }
 
             performance.DataPath = performanceDataPath;
@@ -106,6 +105,81 @@ namespace MathEvent.Controllers
             performanceModel.Id = performance.Id;
 
             return performanceModel;
+        }
+
+        [HttpPost]
+        [Route("delete")]
+        public async Task<HttpStatusCode> DeletePerformance(PerformanceViewModel performanceModel)
+        {
+            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId, performanceModel.UserRoles))
+            {
+                return HttpStatusCode.Forbidden;
+            }
+
+            var performance = await _db.Performances.Where(p => p.Id == performanceModel.Id).SingleOrDefaultAsync();
+
+            if (performance != null)
+            {
+                var path = UserDataPathWorker.GetRootPath(performance.DataPath);
+
+                _db.Performances.Remove(performance);
+                await _db.SaveChangesAsync();
+
+                if (Directory.Exists(path))
+                {
+                    try
+                    {
+                        Directory.Delete(path, true);
+                    }
+                    catch
+                    {
+                        return HttpStatusCode.NotFound;
+                    }
+
+                }
+
+                return HttpStatusCode.OK;
+            }
+
+            return HttpStatusCode.NotFound;
+
+
+        }
+
+        private async Task<bool> IsPerformanceModifier(int performanceId, string userId, List<string> userRoles)
+        {
+            var performance = await _db.Performances.Where(p => p.Id == performanceId)
+                .Include(s => s.Section)
+                .SingleOrDefaultAsync();
+
+            var isModifier = false;
+
+            if (performance == null)
+            {
+                return isModifier;
+            }
+
+            if (performance.CreatorId == userId)
+            {
+                isModifier |= true;
+            }
+
+            if (performance.Section != null &&
+                performance.Section.ManagerId == userId)
+            {
+                isModifier |= true;
+            }
+
+            foreach (var role in userRoles)
+            {
+                if (role == "admin")
+                {
+                    isModifier |= true;
+                    break;
+                }
+            }
+
+            return isModifier;
         }
     }
 }

@@ -9,6 +9,7 @@ using MathEvent.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MathEvent.Models.ViewModels;
+using System.Net;
 
 namespace MathEvent.Controllers
 {
@@ -23,28 +24,28 @@ namespace MathEvent.Controllers
             _db = db;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("deleteProceedings")]
-        public async Task DeleteProceedings(int performanceId)
+        public async Task<HttpStatusCode> DeleteProceedings(PerformanceViewModel performanceModel)
         {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
+            var performance = await _db.Performances.Where(p => p.Id == performanceModel.Id).SingleOrDefaultAsync();
 
             if (performance == null)
             {
-                return;
+                return HttpStatusCode.NotFound;
             }
 
-            var file = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.ProceedingsName));
+            var filePath = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(performance.DataPath, performance.ProceedingsName));
 
-            if (System.IO.File.Exists(file))
+            if (System.IO.File.Exists(filePath))
             {
                 try
                 {
-                    System.IO.File.Delete(file);
+                    System.IO.File.Delete(filePath);
                 }
                 catch
                 {
-                    return;
+                    return HttpStatusCode.NotFound;
                 }
 
                 performance.ProceedingsName = null;
@@ -53,7 +54,7 @@ namespace MathEvent.Controllers
             _db.Performances.Update(performance);
             await _db.SaveChangesAsync();
 
-            return;
+            return HttpStatusCode.OK;
         }
 
         [HttpGet]
@@ -62,16 +63,16 @@ namespace MathEvent.Controllers
         {
             var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
 
-            if (performance != null)
+            if (performance == null)
             {
-                var filePath = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(
-                    performance.DataPath, performance.ProceedingsName));
-                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-
-                return File(fileBytes, "application/pdf", performance.ProceedingsName);
+                return NotFound();
             }
 
-            return BadRequest();
+            var filePath = UserDataPathWorker.GetRootPath(UserDataPathWorker.ConcatPaths(
+                    performance.DataPath, performance.ProceedingsName));
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+
+            return File(fileBytes, "application/pdf", performance.ProceedingsName);
         }
 
         [HttpPost]
@@ -94,13 +95,17 @@ namespace MathEvent.Controllers
                 isExist = true;
             }
 
-            var isModifier = IsPerformanceModifier(performance, performanceViewModel.UserId);
+            var isModifier = await IsPerformanceModifier(performance.Id, performanceViewModel.UserId, performanceViewModel.UserRoles);
 
             return isModifier && isExist;
         }
 
-        private bool IsPerformanceModifier(Performance performance, string userId)
+        private async Task<bool> IsPerformanceModifier(int performanceId, string userId, List<string> userRoles)
         {
+            var performance = await _db.Performances.Where(p => p.Id == performanceId)
+                .Include(s => s.Section)
+                .SingleOrDefaultAsync();
+
             var isModifier = false;
 
             if (performance == null)
@@ -113,10 +118,19 @@ namespace MathEvent.Controllers
                 isModifier |= true;
             }
 
-            if (performance.Section != null && 
+            if (performance.Section != null &&
                 performance.Section.ManagerId == userId)
             {
                 isModifier |= true;
+            }
+
+            foreach (var role in userRoles)
+            {
+                if (role == "admin")
+                {
+                    isModifier |= true;
+                    break;
+                }
             }
 
             return isModifier;

@@ -10,6 +10,7 @@
 @using MathEvent.Helpers
 @using BlazorInputFile
 @using MathEvent.Helpers.File
+@using System.Net
 
 @inject NavigationManager NavigationManager
 @inject DbService DbService
@@ -53,7 +54,6 @@
                 {
                     <div class="form-group">
                         <div class="form-check">
-                            @*<InputCheckbox @bind-Value="@_state" @onchange="@(() => HandleCheck(new ChangeEventArgs { Value = _state}))"></InputCheckbox>*@
                             <input class="form-check-input" type="checkbox" @bind="@State"/>
                             <label class="form-check-label">Установить данные секции</label>
                         </div>
@@ -73,8 +73,6 @@
                         </div>
                     </div>@*<form-group*@
                 }
-                @*<input type="datetime-local" @bind="@PerformanceModel.Start" format-value="yyyy-MM-dd HH:mm" />
-                <input type="datetime-local" @bind-value="@PerformanceModel.Start" format-value="yyyy-MM-dd HH:mm" />*@
                 <div class="form-group">
                     <label class="control-label">Начало</label>
                     <div class="input-group">
@@ -85,11 +83,7 @@
                                @bind="@Date"
                                @bind:format="yyyy-MM-ddTHH:mm"
                                type="datetime-local" disabled="@State"/>
-                        @*<input class="form-control" type="datetime-local" @bind="@Date" />*@
-                        @*<input class="form-control" type="time" @onchange="@HandleStartTime" />*@
                     </div>
-                    <p>дата фальш: @_date</p>
-                    <p>дата настоящая: @PerformanceModel.Start</p>
                     <div class="main-form-label text-danger">
                         <ValidationMessage For="@(() => PerformanceModel.Start)" />
                     </div>
@@ -110,7 +104,7 @@
                 <div class="form-group">
                     <div class="upload-btn-wrapper">
                         <button class="upload-btn btn-block">@_imageName</button>
-                        <InputFile OnChange="@HandleFile"></InputFile>
+                        <InputFile OnChange="@HandleImage"></InputFile>
                     </div>
                 </div>@*<form-group*@
             </div>
@@ -149,13 +143,10 @@
         get { return _state; }
         set
         {
-            _state = (bool) value;
+            _state = (bool)value;
             HandleCheck(_state);
         }
     }
-    private HttpClient _client;
-    private IFileListEntry _file;
-    private string _imageName = "Загрузить афишу события";
     private DateTime _date;
     public DateTime Date
     {
@@ -176,12 +167,18 @@
             HandleSelect(_sectionId);
         }
     }
+    private HttpClient _client;
+    private IFileListEntry _image;
+    private string _imageName;
+
 
     protected override void OnInitialized()
     {
         PerformanceModel.Type = "Доклад";
         Date = DateTime.Now;
         _client = ClientService.Client;
+        _image = null;
+        _imageName = "Загрузить афишу события";
         State = false;
         SectionId = -1;
         _sections = new List<KeyValuePair<int, string>>();
@@ -194,19 +191,41 @@
         }
     }
 
+    private async Task CreatePerformance()
+    {
+        var model = JsonConvert.SerializeObject(PerformanceModel);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("api/performances/create", content);
+        var statusCode = response.StatusCode;
+
+        if (statusCode == HttpStatusCode.OK)
+        {
+            var responseResult = await response.Content.ReadAsStringAsync();
+            var performance = (JsonConvert.DeserializeObject<PerformanceViewModel>(responseResult));
+
+            if (performance != null)
+            {
+                var performanceId = performance.Id;
+                await FileUpload.UploadImageForPerformanceAsync(_image, performanceId);
+            }
+        }
+
+        ResolveStatusCode(statusCode, "Performance/Index");
+    }
+
     private void HandleStartDate(DateTime value)
     {
         PerformanceModel.Start = value;
     }
 
-    private void HandleFile(IFileListEntry[] files)
+    private void HandleImage(IFileListEntry[] files)
     {
         var file = files.FirstOrDefault();
 
         if (IsImage(file))
         {
-            _file = files.FirstOrDefault();
-            _imageName = _file.Name;
+            _image = files.FirstOrDefault();
+            _imageName = _image.Name;
         }
         else
         {
@@ -250,32 +269,8 @@
                 var section = DbService.GetSection((int)PerformanceModel.SectionId);
                 PerformanceModel.Location = section.Location;
                 Date = section.Start;
-                //HandleStartTime(ed);
             }
         }
-    }
-
-    private async Task CreatePerformance()
-    {
-        var model = JsonConvert.SerializeObject(PerformanceModel);
-        var content = new StringContent(model, Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync("api/performances/create", content);
-
-        var responseResult = await response.Content.ReadAsStringAsync();
-        var performanceId = (JsonConvert.DeserializeObject<PerformanceViewModel>(responseResult)).Id; // можно тут отследить, если не модель, значит ошибка
-
-        await FileUpload.UploadImageForPerformanceAsync(_file, performanceId);
-
-        NavigationManager.NavigateTo($"Performance/Index", true);
-
-        //var stream = new MemoryStream();
-        //await _file.Data.CopyToAsync(stream);
-        //var imageContent = new MultipartFormDataContent
-        //{
-        //    {new ByteArrayContent(stream.GetBuffer()), _file.Name, _file.Name }
-        //};
-
-        //var imageResponse = await _client.PostAsync("api/performances/upload", imageContent);
     }
 
     private bool IsImage(IFileListEntry file)
@@ -284,5 +279,20 @@
         return string.Compare(ext, ".png", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".jpeg", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".jpg", StringComparison.Ordinal) == 0;
+    }
+
+    private void ResolveStatusCode(HttpStatusCode statusCode, string okUrl)
+    {
+        if (statusCode != HttpStatusCode.OK)
+        {
+            NavigationManager.NavigateTo($"error/{(int)statusCode}", true);
+
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(okUrl))
+        {
+            NavigationManager.NavigateTo($"{okUrl}", true);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MathEvent.Models.ViewModels
@@ -47,6 +48,7 @@ namespace MathEvent.Models.ViewModels
         [Display(Name = "Секция")]
         public int? SectionId { get; set; }
         public string UserId { get; set; }
+        public List<string> UserRoles { get; set; }
         public string UserDataPath { get; set; }
 
         public string CreatorName { get; set; }
