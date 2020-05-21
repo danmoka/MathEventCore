@@ -48,12 +48,13 @@ namespace MathEvent.Controllers
         public FilterCardViewModel FilterBySerchString(
             [Bind("Cards", "FilterParameter")] FilterCardViewModel filterViewModel)
         {
+            // подумать как лучше сделать если null значения: либо запретить в модели, но + ещё и тут смотреть на всякий случай
             var searchString = filterViewModel.FilterPatameter;
             filterViewModel.Cards = filterViewModel.Cards.Where(c =>
-            c.Name.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 ||
-            c.KeyWords.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 ||
+            c.Name.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 || 
+            (c.KeyWords != null && c.KeyWords.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0) ||
             c.Location.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 ||
-            c.CreatorName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            (c.CreatorName != null &&c.CreatorName.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)).ToList();
 
             return filterViewModel;
         }
