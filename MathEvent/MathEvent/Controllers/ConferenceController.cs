@@ -149,7 +149,25 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            return View(conference);
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var conferenceModel = new ConferenceViewModel
+            {
+                Id = conference.Id,
+                Name = conference.Name,
+                Location = conference.Location,
+                Start = conference.Start,
+                End = conference.End,
+                UserId = user.Id,
+                UserRoles = (List<string>)await _userManager.GetRolesAsync(user)
+            };
+
+            return View(conferenceModel);
         }
 
         [HttpPost]

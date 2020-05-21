@@ -1,0 +1,125 @@
+﻿@using MathEvent.Models.ViewModels
+@using System.IO
+@using System.Net.Http
+@using System.Text
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using Newtonsoft.Json
+@using MathEvent.Helpers.Db
+@using MathEvent.Helpers
+@using System.Net
+@using MathEvent.Helpers.StatusCode
+
+@inject NavigationManager NavigationManager
+@inject DbService DbService
+@inject ClientService ClientService
+@inject IStatusCodeResolver  StatusCodeResolver
+
+    <EditForm Model="@ConferenceModel" OnValidSubmit="EditConference">
+        <FluentValidator></FluentValidator>
+        <div class="row d-flex align-items-top mb-4">
+            <div class="col-md-6">
+                <div class="container input-bg-image rounded py-3">
+                    <div class="form-group">
+                        <label class="control-label">Название</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text text-sea-crayola"><i class="fas fa-tags"></i></span>
+                            </div>
+                            <input class="form-control" @bind="@ConferenceModel.Name" 
+                                   placeholder="Международная молодежная научно-практическая конференция «Путь в науку»"/>
+                        </div>
+                        <div class="main-form-label text-danger">
+                            <ValidationMessage For="@(() => ConferenceModel.Name)" />
+                        </div>
+                    </div>@*<form-group*@
+                    <div class="form-group">
+                        <label class="control-label">Адрес</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text text-sea-crayola"><i class="fas fa-map-marked-alt"></i></span>
+                            </div>
+                            <input class="form-control" @bind="@ConferenceModel.Location" placeholder="Ярославль, ул. Союзная 141, ауд. 441"/>
+                        </div>
+                        <div class="main-form-label text-danger">
+                            <ValidationMessage For="@(() => ConferenceModel.Location)" />
+                        </div>
+                    </div>@*<form-group*@
+                    <div class="form-group">
+                        <label class="control-label">Начало</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text text-sea-crayola"><i class="fas fa-clock"></i></span>
+                            </div>
+                            <input class="form-control"
+                                   @bind="@ConferenceModel.Start"
+                                   @bind:format="yyyy-MM-ddTHH:mm"
+                                   type="datetime-local" />
+                        </div>
+                        <div class="main-form-label text-danger">
+                            <ValidationMessage For="@(() => ConferenceModel.Start)" />
+                        </div>
+                    </div>@*<form-group*@
+                    <div class="form-group">
+                        <label class="control-label">Конец</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text text-sea-crayola"><i class="far fa-clock"></i></span>
+                            </div>
+                            <input class="form-control"
+                                   @bind="@ConferenceModel.End"
+                                   @bind:format="yyyy-MM-ddTHH:mm"
+                                   type="datetime-local" />
+                        </div>
+                        <div class="main-form-label text-danger">
+                            <ValidationMessage For="@(() => ConferenceModel.End)" />
+                        </div>
+                    </div>@*<form-group*@
+                    <div class="form-row form-group d-flex align-items-end mt-4">
+                        <DeleteWithConfirmComponent ConfirmedChanged="Delete"
+                                                    Message="Вы действительно хотите удалить конференцию? Все события и секции этой конференции будут удалены."
+                                                    ActionName="Удалить"
+                                                    Width="380px"></DeleteWithConfirmComponent>
+                        <input type="submit" class="btn btn-success" value="Сохранить изменения" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img class="w-75 need-hide" src="@UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_edit.png")">
+            </div>
+        </div>
+    </EditForm>
+
+@code {
+    [Parameter] public ConferenceViewModel ConferenceModel { get; set; }
+    private HttpClient _client;
+
+    protected override void OnInitialized()
+    {
+        _client = ClientService.Client;
+    }
+
+    public async Task EditConference()
+    {
+        var model = JsonConvert.SerializeObject(ConferenceModel);
+        var content = new StringContent(model, Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("api/conferences/edit", content);
+        var responseResult = await response.Content.ReadAsStringAsync();
+        var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+        StatusCodeResolver.ResolveStatusCode(statusCode, "Account/Index");
+    }
+
+    public async Task Delete(bool isSureToDelete)
+    {
+        if (isSureToDelete)
+        {
+            var model = JsonConvert.SerializeObject(ConferenceModel);
+            var content = new StringContent(model, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("api/conferences/delete", content);
+            var responseResult = await response.Content.ReadAsStringAsync();
+            var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+            StatusCodeResolver.ResolveStatusCode(statusCode, "Account/Index");
+        }
+    }
+}

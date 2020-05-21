@@ -46,7 +46,7 @@ namespace MathEvent.Controllers
                 //performance.CreatorId = performanceModel.UserId;
                 performance.Location = performanceModel.Location;
                 performance.SectionId = performanceModel.SectionId;
-                performance.DataPath = performanceModel.DataPath;
+                //performance.DataPath = performanceModel.DataPath;
 
                 _db.Performances.Update(performance);
                 await _db.SaveChangesAsync();

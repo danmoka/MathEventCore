@@ -9,10 +9,12 @@
 @using MathEvent.Helpers.Db
 @using MathEvent.Helpers
 @using System.Net
+@using MathEvent.Helpers.StatusCode
 
 @inject NavigationManager NavigationManager
 @inject DbService DbService
 @inject ClientService ClientService
+@inject IStatusCodeResolver  StatusCodeResolver
 
 <EditForm Model="@SectionModel" OnValidSubmit="EditSection">
     <FluentValidator></FluentValidator>
@@ -125,7 +127,7 @@
         var response = await _client.PostAsync("api/sections/edit", content);
         var responseResult = await response.Content.ReadAsStringAsync();
         var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
-        ResolveStatusCode(statusCode, "Account/Index");
+        StatusCodeResolver.ResolveStatusCode(statusCode, "Account/Index");
     }
 
     public async Task Delete(bool isSureToDelete)
@@ -137,19 +139,7 @@
             var response = await _client.PostAsync("api/sections/delete", content);
             var responseResult = await response.Content.ReadAsStringAsync();
             var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
-            ResolveStatusCode(statusCode, "Account/Index");
+            StatusCodeResolver.ResolveStatusCode(statusCode, "Account/Index");
         }
-    }
-
-    private void ResolveStatusCode(HttpStatusCode statusCode, string okUrl)
-    {
-        if (statusCode != HttpStatusCode.OK)
-        {
-            NavigationManager.NavigateTo($"error/{(int)statusCode}", true);
-
-            return;
-        }
-
-        NavigationManager.NavigateTo($"{okUrl}", true); // в кабинет
     }
 }

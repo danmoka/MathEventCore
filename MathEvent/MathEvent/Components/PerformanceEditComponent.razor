@@ -11,11 +11,13 @@
 @using BlazorInputFile
 @using MathEvent.Helpers.File
 @using System.Net 
+@using MathEvent.Helpers.StatusCode 
 
 @inject NavigationManager NavigationManager
 @inject DbService DbService
 @inject ClientService ClientService
 @inject IFileUpload FileUpload
+@inject IStatusCodeResolver StatusCodeResolver
 
 <EditForm Model="@PerformanceModel" OnValidSubmit="EditPerformance">
     <FluentValidator></FluentValidator>
@@ -239,7 +241,7 @@
             }
         }
 
-        ResolveStatusCode(statusCode, "Account/Index");
+        StatusCodeResolver.ResolveStatusCode(statusCode, "Account/Index");
     }
 
     private async Task Delete(bool isSureToDelete)
@@ -251,7 +253,7 @@
             var response = await _client.PostAsync("api/performances/delete", content);
             var responseResult = await response.Content.ReadAsStringAsync();
             var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
-            ResolveStatusCode(statusCode, "Account/Index");
+            StatusCodeResolver.ResolveStatusCode(statusCode, "Account/Index");
         }
     }
 
@@ -264,7 +266,7 @@
             var response = await _client.PostAsync($"/api/Proceedings/deleteProceedings", content);
             var responseResult = await response.Content.ReadAsStringAsync();
             var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
-            ResolveStatusCode(statusCode, null);
+            StatusCodeResolver.ResolveStatusCode(statusCode, null);
         }
     }
 
@@ -358,20 +360,5 @@
                string.Compare(ext, ".docx", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".tex", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".pdf", StringComparison.Ordinal) == 0;
-    }
-
-    private void ResolveStatusCode(HttpStatusCode statusCode, string okUrl)
-    {
-        if (statusCode != HttpStatusCode.OK)
-        {
-            NavigationManager.NavigateTo($"error/{(int) statusCode}", true);
-
-            return;
-        }
-
-        if (!string.IsNullOrEmpty(okUrl))
-        {
-            NavigationManager.NavigateTo($"{okUrl}", true);
-        }
     }
 }

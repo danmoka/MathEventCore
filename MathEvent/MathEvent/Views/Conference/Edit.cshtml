@@ -1,5 +1,6 @@
-﻿@model MathEvent.Models.Conference
-@using MathEvent.Helpers 
+﻿@model MathEvent.Models.ViewModels.ConferenceViewModel
+@using MathEvent.Helpers
+@using MathEvent.Components 
 
 <div class="row">
     <div class="col form-group">
@@ -10,75 +11,7 @@
 <div class="row">
     <a class="main-link h5" asp-controller="Account" asp-action="Index"><< В кабинет</a>
 </div>
-<form asp-controller="Conference" asp-action="Edit" method="post" enctype="multipart/form-data">
-    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
-    <div class="row d-flex align-items-top">
-        <div class="col-md-6">
-            <div class="container input-bg-image rounded py-3">
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text text-sea-crayola"><i class="fas fa-tags"></i></span>
-                        </div>
-                        <input asp-for="Name" class="form-control" />
-                    </div>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>@*<form-group*@
-                <div class="form-group">
-                    <label asp-for="Location" class="control-label"></label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text text-sea-crayola"><i class="fas fa-map-marked-alt"></i></span>
-                        </div>
-                        <input asp-for="Location" class="form-control" />
-                    </div>
-                    <span asp-validation-for="Location" class="text-danger"></span>
-                </div>@*<form-group*@
-                <div class="form-group">
-                    <label asp-for="Start" class="control-label"></label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text text-sea-crayola"><i class="fas fa-clock"></i></span>
-                        </div>
-                        <input asp-for="Start" class="form-control" />
-                    </div>
-                    <span asp-validation-for="Start" class="text-danger"></span>
-                </div>@*<form-group*@
-                <div class="form-group">
-                    <label asp-for="End" class="control-label"></label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text text-sea-crayola"><i class="far fa-clock"></i></span>
-                        </div>
-                        <input asp-for="End" class="form-control" />
-                    </div>
-                    <span asp-validation-for="End" class="text-danger"></span>
-                </div>@*<form-group*@
-                <div class="form-group">
-                    <input asp-for="Id" class="form-control" type="hidden" />
-                    <span asp-validation-for="Id" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input asp-for="ManagerId" class="form-control" type="hidden" />
-                    <span asp-validation-for="ManagerId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input asp-for="DataPath" class="form-control" type="hidden" />
-                    <span asp-validation-for="DataPath" class="text-danger"></span>
-                </div>
-                <div class="form-row form-group d-flex align-items-end mt-4">
-                    <a class="btn btn-danger ml-1 mr-4" onclick="return confirm('Вы точно хотите удалить?')"
-                       asp-route-conferenceId="@Model.Id" asp-area="" asp-controller="Conference" asp-action="Delete">Удалить</a>
-                    <input type="submit" class="btn btn-success" value="Сохранить изменения" />
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <img class="w-75 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_edit.png"))">
-        </div>
-    </div>
-</form>
+@(await Html.RenderComponentAsync<ConferenceEditComponent>(RenderMode.ServerPrerendered, new { ConferenceModel = Model }))
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

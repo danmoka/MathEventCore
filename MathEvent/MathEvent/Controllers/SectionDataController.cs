@@ -44,7 +44,7 @@ namespace MathEvent.Controllers
                 section.End = sectionModel.End;
                 section.ConferenceId = sectionModel.ConferenceId;
                 //section.ManagerId = sectionModel.UserId; // надо ли?
-                section.DataPath = sectionModel.DataPath;
+                //section.DataPath = sectionModel.DataPath;
 
                 _db.Sections.Update(section);
                 await _db.SaveChangesAsync();
@@ -64,7 +64,7 @@ namespace MathEvent.Controllers
                 return HttpStatusCode.Forbidden;
             }
 
-            var section = await _db.Sections.Where(p => p.Id == sectionModel.Id).SingleOrDefaultAsync();
+            var section = await _db.Sections.Where(s => s.Id == sectionModel.Id).SingleOrDefaultAsync();
 
             if (section != null)
             {

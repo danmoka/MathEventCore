@@ -16,6 +16,7 @@ using MathEvent.Helpers.File;
 using MathEvent.Models.ViewModels;
 using MathEvent.Helpers.FluentValidator;
 using FluentValidation;
+using MathEvent.Helpers.StatusCode;
 
 namespace MathEvent
 {
@@ -57,8 +58,10 @@ namespace MathEvent
             services.AddWkhtmltopdf(Configuration["wkhtmltopdf"]);
             services.AddTransient<DbService>();
             services.AddScoped<IFileUpload, FileUpload>();
+            services.AddScoped<IStatusCodeResolver, StatusCodeResolver>();
             services.AddTransient<IValidator<PerformanceViewModel>, PerformanceValidator>();
             services.AddTransient<IValidator<SectionViewModel>, SectionValidator>();
+            services.AddTransient<IValidator<ConferenceViewModel>, ConferenceValidator>();
             //services.AddHttpClient();
             //// Server Side Blazor doesn't register HttpClient by default
             //if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
