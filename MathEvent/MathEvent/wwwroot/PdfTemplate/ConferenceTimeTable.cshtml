@@ -16,7 +16,7 @@
     <div class="container" style="padding-left: 30px; margin-top: 30px;">
         <h3>Секция: @sec.Name</h3>
             <p>
-                Начало: <strong>@sec.Start.ToString("dd/MM/yyyy HH:mm")</strong>
+                Начало: <strong>@sec.Start.ToString("dd/MM/yyyy HH:mm")</strong><br />
                  Конец: <strong>@sec.End.ToString("dd/MM/yyyy HH:mm")</strong><br />
                 Где: @sec.Location
             </p>
@@ -30,11 +30,11 @@
                         <h3>@performance.Type: @performance.Name</h3>
                         @if (performance.Start != sec.Start)
                         {
-                            <p>Начало: <strong>@performance.Start.ToString("dd/MM/yyyy HH:mm")</strong></p>
+                            <span>Начало: <strong>@performance.Start.ToString("dd/MM/yyyy HH:mm")</strong></span><br />
                         }
                         @if (performance.Location != sec.Location)
                         {
-                            <p>Где: @performance.Location</p>
+                            <span>Где: @performance.Location</span>
                         }
                     </div>
                 }

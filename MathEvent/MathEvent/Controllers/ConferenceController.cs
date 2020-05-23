@@ -31,7 +31,8 @@ namespace MathEvent.Controllers
                 .Where(c => c.Start.Month >= DateTime.Now.Month)
                 .Include(c => c.Manager)
                 .Include(c => c.Sections)
-                .ThenInclude(s => s.Performances).ToListAsync();
+                .ThenInclude(s => s.Performances)
+                .ThenInclude(p => p.Creator).ToListAsync();
 
             var conferenceViewModels = new List<ConferenceViewModel>();
 

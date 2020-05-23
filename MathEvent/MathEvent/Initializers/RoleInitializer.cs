@@ -20,31 +20,7 @@ namespace MathEvent.Initializers
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
 
-            await InitializeAdminAccount(userManager);
-        }
-
-        private static async Task InitializeAdminAccount(UserManager<ApplicationUser> userManager)
-        {
-            const string adminEmail = "admin@admin.ru";
-            const string adminPassword = "!1Qwerty";
-
-            if (await userManager.FindByNameAsync(adminEmail) == null)
-            {
-                var admin = new ApplicationUser { Name = "Админ", Surname = "Админ", Email = adminEmail, UserName = adminEmail };
-                admin.DataPath = UserDataPathWorker.CreateNewUserPath(admin.Id);
-                var result = await userManager.CreateAsync(admin, adminPassword);
-
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(admin, "admin");
-
-                    if (!UserDataPathWorker.CreateDirectory(admin.DataPath))
-                    {
-                        await userManager.DeleteAsync(admin);
-                    }
-                }
-
-            }
+            //await InitializeAdminAccount(userManager);
         }
     }
 }

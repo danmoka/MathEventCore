@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
@@ -214,9 +216,27 @@ namespace MathEvent.Controllers
                 return View("ForgotPasswordConfirmation");
             }
 
+            var body = string.Empty;
+
+            using (StreamReader sr = new StreamReader(
+                UserDataPathWorker.GetRootPath(
+                    UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetEmailTemplatesDirectory(), "EmailConfirmMessage.html"))))
+            {
+                body = await sr.ReadToEndAsync();
+            }
+
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            var message = new Message(new string[] { model.Email }, "Reset Password", $"Для сброса пароля пройдите по ссылке: <a href='{callbackUrl}'>link</a>");
+
+            body = body.Replace("{Link}", callbackUrl);
+            body = body.Replace("{SocialMedia}", "в разработке");
+            body = body.Replace("{Content}", "Смена пароля");
+            body = body.Replace("{ButtonName}", "Сменить");
+            body = body.Replace("{MainText}", "Для смены пароля нажмите кнопку ниже");
+            body = body.Replace("{FailText}", "Если сменить пароль не удалось, то скопируйте и вставьте в браузер ссылку ниже:");
+            body = body.Replace("{Date}", DateTime.Now.Year.ToString());
+
+            var message = new Message(new string[] { model.Email }, "Смена пароля", body);
             await _emailSender.SendEmailAsync(message);
 
             return View("ForgotPasswordConfirmation");

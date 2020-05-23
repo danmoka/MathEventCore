@@ -28,7 +28,7 @@ namespace MathEvent.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int performanceId)
+        public async Task<IActionResult> Send(int performanceId)
         {
             var performance = await _db.Performances.Where(p => p.Id == performanceId)
                 .Include(p => p.Creator)
@@ -127,7 +127,11 @@ namespace MathEvent.Controllers
             }
 
             body = body.Replace("{Link}", callbackUrl);
-            body = body.Replace("{SocialMedia}", "https://ru-ru.facebook.com/");
+            body = body.Replace("{SocialMedia}", "в разработке");
+            body = body.Replace("{Content}", "Добро пожаловать!");
+            body = body.Replace("{ButtonName}", "Подтвердить email");
+            body = body.Replace("{MainText}", "Мы рады, что вы теперь с нами! Для подтвержения вашего Email нажмите кнопку ниже");
+            body = body.Replace("{FailText}", "Если подтвердить email не удалось, то скопируйте и вставьте в браузер ссылку ниже:");
             body = body.Replace("{Date}", DateTime.Now.Year.ToString());
 
             var emailMessage = new Message(new string[] { user.Email }, "Подтвердите аккаунт", body);

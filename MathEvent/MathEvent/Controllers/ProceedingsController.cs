@@ -124,12 +124,15 @@ namespace MathEvent.Controllers
                 isModifier |= true;
             }
 
-            foreach (var role in userRoles)
+            if (userRoles != null)
             {
-                if (role == "admin")
+                foreach (var role in userRoles)
                 {
-                    isModifier |= true;
-                    break;
+                    if (role == "admin")
+                    {
+                        isModifier |= true;
+                        break;
+                    }
                 }
             }
 
