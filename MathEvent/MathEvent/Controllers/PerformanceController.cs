@@ -218,12 +218,36 @@ namespace MathEvent.Controllers
                 PosterName = performance.PosterName,
                 Traffic = performance.Traffic,
                 Location = performance.Location,
-                Info = performance.Creator.Info,
+                UserInfo = performance.Creator.Info,
                 Type = performance.Type,
                 SectionId = performance.SectionId,
                 IsSectionData = performance.IsSectionData
             };
 
+            if (performance.SectionId != null)
+            {
+                var section = await _db.Sections.Where(s => s.Id == performance.SectionId)
+                    .Include(s => s.Manager)
+                    .Include(s => s.Conference)
+                    .SingleOrDefaultAsync();
+
+                if (section != null)
+                {
+                    var sectionInfo = $"Событие находится на секции \"{section.Name}\" ({section.Start:dd/MM/yyyy HH:mm} - {section.End:dd/MM/yyyy HH:mm}). ";
+
+                    if (section.Manager != null)
+                    {
+                        sectionInfo += $"Создатель секции - {section.Manager.Name} {section.Manager.Surname}. ";
+                    }
+
+                    if (section.Conference != null)
+                    {
+                        sectionInfo += $"Конференция \"{section.Conference.Name}\".";
+                    }
+
+                    card.SectionInfo = sectionInfo;
+                }
+            }
 
             if (_signInManager.IsSignedIn(User))
             {

@@ -46,6 +46,10 @@
         </div>
         <div class="card-body">
             <p>@Model.Annotation</p>
+            @if (!string.IsNullOrEmpty(Model.SectionInfo))
+            {
+                <p>@Model.SectionInfo</p>
+            }
         </div>
     </div>
     <div class="card">
@@ -62,9 +66,9 @@
         </div>
         <div class="card-body">
             <p>@Model.CreatorName</p>
-            @if (Model.Info != null)
+            @if (!string.IsNullOrEmpty(Model.UserInfo))
             {
-                <p>@Model.Info</p>
+                <p>@Model.UserInfo</p>
             }
         </div>
     </div>

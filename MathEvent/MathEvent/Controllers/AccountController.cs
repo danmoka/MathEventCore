@@ -171,7 +171,7 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Name", "Surname", "Info", "ReturnUrl")]AccountViewModel model)
+        public async Task<IActionResult> Edit([Bind("Name", "Surname", "UserInfo", "ReturnUrl")]AccountViewModel model)
         {
             if (!ModelState.IsValid)
             {

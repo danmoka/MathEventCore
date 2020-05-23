@@ -27,7 +27,7 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> SignUp(
             [Bind("Id", "Name", "Annotation", "KeyWords", "Location", "Start",
             "CreatorName", "DataPath", "PosterName", "Traffic", "UserId",
-            "IsSubscribed", "Type", "Info")]PerformanceViewModel model)
+            "IsSubscribed", "Type", "UserInfo")]PerformanceViewModel model)
         {
             var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId).SingleOrDefaultAsync();
 

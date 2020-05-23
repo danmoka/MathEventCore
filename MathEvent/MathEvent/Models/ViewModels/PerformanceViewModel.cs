@@ -50,20 +50,19 @@ namespace MathEvent.Models.ViewModels
 
         [HiddenInput(DisplayValue = false)]
         public bool IsSectionData { get; set; }
-
-        public string UserId { get; set; }
-        public List<string> UserRoles { get; set; }
-        public string UserDataPath { get; set; }
-
-        public string CreatorName { get; set; }
+        public string PosterName { get; set; }
+        public int Traffic { get; set; }
+        public string DataPath { get; set; }
+        public string SectionInfo { get; set; }
 
         /// <summary>
         /// Информация о создателе
         /// </summary>
-        public string Info { get; set; }
-        public string DataPath { get; set; }
-        public string PosterName { get; set; }
-        public int Traffic { get; set; }
+        public string UserInfo { get; set; }
+        public string CreatorName { get; set; }
+        public string UserId { get; set; }
+        public List<string> UserRoles { get; set; }
+        public string UserDataPath { get; set; }
         
         public bool IsSubscribed { get; set; }
         
