@@ -47,6 +47,10 @@ namespace MathEvent.Models.ViewModels
         [HiddenInput(DisplayValue = false)]
         [Display(Name = "Секция")]
         public int? SectionId { get; set; }
+
+        [HiddenInput(DisplayValue = false)]
+        public bool IsSectionData { get; set; }
+
         public string UserId { get; set; }
         public List<string> UserRoles { get; set; }
         public string UserDataPath { get; set; }

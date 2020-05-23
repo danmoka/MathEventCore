@@ -196,6 +196,7 @@
 
     protected override void OnInitialized()
     {
+        State = PerformanceModel.IsSectionData;
         _imageName = "Загрузить афишу события";
         _fileName = "Загрузить материалы";
         _client = ClientService.Client;
@@ -308,6 +309,8 @@
 
     private void HandleCheck(bool value)
     {
+        PerformanceModel.IsSectionData = value;
+
         if (value)
         {
             var sectionId = PerformanceModel.SectionId;

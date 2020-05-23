@@ -45,8 +45,18 @@ namespace MathEvent.Controllers
                 section.ConferenceId = sectionModel.ConferenceId;
                 //section.ManagerId = sectionModel.UserId; // надо ли?
                 //section.DataPath = sectionModel.DataPath;
-
                 _db.Sections.Update(section);
+
+                var performances = await _db.Performances.Where(p => p.SectionId == section.Id && p.IsSectionData).ToListAsync();
+
+                foreach(var performance in performances)
+                {
+                    performance.Location = section.Location;
+                    performance.Start = section.Start;
+                }
+
+                _db.Performances.UpdateRange(performances);
+
                 await _db.SaveChangesAsync();
 
                 return HttpStatusCode.OK;

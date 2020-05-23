@@ -56,7 +56,8 @@ namespace MathEvent.Controllers
                     PosterName = performance.PosterName,
                     Traffic = performance.Traffic,
                     Type = performance.Type,
-                    Location = performance.Location
+                    Location = performance.Location,
+                    IsSectionData = performance.IsSectionData
                 };
 
                 cards.Add(card);
@@ -220,6 +221,7 @@ namespace MathEvent.Controllers
                 Info = performance.Creator.Info,
                 Type = performance.Type,
                 SectionId = performance.SectionId,
+                IsSectionData = performance.IsSectionData
             };
 
 
@@ -273,7 +275,8 @@ namespace MathEvent.Controllers
                 UserRoles = (List<string>) await _userManager.GetRolesAsync(user),
                 Location = performance.Location,
                 SectionId = performance.SectionId,
-                DataPath = performance.DataPath
+                DataPath = performance.DataPath,
+                IsSectionData = performance.IsSectionData
             };
 
             return View(performanceModel);
@@ -345,7 +348,6 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int performanceId)
         {
-            //todo: возможность удалять админу
             var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
 
             if (performance == null)

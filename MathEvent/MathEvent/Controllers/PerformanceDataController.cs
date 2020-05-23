@@ -47,6 +47,7 @@ namespace MathEvent.Controllers
                 performance.Location = performanceModel.Location;
                 performance.SectionId = performanceModel.SectionId;
                 //performance.DataPath = performanceModel.DataPath;
+                performance.IsSectionData = performanceModel.IsSectionData;
 
                 _db.Performances.Update(performance);
                 await _db.SaveChangesAsync();
@@ -70,7 +71,8 @@ namespace MathEvent.Controllers
                 CreatorId = performanceModel.UserId,
                 Start = performanceModel.Start,
                 Location = performanceModel.Location,
-                SectionId = performanceModel.SectionId
+                SectionId = performanceModel.SectionId,
+                IsSectionData = performanceModel.IsSectionData
             };
 
             if (performance.SectionId != null)

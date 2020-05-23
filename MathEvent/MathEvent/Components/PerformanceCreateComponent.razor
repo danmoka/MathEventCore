@@ -181,7 +181,7 @@
         _client = ClientService.Client;
         _image = null;
         _imageName = "Загрузить афишу события";
-        State = false;
+        State = PerformanceModel.IsSectionData;
         SectionId = -1;
         _sections = new List<KeyValuePair<int, string>>();
         _sections.Add(new KeyValuePair<int, string>(-1, "Без секции"));
@@ -238,6 +238,8 @@
 
     private void HandleCheck(bool value)
     {
+        PerformanceModel.IsSectionData = value;
+
         if (value)
         {
             var sectionId = PerformanceModel.SectionId;

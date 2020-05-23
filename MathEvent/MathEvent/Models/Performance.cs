@@ -54,6 +54,8 @@ namespace MathEvent.Models
         [Display(Name = "Секция")]
         public Section Section { get; set; }
 
+        [HiddenInput(DisplayValue = false)]
+        public bool IsSectionData { get; set; }
 
         [ForeignKey("ApplicationUser")]
         [HiddenInput(DisplayValue = false)]
