@@ -24,7 +24,7 @@
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-4">
-                    @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "У нас пока нет событий... Станьте первым!"}))
+                    @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "У нас пока нет событий... Станьте первым!" }))
                 </div>
             </div>
         </div>
@@ -33,12 +33,18 @@
     {
         <div id="carouselIndicators" class="carousel slide pl-3 pr-3" data-ride="carousel">
             <ol class="carousel-indicators">
-                <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselIndicators" data-slide-to="1"></li>
-                <li data-target="#carouselIndicators" data-slide-to="2"></li>
+                @{
+                    var i = 0;
+                }
+                @while(i < Model.Count())
+                {
+                    var active = i == 0 ? "active" : "";
+                    <li data-target="#carouselIndicators" data-slide-to="@i" class="@active"></li>
+                    i++;
+                }
             </ol>
             <div class="carousel-inner">
-                @{var i = 0;
+                @{i = 0;
                     foreach (var item in Model)
                     {
                         var active = i == 0 ? "active" : "";
