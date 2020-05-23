@@ -27,6 +27,13 @@ namespace MathEvent.Helpers.File
             {
                 if (file != null)
                 {
+                    var imageToBeDeleted = UserDataPathWorker.GetRootPath(Path.Combine(performance.DataPath, performance.PosterName));
+
+                    if (System.IO.File.Exists(imageToBeDeleted))
+                    {
+                        System.IO.File.Delete(imageToBeDeleted);
+                    }
+
                     var fileName = file.Name;
 
                     if (fileName.Length > 30)
