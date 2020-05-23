@@ -48,6 +48,7 @@
                                 }
                                 else
                                 {
+                                    var i = 0;
                                     @foreach (var section in conference.SectionViewModels)
                                     {
                                         var sectionName = section.Name;
@@ -81,9 +82,14 @@
                                                 }
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-2">
-                                            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_left.png"))">
-                                        </div>
+                                        if (i % 3 == 0)
+                                        {
+                                            <div class="col-md-3 mb-2">
+                                                <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_left.png"))">
+                                            </div>
+                                        }
+                                                        
+                                        i++;
                                     }
                                 }
                             }
