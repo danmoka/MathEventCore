@@ -46,7 +46,22 @@ namespace MathEvent.Helpers.FluentValidator
                 .NotNull().WithMessage("Введите дату")
                 .NotEmpty().WithMessage("Дата не должна быть пустой")
                 .GreaterThan(DateTime.Now).WithMessage("Дата меньше текущей")
-                .Must((fooArgs, start) => IsCorrectStart(fooArgs.SectionId, start)).WithMessage("Дата выходит за рамки секции");
+                .Must((fooArgs, start) => IsCorrectStart(fooArgs.SectionId, start)).WithMessage((fooArgs, start) => CreateErrorMessage(fooArgs.SectionId, start));
+        }
+
+        private string CreateErrorMessage(int? sectionId, DateTime start)
+        {
+            if (sectionId != null)
+            {
+                var section = _db.Sections.Where(s => s.Id == sectionId).SingleOrDefault();
+
+                if (section != null)
+                {
+                    return $"Дата выходит за рамки секции: {section.Start} - {section.End}";
+                }             
+            }
+
+            return "Дата выходит за рамки секции";
         }
 
         private bool IsCorrectStart(int? sectionId, DateTime start)
@@ -91,15 +106,27 @@ namespace MathEvent.Helpers.FluentValidator
                 .NotNull().WithMessage("Введите дату")
                 .NotEmpty().WithMessage("Дата не должна быть пустой")
                 .GreaterThan(DateTime.Now).WithMessage("Дата меньше текущей")
-                .Must((fooArgs, start) => IsCorrectStart(fooArgs.ConferenceId, start)).WithMessage("Дата начала выходит за рамки конференции")
+                .Must((fooArgs, start) => IsCorrectStart(fooArgs.ConferenceId, start)).WithMessage((fooArgs, start) => CreateErrorMessage(fooArgs.ConferenceId, start))
                 .Must((fooArgs, start) => IsStartLessThanEnd(fooArgs.End, start)).WithMessage("Дата начала больше даты конца");
 
             RuleFor(s => s.End)
                 .NotNull().WithMessage("Введите дату")
                 .NotEmpty().WithMessage("Дата не должна быть пустой")
                 .GreaterThan(DateTime.Now).WithMessage("Дата меньше текущей")
-                .Must((fooArgs, end) => IsCorrectEnd(fooArgs.ConferenceId, end)).WithMessage("Дата конца выходит за рамки конференции")
+                .Must((fooArgs, end) => IsCorrectEnd(fooArgs.ConferenceId, end)).WithMessage((fooArgs, end) => CreateErrorMessage(fooArgs.ConferenceId, end))
                 .Must((fooArgs, end) => IsEndGreaterThanStart(fooArgs.Start, end)).WithMessage("Дата конца меньше даты начала");
+        }
+
+        private string CreateErrorMessage(int conferenceId, DateTime time)
+        {
+            var conference = _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefault();
+
+            if (conference != null)
+            {
+                return $"Дата выходит за рамки конференции: {conference.Start} - {conference.End}";
+            }
+
+            return "Дата выходит за рамки конференции";
         }
 
         private bool IsStartLessThanEnd(DateTime end, DateTime start)

@@ -230,7 +230,7 @@ namespace MathEvent.Controllers
 
             if (start < conference.Start || start > conference.End)
             {
-                return Json($"Дата {start} выходит за временные рамки конференции {conference.Name}.");
+                return Json($"Дата {start} выходит за временные рамки конференции {conference.Name}: {conference.Start} - {conference.End}.");
             }  
             else if (start < DateTime.Now)
             {
@@ -251,7 +251,7 @@ namespace MathEvent.Controllers
 
             if (end < conference.Start || end > conference.End)
             {
-                return Json($"Дата {end} выходит за временные рамки конференции {conference.Name}.");
+                return Json($"Дата {end} выходит за временные рамки конференции {conference.Name}: {conference.Start} - {conference.End}.");
             }
             else if (end < DateTime.Now)
             {
