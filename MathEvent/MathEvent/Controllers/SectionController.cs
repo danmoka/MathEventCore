@@ -39,10 +39,15 @@ namespace MathEvent.Controllers
 
             if (user == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             var userConferences = await _db.Conferences.Where(c => c.ManagerId == user.Id).ToListAsync();
+
+            if (userConferences == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
 
             if (userConferences.Count() == 0)
             {
@@ -58,45 +63,45 @@ namespace MathEvent.Controllers
         [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(
-            [Bind("Name", "Location", "Start", "End", "ConferenceId")] Section section)
+            [Bind("Name", "Location", "Start", "End", "ConferenceId")] Section model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("Error400", "Error");
+                return View(model);
             }
 
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
-            section.ManagerId = user.Id;
-            await _db.Sections.AddAsync(section);
+            model.ManagerId = user.Id;
+            await _db.Sections.AddAsync(model);
             await _db.SaveChangesAsync();
 
-            var conference = await _db.Conferences.Where(c => c.Id == section.ConferenceId).SingleOrDefaultAsync();
+            var conference = await _db.Conferences.Where(c => c.Id == model.ConferenceId).SingleOrDefaultAsync();
 
             if (conference == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             var sectionDataPath = conference.DataPath;
             
-            if (!UserDataPathWorker.CreateSubDirectory(ref sectionDataPath, section.Id.ToString()))
+            if (!UserDataPathWorker.CreateSubDirectory(ref sectionDataPath, model.Id.ToString()))
             {
-                _db.Sections.Remove(section);
+                _db.Sections.Remove(model);
                 await _db.SaveChangesAsync();
 
                 return RedirectToAction("Error500", "Error");
             }
             
-            section.DataPath = sectionDataPath;
+            model.DataPath = sectionDataPath;
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Conference");
         }
 
         [HttpGet]
@@ -108,19 +113,19 @@ namespace MathEvent.Controllers
 
             if (section == null)
             {
-                return RedirectToAction("Error500", "Error");
-            }
-
-            if (!await IsSectionModifier(sectionId))
-            {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
+            }
+
+            if (!await IsSectionModifier(sectionId))
+            {
+                return RedirectToAction("Error403", "Error");
             }
 
             var sectionModel = new SectionViewModel
@@ -132,9 +137,17 @@ namespace MathEvent.Controllers
                 Location = section.Location,
                 ConferenceId = section.ConferenceId,
                 DataPath = section.DataPath,
-                UserId = user.Id,
-                UserRoles = (List<string>) await _userManager.GetRolesAsync(user)
+                UserId = user.Id
             };
+
+            var userRoles = (List<string>)await _userManager.GetRolesAsync(user);
+
+            if (userRoles == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
+            sectionModel.UserRoles = userRoles;
 
             return View(sectionModel);
         }

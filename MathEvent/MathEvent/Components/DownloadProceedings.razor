@@ -7,6 +7,7 @@
 @using MathEvent.Helpers
 @using MathEvent.Models.ViewModels
 @using System.Text
+@using System.Net; 
 
 @inject ClientService ClientService
 @inject NavigationManager NavigationManager
@@ -24,9 +25,13 @@
         var model = JsonConvert.SerializeObject(Performance);
         var content = new StringContent(model, Encoding.UTF8, "application/json");
         var response = await _client.PostAsync("api/Proceedings/isFileExists", content);
-        var result = await response.Content.ReadAsStringAsync();
 
-        _isActive = JsonConvert.DeserializeObject<bool>(result);
+
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            _isActive = JsonConvert.DeserializeObject<bool>(result);
+        }
     }
 
     protected void Download()

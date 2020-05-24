@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Bcpg;
 
 namespace MathEvent.Controllers
 {
@@ -108,9 +107,9 @@ namespace MathEvent.Controllers
                     //return RedirectToAction("Index", "Home");
                 }
 
-
-                foreach (var error in result.Errors)
-                    ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError(string.Empty, "Неудачная попытка регистрации");
+                //foreach (var error in result.Errors)
+                //    ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
@@ -157,13 +156,16 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Edit()
         {
+            var model = new AccountViewModel();
             var user = await _userManager.GetUserAsync(User);
-            var model = new AccountViewModel
+
+            if (user != null)
             {
-                Name = user.Name,
-                Surname = user.Surname,
-                Info = user.Info
-            };
+                model.Name = user.Name;
+                model.Surname = user.Surname;
+                model.UserInfo = user.Info;
+            }
+            
 
             return View(model);
         }
@@ -173,23 +175,22 @@ namespace MathEvent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind("Name", "Surname", "UserInfo", "ReturnUrl")]AccountViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Error500", "Error");
+                var user = await _userManager.GetUserAsync(User);
+                
+                if (user != null)
+                {
+                    user.Name = model.Name;
+                    user.Surname = model.Surname;
+                    user.Info = model.UserInfo;
+                    await _userManager.UpdateAsync(user);
+
+                    return RedirectToAction("Index", "Account");
+                }   
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            // если user null?
-
-            user.Name = model.Name;
-            user.Surname = model.Surname;
-            user.Info = model.Info;
-            await _userManager.UpdateAsync(user);
-
-            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                return Redirect(model.ReturnUrl);
-
-            return RedirectToAction("Index", "Account");
+            return View(model);
         }
 
 
@@ -207,10 +208,13 @@ namespace MathEvent.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("Error500", "Error");
+                ModelState.AddModelError(string.Empty, "Проверьте введенные данные");
+
+                return View(model);
             }
 
             var user = await _userManager.FindByEmailAsync(model.Email);
+
             if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
             {
                 return View("ForgotPasswordConfirmation");
@@ -246,8 +250,7 @@ namespace MathEvent.Controllers
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
-        {
-            
+        {  
             if (code == null)
             {
                 return RedirectToAction("Error404", "Error");
@@ -283,10 +286,11 @@ namespace MathEvent.Controllers
                 return View("ResetPasswordConfirmation");
             }
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            ModelState.AddModelError(string.Empty, "Не удалось сменить пароль");
+            //foreach (var error in result.Errors)
+            //{
+            //    ModelState.AddModelError(string.Empty, error.Description);
+            //}
 
             return View(model);
         }

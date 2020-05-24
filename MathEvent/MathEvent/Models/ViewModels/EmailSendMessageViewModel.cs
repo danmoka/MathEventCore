@@ -11,7 +11,7 @@ namespace MathEvent.Models.ViewModels
     {
         [Required(ErrorMessage = "Не удается определить событие")]
         [HiddenInput(DisplayValue = false)]
-        public int PerformanceId { get; set; }
+        public int? PerformanceId { get; set; }
 
         [Required(ErrorMessage = "Не удается определить организатора")]
         [HiddenInput(DisplayValue = false)]

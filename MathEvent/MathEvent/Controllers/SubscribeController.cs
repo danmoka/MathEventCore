@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +21,7 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public async Task<IActionResult> SignUp(
+        public async Task<HttpStatusCode> SignUp(
             [Bind("Id", "Name", "Annotation", "KeyWords", "Location", "Start",
             "CreatorName", "DataPath", "PosterName", "Traffic", "UserId",
             "IsSubscribed", "Type", "UserInfo")]PerformanceViewModel model)
@@ -44,7 +41,7 @@ namespace MathEvent.Controllers
 
                 if (performance == null)
                 {
-                    return RedirectToAction("Error500", "Error");
+                    return HttpStatusCode.NotFound;
                 }
 
                 performance.Traffic++;
@@ -58,7 +55,7 @@ namespace MathEvent.Controllers
 
                 if (performance == null)
                 {
-                    return RedirectToAction("Error500", "Error");
+                    return HttpStatusCode.NotFound;
                 }
 
                 performance.Traffic--; // если меньше 0 получается, то это ошибка проектирования (наверное) где-то, в бд стоит check(>= 0). Но будет он отрабатывать - неизвестно. Но это не его проблемы, решать эту проблему надо тут.
@@ -67,7 +64,7 @@ namespace MathEvent.Controllers
                 await _db.SaveChangesAsync();
             }
 
-            return Ok();
+            return HttpStatusCode.OK;
         }
     }
 }

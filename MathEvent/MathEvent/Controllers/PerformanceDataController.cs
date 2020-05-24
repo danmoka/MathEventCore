@@ -36,26 +36,26 @@ namespace MathEvent.Controllers
 
             var performance = await _db.Performances.Where(p => p.Id == performanceModel.Id).SingleOrDefaultAsync();
 
-            if (performance != null)
+            if (performance == null)
             {
-                performance.Type = performanceModel.Type;
-                performance.Name = performanceModel.Name;
-                performance.Annotation = performanceModel.Annotation;
-                performance.KeyWords = performanceModel.KeyWords;
-                performance.Start = performanceModel.Start;
-                //performance.CreatorId = performanceModel.UserId;
-                performance.Location = performanceModel.Location;
-                performance.SectionId = performanceModel.SectionId;
-                //performance.DataPath = performanceModel.DataPath;
-                performance.IsSectionData = performanceModel.IsSectionData;
-
-                _db.Performances.Update(performance);
-                await _db.SaveChangesAsync();
-
-                return HttpStatusCode.OK;
+                return HttpStatusCode.NotFound;
             }
 
-            return HttpStatusCode.NotFound;
+            performance.Type = performanceModel.Type;
+            performance.Name = performanceModel.Name;
+            performance.Annotation = performanceModel.Annotation;
+            performance.KeyWords = performanceModel.KeyWords;
+            performance.Start = performanceModel.Start;
+            //performance.CreatorId = performanceModel.UserId;
+            performance.Location = performanceModel.Location;
+            performance.SectionId = performanceModel.SectionId;
+            //performance.DataPath = performanceModel.DataPath;
+            performance.IsSectionData = performanceModel.IsSectionData;
+
+            _db.Performances.Update(performance);
+            await _db.SaveChangesAsync();
+
+            return HttpStatusCode.OK;
         }
 
         [HttpPost]
@@ -79,10 +79,12 @@ namespace MathEvent.Controllers
             {
                 var section = await _db.Sections.Where(s => s.Id == performance.SectionId).SingleOrDefaultAsync();
 
-                if (section != null)
+                if (section == null)
                 {
-                    performance.DataPath = section.DataPath;
+                    throw new ArgumentNullException("ops...");
                 }
+
+                performance.DataPath = section.DataPath;
             }
             else
             {
@@ -98,6 +100,8 @@ namespace MathEvent.Controllers
             {
                 _db.Performances.Remove(performance);
                 await _db.SaveChangesAsync();
+
+                throw new Exception("ops...");
             }
 
             performance.DataPath = performanceDataPath;
@@ -120,32 +124,30 @@ namespace MathEvent.Controllers
 
             var performance = await _db.Performances.Where(p => p.Id == performanceModel.Id).SingleOrDefaultAsync();
 
-            if (performance != null)
+            if (performance == null)
             {
-                var path = UserDataPathWorker.GetRootPath(performance.DataPath);
-
-                _db.Performances.Remove(performance);
-                await _db.SaveChangesAsync();
-
-                if (Directory.Exists(path))
-                {
-                    try
-                    {
-                        Directory.Delete(path, true);
-                    }
-                    catch
-                    {
-                        return HttpStatusCode.NotFound;
-                    }
-
-                }
-
-                return HttpStatusCode.OK;
+                return HttpStatusCode.NotFound;
             }
 
-            return HttpStatusCode.NotFound;
+            var path = UserDataPathWorker.GetRootPath(performance.DataPath);
 
+            _db.Performances.Remove(performance);
+            await _db.SaveChangesAsync();
 
+            if (Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+            }
+
+            return HttpStatusCode.OK;
         }
 
         private async Task<bool> IsPerformanceModifier(int performanceId, string userId, List<string> userRoles)

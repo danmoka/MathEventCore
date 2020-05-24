@@ -3,11 +3,29 @@
 <div class="row">
     <div class="col form-group p-0 w-0 text-center">
         <h3 class="mb-2">@Comment</h3>
-        <img class="w-75 need-hide" src="@UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_sad.png")">
+        <img class="w-75 @ImageClass" src="@UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), @ImageName)">
     </div>
 </div>
 
 @code {
     [Parameter]
     public string Comment { get; set; } = "Ничего не найдено";
+
+    [Parameter]
+    public string ImageClass { get; set; } = "need-hide";
+
+    [Parameter]
+    public string ImageName
+    {
+        get { return _imageName; }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                _imageName = value;
+            }
+        }
+    }
+
+    private string _imageName = "planet_sad.png";
 }

@@ -11,12 +11,15 @@
 @using System.Text
 @using Microsoft.AspNetCore.Identity
 @using MathEvent.Models
+@using MathEvent.Helpers.StatusCode
+@using System.Net
 
 @inject NavigationManager NavigationManager
 @inject ClientService ClientService
+@inject IStatusCodeResolver StatusCodeResolver
 
 <h6>Участников: @Count()</h6>
-<input type="button" class="btn btn-block btn-success" @onclick="SignUp" value="@CurrentButtonValue()"/>
+<input type="button" class="btn btn-block btn-success" @onclick="SignUp" value="@CurrentButtonValue()" />
 
 @code {
     [Parameter] public PerformanceViewModel Card { get; set; }
@@ -39,6 +42,9 @@
         var model = JsonConvert.SerializeObject(Card);
         var content = new StringContent(model, Encoding.UTF8, "application/json");
         var response = await _client.PostAsync("api/Subscribe/signup", content);
+        var responseResult = await response.Content.ReadAsStringAsync();
+        var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
+        StatusCodeResolver.ResolveStatusCode(statusCode, null);
 
         if (!Card.IsSubscribed)
         {

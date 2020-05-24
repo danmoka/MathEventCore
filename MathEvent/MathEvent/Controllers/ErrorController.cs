@@ -8,26 +8,32 @@ namespace MathEvent.Controllers
         [Route("error/404")]
         public IActionResult Error404()
         {
-            return Content("404");
+            ViewBag.ImageName = "error404.png";
+            ViewBag.Message = "";
+            return View();
         }
 
-        [Route("error/400")]
-        public IActionResult Error400()
+        [Route("error/403")]
+        public IActionResult Error403()
         {
-            return Content("400");
+            ViewBag.ImageName = "error403.png";
+            ViewBag.Message = "";
+            return View();
         }
 
         [Route("error/500")]
         public IActionResult Error500()
         {
-            return Content("500");
+            ViewBag.ImageName = "error500.png";
+            ViewBag.Message = "";
+            return View();
         }
 
         [Route("error/{code:int}")]
         public IActionResult Error(int code)
         {
-            // handle different codes or just return the default error view
-            return Content($"default: {code}");
+            ViewBag.Message = $"Ошибка {code}";
+            return View();
         }
     }
 }

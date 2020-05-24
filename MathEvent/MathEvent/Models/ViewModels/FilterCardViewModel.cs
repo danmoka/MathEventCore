@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MathEvent.Models.ViewModels
 {
@@ -7,7 +8,10 @@ namespace MathEvent.Models.ViewModels
     /// </summary>
     public class FilterCardViewModel
     {
+        [Required]
         public List<PerformanceViewModel> Cards { get; set; }
+
+        [Required]
         public string FilterPatameter { get; set; }
     }
 }

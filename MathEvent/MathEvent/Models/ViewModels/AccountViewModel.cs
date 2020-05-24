@@ -20,7 +20,7 @@ namespace MathEvent.Models.ViewModels
 
         [StringLength(100, ErrorMessage = "Длина информации о вас должна быть от 3 до 300 символов", MinimumLength = 1)]
         [Display(Name = "О вас")]
-        public string Info { get; set; }
+        public string UserInfo { get; set; }
 
         [HiddenInput(DisplayValue = false)]
         public string ReturnUrl { get; set; }

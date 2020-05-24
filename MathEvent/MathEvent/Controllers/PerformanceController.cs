@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
@@ -35,10 +33,15 @@ namespace MathEvent.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Performance> performances = await _db.Performances
+            var performances = await _db.Performances
                 .Where(p => p.Start.Month >= DateTime.Now.Month)
                 .Include(p => p.Section)
                 .Include(p => p.Creator).ToListAsync();
+
+            if (performances == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
 
             var cards = new List<PerformanceViewModel>();
 
@@ -51,7 +54,6 @@ namespace MathEvent.Controllers
                     Annotation = performance.Annotation,
                     KeyWords = performance.KeyWords,
                     Start = performance.Start,
-                    CreatorName = $"{performance.Creator.Name} {performance.Creator.Surname}",
                     DataPath = performance.DataPath,
                     PosterName = performance.PosterName,
                     Traffic = performance.Traffic,
@@ -59,6 +61,11 @@ namespace MathEvent.Controllers
                     Location = performance.Location,
                     IsSectionData = performance.IsSectionData
                 };
+
+                if (performance.Creator != null)
+                {
+                    card.CreatorName = $"{performance.Creator.Name} {performance.Creator.Surname}";
+                }
 
                 cards.Add(card);
             }
@@ -74,7 +81,7 @@ namespace MathEvent.Controllers
 
             if (user == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             var performance = new PerformanceViewModel
@@ -203,7 +210,7 @@ namespace MathEvent.Controllers
 
             if (performance == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             var card = new PerformanceViewModel
@@ -213,16 +220,20 @@ namespace MathEvent.Controllers
                 Annotation = performance.Annotation,
                 KeyWords = performance.KeyWords,
                 Start = performance.Start,
-                CreatorName = $"{performance.Creator.Name} {performance.Creator.Surname}",
                 DataPath = performance.DataPath,
                 PosterName = performance.PosterName,
                 Traffic = performance.Traffic,
                 Location = performance.Location,
-                UserInfo = performance.Creator.Info,
                 Type = performance.Type,
                 SectionId = performance.SectionId,
                 IsSectionData = performance.IsSectionData
             };
+
+            if (performance.Creator != null)
+            {
+                card.CreatorName = $"{performance.Creator.Name} {performance.Creator.Surname}";
+                card.UserInfo = performance.Creator.Info;
+            }
 
             if (performance.SectionId != null)
             {
@@ -272,19 +283,19 @@ namespace MathEvent.Controllers
 
             if (performance == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             if (! await IsPerformanceModifier(performanceId))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Eror403", "Home");
             }
 
             var performanceModel = new PerformanceViewModel
@@ -296,22 +307,30 @@ namespace MathEvent.Controllers
                 KeyWords = performance.KeyWords,
                 Start = performance.Start,
                 UserId = user.Id,
-                UserRoles = (List<string>) await _userManager.GetRolesAsync(user),
                 Location = performance.Location,
                 SectionId = performance.SectionId,
                 DataPath = performance.DataPath,
                 IsSectionData = performance.IsSectionData
             };
 
+            var userRoles = (List<string>)await _userManager.GetRolesAsync(user);
+
+            if (userRoles == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
+            performanceModel.UserRoles = userRoles;
+
             return View(performanceModel);
         }
 
-        [HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id", "Name", "Location", "Type", "KeyWords", "Annotation", "Start", "SectionId",
-            "CreatorId", "DataPath", "PosterName", "Traffic")] Performance performance, IFormFile uploadedFile, IFormFile uploadedProceedings)
-        {
+        //[HttpPost]
+        //[Authorize]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit([Bind("Id", "Name", "Location", "Type", "KeyWords", "Annotation", "Start", "SectionId",
+        //    "CreatorId", "DataPath", "PosterName", "Traffic")] Performance performance, IFormFile uploadedFile, IFormFile uploadedProceedings)
+        //{
             //if (!ModelState.IsValid)
             //{
             //    return RedirectToAction("Error400", "Error");
@@ -359,8 +378,8 @@ namespace MathEvent.Controllers
             //_db.Entry(dbPerformance).State = EntityState.Modified;
             //await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Account");
-        }
+        //    return RedirectToAction("Index", "Account");
+        //}
 
         [HttpGet]
         public IActionResult About()
@@ -368,42 +387,42 @@ namespace MathEvent.Controllers
             return View();
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Delete(int performanceId)
-        {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
+        //[HttpGet]
+        //[Authorize]
+        //public async Task<IActionResult> Delete(int performanceId)
+        //{
+        //    var performance = await _db.Performances.Where(p => p.Id == performanceId).SingleOrDefaultAsync();
 
-            if (performance == null)
-            {
-                return RedirectToAction("Error500", "Error");
-            }
+        //    if (performance == null)
+        //    {
+        //        return RedirectToAction("Error404", "Error");
+        //    }
 
-            if (! await IsPerformanceModifier(performanceId))
-            {
-                return RedirectToAction("Error500", "Error");
-            }
+        //    if (! await IsPerformanceModifier(performanceId))
+        //    {
+        //        return RedirectToAction("Error500", "Error");
+        //    }
 
-            var path = UserDataPathWorker.GetRootPath(performance.DataPath);
+        //    var path = UserDataPathWorker.GetRootPath(performance.DataPath);
 
-            if (Directory.Exists(path))
-            {
-                try
-                {
-                    Directory.Delete(path, true);
-                }
-                catch
-                {
-                    return RedirectToAction("Error500", "Error");
-                }
+        //    if (Directory.Exists(path))
+        //    {
+        //        try
+        //        {
+        //            Directory.Delete(path, true);
+        //        }
+        //        catch
+        //        {
+        //            return RedirectToAction("Error500", "Error");
+        //        }
                 
-            }
+        //    }
             
-            _db.Performances.Remove(performance);
-            await _db.SaveChangesAsync();
+        //    _db.Performances.Remove(performance);
+        //    await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Account");
-        }
+        //    return RedirectToAction("Index", "Account");
+        //}
 
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckStartDate(DateTime start, int? sectionId)

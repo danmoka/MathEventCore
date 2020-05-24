@@ -28,6 +28,11 @@ namespace MathEvent.Controllers
         {
             var performances = await _db.Performances.ToListAsync();
 
+            if (performances == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
             return View(performances);
         }
 
@@ -59,31 +64,6 @@ namespace MathEvent.Controllers
             };
 
             return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Send([Bind("EmailTo", "Content", "Message")] AdminEmailViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Проверьте введенные данные");
-
-                return View(model);
-            }
-
-            model.Content = "Администрация MathEvent: " + model.Content;
-
-            try
-            {
-                var emailMessage = new Message(new string[] { model.EmailTo }, model.Content, model.Message);
-                await _emailSender.SendEmailAsync(emailMessage);
-            }
-            catch
-            {
-                return RedirectToAction("Error500", "Error");
-            }
-
-            return RedirectToAction("GetUsers", "Admin");
         }
     }
 }

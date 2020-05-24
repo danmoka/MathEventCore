@@ -36,15 +36,18 @@ namespace MathEvent.Controllers
 
             if (performance == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
-            var email = performance.Creator.UserName;
+            if (performance.Creator == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
 
             var emailSendMessageViewModel = new EmailSendMessageViewModel
             {
-                PerformanceId = performanceId,
-                CreatorEmail = email
+                PerformanceId = performance.Id,
+                CreatorEmail = performance.Creator.Email
             };
 
             return View(emailSendMessageViewModel);
@@ -54,17 +57,17 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> Send(
             [Bind("PerformanceId", "CreatorEmail", "UserEmail", "Message", "Content")] EmailSendMessageViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Проверьте введенные данные");
+
+                return View(model);
+            }
+
             var creatorEmail = model.CreatorEmail;
             var content = model.Content;
             var userEmail = model.UserEmail;
-
             var userMessage = model.Message;
-            var performance = await _db.Performances.Where(p => p.Id == model.PerformanceId).SingleOrDefaultAsync();
-
-            if (performance == null)
-            {
-                return RedirectToAction("Error500", "Error");
-            }
 
             var body = string.Empty;
 
@@ -75,7 +78,27 @@ namespace MathEvent.Controllers
                 body = await sr.ReadToEndAsync();
             }
 
-            body = body.Replace("{PerformanceName}", performance.Name);
+            if (model.PerformanceId != null)
+            {
+                var performance = await _db.Performances.Where(p => p.Id == model.PerformanceId).SingleOrDefaultAsync();
+
+                if (performance == null)
+                {
+                    return RedirectToAction("Error404", "Error");
+                }
+
+                body = body.Replace("{PerformanceName}", $"Событие \"{performance.Name}\"");
+            }
+            else
+            {
+                if (User.IsInRole("admin"))
+                {
+                    body = body.Replace("{PerformanceName}", $"Администрация MathEvent");
+                }
+
+                body = body.Replace("{PerformanceName}", "");
+            }
+
             body = body.Replace("{Content}", content);
             body = body.Replace("{Message}", userMessage);
             body = body.Replace("{UserEmail}", userEmail);
@@ -91,7 +114,51 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error500", "Error");
             }
 
+            if (User.IsInRole("admin"))
+            {
+                // переделать потом с передачей returnUrl
+                return RedirectToAction("GetUsers", "Admin");
+            }
+
             return RedirectToAction("Card", "Performance", new { id = model.PerformanceId });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AdminSend([Bind("EmailTo", "Content", "Message")] AdminEmailViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Проверьте введенные данные");
+
+                return View(model);
+            }
+
+            var admin = await _userManager.GetUserAsync(User);
+
+            if (admin == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
+            EmailSendMessageViewModel emailModel = new EmailSendMessageViewModel
+            {
+                PerformanceId = null,
+                Content = model.Content,
+                CreatorEmail = model.EmailTo,
+                Message = model.Message
+            };
+
+            var email = await _userManager.GetEmailAsync(admin);
+
+            if (email == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
+            emailModel.UserEmail = email;
+
+            return await Send(emailModel);
         }
 
         [HttpGet]
@@ -107,10 +174,16 @@ namespace MathEvent.Controllers
 
             if (user == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
             
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            if (code == null)
+            {
+                return RedirectToAction("Error500", "Error");
+            }
+
             var callbackUrl = Url.Action(
                 "ConfirmEmailResponse",
                 "Email",
@@ -152,7 +225,7 @@ namespace MathEvent.Controllers
 
             if (user == null)
             {
-                return RedirectToAction("Error500", "Error");
+                return RedirectToAction("Error404", "Error");
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, code);

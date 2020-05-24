@@ -30,6 +30,11 @@ namespace MathEvent.Controllers
                 .Include(p => p.Section)
                 .OrderByDescending(p => p.Start).Take(3).ToListAsync();
 
+            if (performances == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
             return View(performances);
         }
 
