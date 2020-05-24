@@ -27,7 +27,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("edit")]
-        public async Task<HttpStatusCode> EditPerformance(PerformanceViewModel performanceModel)
+        public async Task<HttpStatusCode> EditPerformance(
+            [Bind("Id", "UserId", "UserRoles", "Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionData")] PerformanceViewModel performanceModel)
         {
             if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId, performanceModel.UserRoles))
             {
@@ -60,7 +61,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<PerformanceViewModel> CreatePerformance(PerformanceViewModel performanceModel)
+        public async Task<PerformanceViewModel> CreatePerformance(
+            [Bind("UserId", "UserDataPath", "Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionData")] PerformanceViewModel performanceModel)
         {
             var performance = new Performance
             {
@@ -115,7 +117,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("delete")]
-        public async Task<HttpStatusCode> DeletePerformance(PerformanceViewModel performanceModel)
+        public async Task<HttpStatusCode> DeletePerformance(
+            [Bind("Id", "UserId", "UserRoles")] PerformanceViewModel performanceModel)
         {
             if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId, performanceModel.UserRoles))
             {

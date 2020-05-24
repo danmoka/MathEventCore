@@ -27,7 +27,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("edit")]
-        public async Task<HttpStatusCode> EditSection(SectionViewModel sectionModel)
+        public async Task<HttpStatusCode> EditSection(
+            [Bind("Id", "UserId", "UserRoles", "Name", "Location", "Start", "End", "ConferenceId")] SectionViewModel sectionModel)
         {
             if (!await IsSectionModifier(sectionModel.Id, sectionModel.UserId, sectionModel.UserRoles))
             {
@@ -72,7 +73,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("delete")]
-        public async Task<HttpStatusCode> DeleteSection(SectionViewModel sectionModel)
+        public async Task<HttpStatusCode> DeleteSection(
+            [Bind("Id", "UserId", "UserRoles")] SectionViewModel sectionModel)
         {
             if (!await IsSectionModifier(sectionModel.Id, sectionModel.UserId, sectionModel.UserRoles))
             {

@@ -22,9 +22,7 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Route("signup")]
         public async Task<HttpStatusCode> SignUp(
-            [Bind("Id", "Name", "Annotation", "KeyWords", "Location", "Start",
-            "CreatorName", "DataPath", "PosterName", "Traffic", "UserId",
-            "IsSubscribed", "Type", "UserInfo")]PerformanceViewModel model)
+            [Bind("Id", "UserId")]PerformanceViewModel model)
         {
             var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId).SingleOrDefaultAsync();
 

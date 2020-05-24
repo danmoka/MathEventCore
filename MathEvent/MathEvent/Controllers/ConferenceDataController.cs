@@ -24,7 +24,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("delete")]
-        public async Task<HttpStatusCode> DeleteConference(ConferenceViewModel conferenceModel)
+        public async Task<HttpStatusCode> DeleteConference(
+            [Bind("Id", "UserId", "UserRoles")] ConferenceViewModel conferenceModel)
         {
             if (!await IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId, conferenceModel.UserRoles))
             {
@@ -61,7 +62,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("edit")]
-        public async Task<HttpStatusCode> EditConference(ConferenceViewModel conferenceModel)
+        public async Task<HttpStatusCode> EditConference(
+            [Bind("Id", "Name", "Location", "Start", "End", "UserId", "UserRoles", "SectionViewModels")] ConferenceViewModel conferenceModel)
         {
             if (!await IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId, conferenceModel.UserRoles))
             {
