@@ -19,8 +19,6 @@ namespace MathEvent.Initializers
                 if (await roleManager.FindByNameAsync(role) == null)
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
-
-            //await InitializeAdminAccount(userManager);
         }
     }
 }

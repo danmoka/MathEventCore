@@ -6,38 +6,42 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
+    ViewData["Title"] = "Карточка события";
+}
+
+@{
     Model.UserId = UserManager.GetUserId(User);
 }
 
 <div class="row container mb-2">
     <a class="main-link h5" asp-controller="Performance" asp-action="Index"><< К списку событий</a>
 </div>
-        <div class="row">
-            <div class="col-lg-8 pr-lg-3 m-0">
-                <img class="card-img" src="@Url.Content(UserDataPathWorker.ConcatPaths(Model.DataPath, Model.PosterName))">
+<div class="row">
+    <div class="col-lg-8 pr-lg-3 m-0">
+        <img class="card-img" src="@Url.Content(UserDataPathWorker.ConcatPaths(Model.DataPath, Model.PosterName))">
+    </div>
+    <div class="col-lg-4 px-4">
+        <div class="row mb-2">
+            <hr class="block-1" />
+        </div>
+        <div class="row mb-4">
+            <div class="col">
+                <h4 class="mb-4">@Model.Name</h4>
+                <p><strong>@Model.Start.ToString("dd/MM/yyyy HH:mm")</strong></p>
+                <p>@Model.Location</p>
             </div>
-            <div class="col-lg-4 px-4">
-                <div class="row mb-2">
-                    <hr class="block-1" />
-                </div>
-                <div class="row mb-4">
-                    <div class="col">
-                        <h4 class="mb-4">@Model.Name</h4>
-                        <p><strong>@Model.Start.ToString("dd/MM/yyyy HH:mm")</strong></p>
-                        <p>@Model.Location</p>
-                    </div>
-                </div>  
-                <div class="row">
-                    <div class="col">
-                        @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { Traffic = Model.Traffic, Card = Model, IsSignIn = SignInManager.IsSignedIn(User)}))
-                        @Html.RouteLink("Написать организатору", new { controller = "Email", action = "Send", performanceId = Model.Id }, new { @class = "btn btn-block btn-info md-4" })
-                        <div class="mt-4">
-                            @(await Html.RenderComponentAsync<DownloadProceedings>(RenderMode.ServerPrerendered, new { Performance = Model }))
-                        </div>
-                    </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                @(await Html.RenderComponentAsync<Subscribe>(RenderMode.ServerPrerendered, new { Traffic = Model.Traffic, Card = Model, IsSignIn = SignInManager.IsSignedIn(User)}))
+                @Html.RouteLink("Написать организатору", new { controller = "Email", action = "Send", performanceId = Model.Id }, new { @class = "btn btn-block btn-info md-4" })
+                <div class="mt-4">
+                    @(await Html.RenderComponentAsync<DownloadProceedings>(RenderMode.ServerPrerendered, new { Performance = Model }))
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
 <div class="card-deck my-4">
     <div class="card">

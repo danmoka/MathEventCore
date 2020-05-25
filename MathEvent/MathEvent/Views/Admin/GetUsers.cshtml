@@ -1,8 +1,13 @@
 ﻿@model IEnumerable<MathEvent.Models.ApplicationUser>
 
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+
 <div class="container">
-    @{ 
-        foreach(var user in Model)
+    @{
+        foreach (var user in Model)
         {
             <div class="row border-left-main mt-2">
                 <div class="col-8">

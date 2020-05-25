@@ -1,6 +1,11 @@
 ﻿@using MathEvent.Components
 
+@{
+    ViewData["Title"] = "Подтверждение email";
+}
+
+
 @(await Html.RenderComponentAsync<EmailConfirm>(RenderMode.ServerPrerendered,
-    new { 
+    new {
         MainComment = "Для завершения регистрации проверьте электронную почту и перейдите по ссылке, указанной в письме!",
         Comment = "На подтвержденную почту пользователи MathEvent смогут отправлять сообщения с вопросами, касающихся ваших событий!"}))

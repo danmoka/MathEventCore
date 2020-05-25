@@ -1,5 +1,9 @@
 ﻿@model MathEvent.Models.ViewModels.AccountViewModel
 
+@{
+    ViewData["Title"] = "Аккаунт";
+}
+
 <div class="row">
     <div class="col form-group">
         <h2 class="mb-4">Аккаунт</h2>
@@ -9,7 +13,6 @@
         </p>
     </div>
 </div>
-
 
 <form method="post" asp-controller="Account" asp-action="Edit" asp-route-returnUrl="@Model.ReturnUrl">
     <div class="row d-flex justify-content-center">

@@ -2,6 +2,10 @@
 @using MathEvent.Components
 @using MathEvent.Helpers
 
+@{
+    ViewData["Title"] = "Конференции";
+}
+
 <header class="head-bg-image rounded shadow text-center py-5 mb-2">
     <div class="container">
         <h1 class="display-4 text-white">Конференции</h1>
@@ -26,13 +30,13 @@
                 <div class="row mb-4">
                     <div class="col-md-12">
                         <div class="row d-flex align-items-center input-bg-image rounded shadow p-1">
-                                <div class="col text-left">
-                                    <h4>@conference.Name</h4>
-                                    <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
-                                </div>
-                                <div class="col text-right">
-                                    <a class="btn download-btn" asp-route-conferenceId="@conference.Id" asp-controller="Pdf" asp-action="TimeTable">Программа</a>
-                                </div>
+                            <div class="col text-left">
+                                <h4>@conference.Name</h4>
+                                <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+                            </div>
+                            <div class="col text-right">
+                                <a class="btn download-btn" asp-route-conferenceId="@conference.Id" asp-controller="Pdf" asp-action="TimeTable">Программа</a>
+                            </div>
                         </div>
                         <div class="row rounded-bottom border p-4">
                             @{
@@ -88,7 +92,7 @@
                                                 <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_left.png"))">
                                             </div>
                                         }
-                                                        
+
                                         i++;
                                     }
                                 }

@@ -54,13 +54,14 @@
                 </div>@*<form-group*@
                 @if (_sections.Count() > 0)
                 {
-                    <div class="form-group">
-                        <div class="form-check">
-                            @*<InputCheckbox @bind-Value="@_state" @onchange="@(() => HandleCheck(new ChangeEventArgs { Value = _state}))"></InputCheckbox>*@
-                            <input class="form-check-input" type="checkbox" @bind="@State" />
-                            <label class="form-check-label">Установить данные секции</label>
-                        </div>
-                    </div>@*<form-group*@
+            <div class="form-group">
+                <div class="form-check">
+                    @*<InputCheckbox @bind-Value="@_state" @onchange="@(() => HandleCheck(new ChangeEventArgs { Value = _state}))"></InputCheckbox>*@
+                    <input class="form-check-input" type="checkbox" @bind="@State" />
+                    <label class="form-check-label">Установить данные секции</label>
+                </div>
+                <p><small>Если вы не установите данные секции, то данные события не будут автоматически измменены при изменении данных секции</small></p>
+            </div>@*<form-group*@
                     <div class="form-group">
                         <label class="control-label">Секция</label>
                         <div class="input-group">

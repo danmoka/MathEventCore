@@ -27,6 +27,11 @@ namespace MathEvent.Controllers
         public async Task<HttpStatusCode> DeleteConference(
             [Bind("Id", "UserId", "UserRoles")] ConferenceViewModel conferenceModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpStatusCode.BadRequest;
+            }
+
             if (!await IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId, conferenceModel.UserRoles))
             {
                 return HttpStatusCode.Forbidden;
@@ -44,18 +49,18 @@ namespace MathEvent.Controllers
             _db.Conferences.Remove(conference);
             await _db.SaveChangesAsync();
 
-            if (Directory.Exists(path))
-            {
-                try
-                {
-                    Directory.Delete(path, true);
-                }
-                catch
-                {
-                    return HttpStatusCode.InternalServerError;
-                }
+            //if (Directory.Exists(path))
+            //{
+            //    try
+            //    {
+            //        Directory.Delete(path, true);
+            //    }
+            //    catch
+            //    {
+            //        return HttpStatusCode.InternalServerError;
+            //    }
 
-            }
+            //}
 
             return HttpStatusCode.OK;
         }
@@ -65,6 +70,11 @@ namespace MathEvent.Controllers
         public async Task<HttpStatusCode> EditConference(
             [Bind("Id", "Name", "Location", "Start", "End", "UserId", "UserRoles", "SectionViewModels")] ConferenceViewModel conferenceModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpStatusCode.BadRequest;
+            }
+
             if (!await IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId, conferenceModel.UserRoles))
             {
                 return HttpStatusCode.Forbidden;

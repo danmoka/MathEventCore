@@ -11,7 +11,6 @@ namespace MathEvent.Models.ViewModels
         [Required]
         public List<PerformanceViewModel> Cards { get; set; }
 
-        [Required]
         public string FilterPatameter { get; set; }
     }
 }

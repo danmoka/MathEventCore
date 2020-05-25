@@ -1,5 +1,9 @@
 ﻿@model MathEvent.Models.ViewModels.EmailSendMessageViewModel
 
+@{
+    ViewData["Title"] = "Сообщение организатору";
+}
+
 <div class="row">
     <div class="col form-group">
         <h2 class="mb-4">Сообщение организатору события</h2>
@@ -10,8 +14,8 @@
     </div>
 </div>
 @*<div class="row">
-    <a class="nav-link h5" asp-route-id="@Model.PerformanceId" asp-controller="Performance" asp-action="Card"><< Назад</a>
-</div>*@
+        <a class="nav-link h5" asp-route-id="@Model.PerformanceId" asp-controller="Performance" asp-action="Card"><< Назад</a>
+    </div>*@
 <div class="row d-flex justify-content-center">
     <div class="col-8 col-sm-6 col-md-4">
         <form asp-controller="Email" asp-action="Send" method="post">
@@ -56,34 +60,34 @@
 }
 
 @*<div class="row">
-    <div class="col-md-4">
-        <form asp-controller="Email" asp-action="Send" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input asp-for="PerformanceId" class="form-control" type="hidden" />
-            </div>
-            <div class="form-group">
-                <input asp-for="CreatorEmail" class="form-control" type="hidden" />
-            </div>
-            <div class="form-group">
-                <label asp-for="UserEmail" class="control-label"></label>
-                <input asp-for="UserEmail" class="form-control" />
-                <span asp-validation-for="UserEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Message" class="control-label"></label>
-                <input asp-for="Message" class="form-control" />
-                <span asp-validation-for="Message" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Отправить" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>*@
+        <div class="col-md-4">
+            <form asp-controller="Email" asp-action="Send" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input asp-for="PerformanceId" class="form-control" type="hidden" />
+                </div>
+                <div class="form-group">
+                    <input asp-for="CreatorEmail" class="form-control" type="hidden" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserEmail" class="control-label"></label>
+                    <input asp-for="UserEmail" class="form-control" />
+                    <span asp-validation-for="UserEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Message" class="control-label"></label>
+                    <input asp-for="Message" class="form-control" />
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Content" class="control-label"></label>
+                    <input asp-for="Content" class="form-control" />
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Отправить" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>*@
 

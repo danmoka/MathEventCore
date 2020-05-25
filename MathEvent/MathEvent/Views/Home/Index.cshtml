@@ -1,6 +1,10 @@
 ﻿@model IEnumerable<MathEvent.Models.Performance>
 @using MathEvent.Helpers
-@using MathEvent.Components 
+@using MathEvent.Components
+
+@{
+    ViewData["Title"] = "Главная";
+}
 
 <div class="container py-4">
     <div class="jumbotron jmb-bg-image shadow">
@@ -36,7 +40,7 @@
                 @{
                     var i = 0;
                 }
-                @while(i < Model.Count())
+                @while (i < Model.Count())
                 {
                     var active = i == 0 ? "active" : "";
                     <li data-target="#carouselIndicators" data-slide-to="@i" class="@active"></li>

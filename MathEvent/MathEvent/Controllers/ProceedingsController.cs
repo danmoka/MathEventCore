@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MathEvent.Models.ViewModels;
 using System.Net;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MathEvent.Controllers
 {
@@ -26,8 +27,14 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("deleteProceedings")]
-        public async Task<HttpStatusCode> DeleteProceedings(PerformanceViewModel performanceModel)
+        public async Task<HttpStatusCode> DeleteProceedings(
+            [Bind("Id")] PerformanceViewModel performanceModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpStatusCode.BadRequest;
+            }
+
             var performance = await _db.Performances.Where(p => p.Id == performanceModel.Id).SingleOrDefaultAsync();
 
             if (performance == null)
@@ -77,8 +84,14 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [Route("isFileExists")]
-        public async Task<bool> IsFileExists(PerformanceViewModel performanceViewModel)
+        public async Task<bool> IsFileExists(
+            [Bind("Id", "UserId", "UserRoles")] PerformanceViewModel performanceViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return false;
+            }
+
             var performance = await _db.Performances.Where(p => p.Id == performanceViewModel.Id)
                 .Include(s => s.Section)
                 .SingleOrDefaultAsync();

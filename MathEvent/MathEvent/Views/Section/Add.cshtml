@@ -1,6 +1,10 @@
 ﻿@model MathEvent.Models.Section
 @using MathEvent.Helpers
 
+@{
+    ViewData["Title"] = "Создание секции";
+}
+
 <div class="row">
     <div class="col form-group">
         <h2 class="mb-4">Создание секции</h2>
@@ -87,24 +91,24 @@
     </div>
 </form>
 @*<hr class="block-1 mb-4" />
-<div class="row">
-    <div class="col-auto"></div>
-    <div class="col-md-5">
-        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_right.png"))">
-    </div>
-    <div class="col-md-5">
-        <div class="container bg-white me-list pb-4">
-            <h5 class="mt-2 text-dark-cyan">Обратите внимание</h5>
-            <hr class="bg-dark-cyan mb-4 mt-0 d-inline-block mx-auto" style="width: 60px" />
-            <ol class="me-ol">
-                <li class="me-li">После создания секции вы сможете добавить на неё <a asp-controller="Performance" asp-action="Add">события</a></li>
-                <li class="me-li">Секция является частью конференции</li>
-                <li class="me-li">Отредактировать или удалить секцию можно в <a asp-controller="Account" asp-action="Index">Кабинете</a></li>
-            </ol>
+    <div class="row">
+        <div class="col-auto"></div>
+        <div class="col-md-5">
+            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_right.png"))">
         </div>
-    </div>
-    <div class="col-auto"></div>
-</div>*@
+        <div class="col-md-5">
+            <div class="container bg-white me-list pb-4">
+                <h5 class="mt-2 text-dark-cyan">Обратите внимание</h5>
+                <hr class="bg-dark-cyan mb-4 mt-0 d-inline-block mx-auto" style="width: 60px" />
+                <ol class="me-ol">
+                    <li class="me-li">После создания секции вы сможете добавить на неё <a asp-controller="Performance" asp-action="Add">события</a></li>
+                    <li class="me-li">Секция является частью конференции</li>
+                    <li class="me-li">Отредактировать или удалить секцию можно в <a asp-controller="Account" asp-action="Index">Кабинете</a></li>
+                </ol>
+            </div>
+        </div>
+        <div class="col-auto"></div>
+    </div>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

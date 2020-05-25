@@ -1,4 +1,9 @@
 ﻿@using MathEvent.Helpers
+
+@{
+    ViewData["Title"] = "О секции";
+}
+
 <header class="head-bg-image rounded shadow text-center py-5 mb-4">
     <div class="container">
         <h1 class="display-4 text-white">Секция</h1>
@@ -20,7 +25,8 @@
             <div class="col-lg-6">
                 <i class="fa fa-bars fa-2x mb-3 text-dark-cyan"></i>
                 <h2 class="font-weight-light">Откройте меню</h2>
-                <p class="font-italic text-muted mb-4">После регистрации нажмите вкладку "Создать секцию". Если у вас не создано ни одной конференции, то сначала создайте 
+                <p class="font-italic text-muted mb-4">
+                    После регистрации нажмите вкладку "Создать секцию". Если у вас не создано ни одной конференции, то сначала создайте
                     <a asp-controller="Conference" asp-action="Add">Конференцию</a>
                 </p>
                 <a asp-controller="Section" asp-action="Add" class="btn btn-light">Создать секцию</a>

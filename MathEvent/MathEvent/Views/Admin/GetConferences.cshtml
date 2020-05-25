@@ -1,16 +1,21 @@
 ﻿@model IEnumerable<MathEvent.Models.Conference>
 
+@{
+    ViewData["Title"] = "Конференции";
+}
+
+
 <div class="container">
-    @{ 
-        foreach(var conference in Model)
+    @{
+        foreach (var conference in Model)
         {
             <div class="row d-flex align-items-center p-1">
-                    <div class="col-8 text-left">
-                        <h4>Конференция: "@conference.Name"</h4>
-                    </div>
-                    <div class="col-4 text-right">
-                        <a class="edit-link" asp-route-conferenceId="@conference.Id" asp-controller="Conference" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
-                    </div>
+                <div class="col-8 text-left">
+                    <h4>Конференция: "@conference.Name"</h4>
+                </div>
+                <div class="col-4 text-right">
+                    <a class="edit-link" asp-route-conferenceId="@conference.Id" asp-controller="Conference" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
+                </div>
             </div>
             <div class="mt-2 pl-4">
                 @{

@@ -1,6 +1,10 @@
 ﻿@model MathEvent.Models.Conference
 @using MathEvent.Helpers
 
+@{
+    ViewData["Title"] = "Создание конференции";
+}
+
 <div class="row">
     <div class="col form-group">
         <h2 class="mb-4">Создание конференции</h2>
@@ -78,27 +82,27 @@
     </div>
 </div>
 
-    
+
 
 @*<hr class="block-1 mb-4" />
-<div class="row">
-    <div class="col-auto"></div>
-    <div class="col-md-5">
-        <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_right.png"))">
-    </div>
-    <div class="col-md-5">
-        <div class="container bg-white me-list pb-4">
-            <h5 class="mt-2 text-dark-cyan">Обратите внимание</h5>
-            <hr class="bg-dark-cyan mb-4 mt-0 d-inline-block mx-auto" style="width: 60px" />
-            <ol class="me-ol">
-                <li class="me-li">После создания конференции вы сможете добавить на неё <a asp-controller="Section" asp-action="Add">секции</a></li>
-                <li class="me-li">Конференция отобразиться в списке всех <a asp-controller="Conference" asp-action="Index">конференций MathEvent</a></li>
-                <li class="me-li">Отредактировать или удалить конференцию можно в <a asp-controller="Account" asp-action="Index">Кабинете</a></li>
-            </ol>
+    <div class="row">
+        <div class="col-auto"></div>
+        <div class="col-md-5">
+            <img class="w-100 need-hide" src="@Url.Content(UserDataPathWorker.ConcatPaths(UserDataPathWorker.GetImagesDirectory(), "planet_right.png"))">
         </div>
-    </div>
-    <div class="col-auto"></div>
-</div>*@
+        <div class="col-md-5">
+            <div class="container bg-white me-list pb-4">
+                <h5 class="mt-2 text-dark-cyan">Обратите внимание</h5>
+                <hr class="bg-dark-cyan mb-4 mt-0 d-inline-block mx-auto" style="width: 60px" />
+                <ol class="me-ol">
+                    <li class="me-li">После создания конференции вы сможете добавить на неё <a asp-controller="Section" asp-action="Add">секции</a></li>
+                    <li class="me-li">Конференция отобразиться в списке всех <a asp-controller="Conference" asp-action="Index">конференций MathEvent</a></li>
+                    <li class="me-li">Отредактировать или удалить конференцию можно в <a asp-controller="Account" asp-action="Index">Кабинете</a></li>
+                </ol>
+            </div>
+        </div>
+        <div class="col-auto"></div>
+    </div>*@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

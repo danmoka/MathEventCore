@@ -30,6 +30,11 @@ namespace MathEvent.Controllers
         public async Task<HttpStatusCode> EditSection(
             [Bind("Id", "UserId", "UserRoles", "Name", "Location", "Start", "End", "ConferenceId")] SectionViewModel sectionModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpStatusCode.BadRequest;
+            }
+
             if (!await IsSectionModifier(sectionModel.Id, sectionModel.UserId, sectionModel.UserRoles))
             {
                 return HttpStatusCode.Forbidden;
@@ -76,6 +81,11 @@ namespace MathEvent.Controllers
         public async Task<HttpStatusCode> DeleteSection(
             [Bind("Id", "UserId", "UserRoles")] SectionViewModel sectionModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpStatusCode.BadRequest;
+            }
+
             if (!await IsSectionModifier(sectionModel.Id, sectionModel.UserId, sectionModel.UserRoles))
             {
                 return HttpStatusCode.Forbidden;
@@ -93,18 +103,18 @@ namespace MathEvent.Controllers
             _db.Sections.Remove(section);
             await _db.SaveChangesAsync();
 
-            if (Directory.Exists(path))
-            {
-                try
-                {
-                    Directory.Delete(path, true);
-                }
-                catch
-                {
-                    return HttpStatusCode.NotFound;
-                }
+            //if (Directory.Exists(path))
+            //{
+            //    try
+            //    {
+            //        Directory.Delete(path, true);
+            //    }
+            //    catch
+            //    {
+            //        return HttpStatusCode.NotFound;
+            //    }
 
-            }
+            //}
 
             return HttpStatusCode.OK;
         }
