@@ -116,7 +116,7 @@ namespace MathEvent.Controllers
 
             if (User.IsInRole("admin"))
             {
-                return RedirectToAction("GetUsers", "Admin");
+                return RedirectToAction("Users", "Admin");
             }
 
             return RedirectToAction("Card", "Performance", new { id = model.PerformanceId });

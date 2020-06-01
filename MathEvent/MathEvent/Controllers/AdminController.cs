@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// Контроллер действий Администратора сайта
+    /// </summary>
     [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
@@ -20,8 +23,12 @@ namespace MathEvent.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Предоставляет представление со списком всех событий
+        /// </summary>
+        /// <returns>Представление со списком всех событий</returns>
         [HttpGet]
-        public async Task<IActionResult> GetPerformances()
+        public async Task<IActionResult> Performances()
         {
             var performances = await _db.Performances.ToListAsync();
 
@@ -33,8 +40,12 @@ namespace MathEvent.Controllers
             return View(performances);
         }
 
+        /// <summary>
+        /// Предоставляет представление со списком всех конференций
+        /// </summary>
+        /// <returns>Представление со списком всех конференций</returns>
         [HttpGet]
-        public async Task<IActionResult> GetConferences()
+        public async Task<IActionResult> Conferences()
         {
             var conferences = await _db.Conferences
                 .Include(c => c.Sections)
@@ -49,8 +60,12 @@ namespace MathEvent.Controllers
             return View(conferences);
         }
 
+        /// <summary>
+        /// Предоставляет представление со списком всех пользователей
+        /// </summary>
+        /// <returns>Представление со списком всех пользователей</returns>
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> Users()
         {
             var users = await _userManager.Users.ToListAsync();
 
@@ -62,8 +77,12 @@ namespace MathEvent.Controllers
             return View(users);
         }
 
+        /// <summary>
+        /// Предоставляет представление для ввода сообщения
+        /// </summary>
+        /// <returns>Представление для ввода сообщения</returns>
         [HttpGet]
-        public IActionResult Send(string userEmail)
+        public IActionResult Message(string userEmail)
         {
             AdminEmailViewModel model = new AdminEmailViewModel
             {

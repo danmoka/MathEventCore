@@ -14,11 +14,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// Контроллер действий с аккаунтом
+    /// </summary>
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationContext _db;
+        /// <summary>
+        /// Сервис отправки сообщений по электронной почте
+        /// </summary>
         private readonly EmailService _emailSender;
 
         public AccountController(UserManager<ApplicationUser> userManager,
@@ -30,6 +36,10 @@ namespace MathEvent.Controllers
             _emailSender = new EmailService(ec);
         }
 
+        /// <summary>
+        /// Возвращает страницу кабинета 
+        /// </summary>
+        /// <returns>Страница кабинета</returns>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Index()
@@ -104,12 +114,9 @@ namespace MathEvent.Controllers
                     await _signInManager.SignInAsync(user, false);
 
                     return RedirectToAction("ConfirmEmailRequest", "Email");
-                    //return RedirectToAction("Index", "Home");
                 }
 
                 ModelState.AddModelError(string.Empty, "Неудачная попытка регистрации");
-                //foreach (var error in result.Errors)
-                //    ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
@@ -132,7 +139,8 @@ namespace MathEvent.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("UserName", "Password", "RememberMe", "ReturnUrl")] LoginViewModel model)
+        public async Task<IActionResult> Login(
+            [Bind("UserName", "Password", "RememberMe", "ReturnUrl")] LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -152,6 +160,10 @@ namespace MathEvent.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Возвращает страницу редактирования данных "о себе"
+        /// </summary>
+        /// <returns>Страница редактирования данных "о себе"</returns>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit()
@@ -165,15 +177,20 @@ namespace MathEvent.Controllers
                 model.Surname = user.Surname;
                 model.UserInfo = user.Info;
             }
-            
 
             return View(model);
         }
 
+        /// <summary>
+        /// Изменяет данные пользователя
+        /// </summary>
+        /// <param name="model">Аккаунт модель данных пользователя</param>
+        /// <returns>Кабинет пользователя или страница редактирования данных "о себе", если модель не валидна</returns>
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Name", "Surname", "UserInfo", "ReturnUrl")]AccountViewModel model)
+        public async Task<IActionResult> Edit(
+            [Bind("Name", "Surname", "UserInfo", "ReturnUrl")]AccountViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -193,7 +210,10 @@ namespace MathEvent.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// Возвращает страницу ввода Email для смены пароля
+        /// </summary>
+        /// <returns>Страница ввода Email</returns>
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ForgotPassword()
@@ -201,6 +221,12 @@ namespace MathEvent.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Отправляет сообщение о смене пароля на электронную почту пользователя
+        /// </summary>
+        /// <param name="model">Модель, создержащая Email пользователя</param>
+        /// <returns>Информационное представление, которое сообщает о том, 
+        ///             что нужно проверить электронную почту</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -215,7 +241,7 @@ namespace MathEvent.Controllers
 
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
+            if (user == null)
             {
                 return View("ForgotPasswordConfirmation");
             }
@@ -247,6 +273,11 @@ namespace MathEvent.Controllers
             
         }
 
+        /// <summary>
+        /// Предоставляет страницу ввода нового пароля
+        /// </summary>
+        /// <param name="code">Код, отправленный на электронную почту пользователя</param>
+        /// <returns>Страница ввода нового пароля</returns>
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
@@ -259,6 +290,12 @@ namespace MathEvent.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Меняет пароль пользователя
+        /// </summary>
+        /// <param name="model">Модель данных для смены пароля</param>
+        /// <returns>Если пользователь не обнаружен, то возвращаем страницу о том, что пароль сброшен.
+        ///             Это не позволит злоумышленнику узнать о том какие email'ы есть на сайте</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -287,10 +324,6 @@ namespace MathEvent.Controllers
             }
 
             ModelState.AddModelError(string.Empty, "Не удалось сменить пароль");
-            //foreach (var error in result.Errors)
-            //{
-            //    ModelState.AddModelError(string.Empty, error.Description);
-            //}
 
             return View(model);
         }
