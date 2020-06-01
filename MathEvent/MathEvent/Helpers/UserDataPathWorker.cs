@@ -136,18 +136,6 @@ namespace MathEvent.Helpers
                 {
                     await file.Data.CopyToAsync(stream);
                 }
-                //var ms = new MemoryStream();
-                //await file.Data.CopyToAsync(ms);
-                //using var outStream = new FileStream(GetRootPath(Path.Combine(path, fileName)), FileMode.Create);
-
-                //var image = Image.Load(ms, out IImageFormat format);
-
-                //if (image.Size().Width > _imageWidth || image.Size().Height > _imageHeight)
-                //{
-                //    image.Mutate(x => x.Resize(_imageWidth, _imageHeight));
-                //}
-
-                //image.Save(outStream, format);
             }
             else
             {

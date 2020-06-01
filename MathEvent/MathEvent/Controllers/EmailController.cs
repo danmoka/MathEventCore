@@ -18,12 +18,12 @@ namespace MathEvent.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationContext _db;
-        private readonly EmailSender _emailSender;
+        private readonly EmailService _emailSender;
 
         public EmailController(UserManager<ApplicationUser> userManager, ApplicationContext db, EmailConfiguration er)
         {
             _userManager = userManager;
-            _emailSender = new EmailSender(er);
+            _emailSender = new EmailService(er);
             _db = db;
         }
 

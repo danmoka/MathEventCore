@@ -65,7 +65,7 @@ namespace MathEvent
             services.AddScoped<DbService, DbService>();
             services.AddScoped<UserService, UserService>();
             services.AddScoped<IFileUpload, FileUpload>();
-            services.AddScoped<IStatusCodeResolver, StatusCodeResolver>();
+            services.AddScoped<IStatusCodeResolver, StatusCodeService>();
             services.AddTransient<IValidator<PerformanceViewModel>, PerformanceValidator>();
             services.AddTransient<IValidator<SectionViewModel>, SectionValidator>();
             services.AddTransient<IValidator<ConferenceViewModel>, ConferenceValidator>();

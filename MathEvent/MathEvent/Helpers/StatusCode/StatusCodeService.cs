@@ -1,17 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace MathEvent.Helpers.StatusCode
 {
-    public class StatusCodeResolver : IStatusCodeResolver
+    public class StatusCodeService : IStatusCodeResolver
     {
         private readonly NavigationManager _nm;
 
-        public StatusCodeResolver(NavigationManager nm)
+        public StatusCodeService(NavigationManager nm)
         {
             _nm = nm;
         }

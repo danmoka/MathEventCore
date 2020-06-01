@@ -19,7 +19,7 @@ namespace MathEvent.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationContext _db;
-        private readonly EmailSender _emailSender;
+        private readonly EmailService _emailSender;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager, ApplicationContext db, EmailConfiguration ec)
@@ -27,7 +27,7 @@ namespace MathEvent.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _db = db;
-            _emailSender = new EmailSender(ec);
+            _emailSender = new EmailService(ec);
         }
 
         [HttpGet]

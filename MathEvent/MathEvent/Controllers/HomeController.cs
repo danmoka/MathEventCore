@@ -14,11 +14,11 @@ namespace MathEvent.Controllers
     {
         private readonly ApplicationContext _db;
         private readonly ILogger<HomeController> _logger;
-        private readonly EmailSender _emailSender;
+        private readonly EmailService _emailSender;
 
         public HomeController(ApplicationContext db, EmailConfiguration es)
         {
-            _emailSender = new EmailSender(es);
+            _emailSender = new EmailService(es);
             _db = db;
         }
 

@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace MathEvent.Helpers.Email
 {
-    public class EmailSender : IEmailSender
+    public class EmailService : IEmailSender
     {
         private readonly EmailConfiguration _emailConfig;
 
-        public EmailSender(EmailConfiguration emailConfig)
+        public EmailService(EmailConfiguration emailConfig)
         {
             _emailConfig = emailConfig;
         }

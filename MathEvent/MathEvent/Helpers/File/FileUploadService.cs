@@ -1,21 +1,17 @@
 ﻿using BlazorInputFile;
 using MathEvent.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MathEvent.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 
 namespace MathEvent.Helpers.File
 {
-    public class FileUpload : IFileUpload
+    public class FileUploadService : IFileUpload
     {
         private readonly ApplicationContext _db;
 
-        public FileUpload(ApplicationContext db)
+        public FileUploadService(ApplicationContext db)
         {
             _db = db;
         }
