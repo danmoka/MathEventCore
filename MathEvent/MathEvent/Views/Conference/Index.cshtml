@@ -18,7 +18,7 @@
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-4">
-                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной конференции..."}))
+                        @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной конференции..."}))
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                         <div class="row d-flex align-items-center input-bg-image rounded shadow p-1">
                             <div class="col text-left">
                                 <h4>@conference.Name</h4>
-                                <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+                                <p>@conference.Location, @conference.Start.ToString("dd/MM/yyyy HH:mm")</p>
                             </div>
                             <div class="col text-right">
                                 <a class="btn download-btn" asp-route-conferenceId="@conference.Id" asp-controller="Pdf" asp-action="TimeTable">Программа</a>
@@ -45,7 +45,7 @@
                                     <div class="container">
                                         <div class="row d-flex justify-content-center">
                                             <div class="col-md-4">
-                                                @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной секции..." }))
+                                                @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной секции..." }))
                                             </div>
                                         </div>
                                     </div>
@@ -62,7 +62,7 @@
                                             <div class="row d-flex align-items-center input-bg-image rounded-top p-1 bg-very-light-blue shadow">
                                                 <div class="col text-left">
                                                     <h5>@sectionName</h5>
-                                                    <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
+                                                    <p>@sectionAddress, @sectionStart.ToString("dd/MM/yyyy HH:mm")</p>
                                                 </div>
                                             </div>
                                             <div class="row rounded-bottom border p-2">
@@ -72,7 +72,7 @@
                                                         <div class="container">
                                                             <div class="row d-flex justify-content-center">
                                                                 <div class="col-md-4">
-                                                                    @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одного события..." }))
+                                                                    @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одного события..." }))
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -80,7 +80,7 @@
                                                     else
                                                     {
                                                         <div class="col-md-12 mb-2">
-                                                            @(await Html.RenderComponentAsync<PerformanceList>(RenderMode.ServerPrerendered, new { Performances = section.PerformanceViewModels, IsKeyWordsHidden = true}))
+                                                            @(await Html.RenderComponentAsync<PerformanceListComponent>(RenderMode.ServerPrerendered, new { Performances = section.PerformanceViewModels, IsKeyWordsHidden = true}))
                                                         </div>
                                                     }
                                                 }

@@ -116,7 +116,6 @@ namespace MathEvent.Controllers
 
             if (User.IsInRole("admin"))
             {
-                // переделать потом с передачей returnUrl
                 return RedirectToAction("GetUsers", "Admin");
             }
 

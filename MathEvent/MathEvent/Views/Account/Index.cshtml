@@ -60,7 +60,7 @@
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-4">
-                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной конференции..." }))
+                        @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной конференции..." }))
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                         <div class="row d-flex align-items-center input-bg-image rounded shadow p-1">
                             <div class="col text-left">
                                 <h4>@conference.Name</h4>
-                                <p>@conference.Location, @conference.Start.Date.ToShortDateString()</p>
+                                <p>@conference.Location, @conference.Start.ToString("dd/MM/yyyy HH:mm")</p>
                             </div>
                             <div class="col d-flex justify-content-end align-items-center">
                                 <a class="btn download-btn mr-4" asp-route-conferenceId="@conference.Id" asp-controller="Pdf" asp-action="TimeTable">Программа</a>
@@ -88,7 +88,7 @@
                                     <div class="container">
                                         <div class="row d-flex justify-content-center">
                                             <div class="col-md-4">
-                                                @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной секции..." }))
+                                                @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одной секции..." }))
                                             </div>
                                         </div>
                                     </div>
@@ -106,7 +106,7 @@
                                             <div class="row d-flex align-items-center input-bg-image rounded-top p-1 shadow">
                                                 <div class="col text-left">
                                                     <h6>@sectionName</h6>
-                                                    <p>@sectionAddress, @sectionStart.Date.ToShortDateString()</p>
+                                                    <p>@sectionAddress, @sectionStart.ToString("dd/MM/yyyy HH:mm")</p>
                                                 </div>
                                                 <div class="col text-right p-3 ">
                                                     <a class="edit-link" asp-route-sectionId="@sectionId" asp-area="" asp-controller="Section" asp-action="Edit"><i class="fas fa-pencil-alt fa-2x"></i></a>
@@ -119,7 +119,7 @@
                                                         <div class="container">
                                                             <div class="row d-flex justify-content-center">
                                                                 <div class="col-md-4">
-                                                                    @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одного события..." }))
+                                                                    @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "Пока нет ни одного события..." }))
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -179,7 +179,7 @@
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-4">
-                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "У вас нет событий на сторонних конференциях" }))
+                        @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "У вас нет событий на сторонних конференциях" }))
                     </div>
                 </div>
             </div>
@@ -221,7 +221,7 @@
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-4">
-                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "У вас нет событий вне секций" }))
+                        @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "У вас нет событий вне секций" }))
                     </div>
                 </div>
             </div>
@@ -263,7 +263,7 @@
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-4">
-                        @(await Html.RenderComponentAsync<NotFound>(RenderMode.ServerPrerendered, new { Comment = "Вы не записаны ни на одно событие" }))
+                        @(await Html.RenderComponentAsync<NotFoundComponent>(RenderMode.ServerPrerendered, new { Comment = "Вы не записаны ни на одно событие" }))
                     </div>
                 </div>
             </div>

@@ -41,8 +41,17 @@ namespace MathEvent.Controllers
             {
                 return RedirectToAction("Error404", "Error");
             }
+            var userConferences = new List<Conference>();
 
-            var userConferences = await _db.Conferences.Where(c => c.ManagerId == user.Id).ToListAsync();
+            if (User.IsInRole("admin"))
+            {
+                // переделать section add view на blazor и брать конференции из DbService
+                userConferences = await _db.Conferences.ToListAsync();
+            }
+            else
+            {
+                userConferences = await _db.Conferences.Where(c => c.ManagerId == user.Id).ToListAsync();
+            }
 
             if (userConferences == null)
             {
@@ -139,15 +148,6 @@ namespace MathEvent.Controllers
                 DataPath = section.DataPath,
                 UserId = user.Id
             };
-
-            var userRoles = (List<string>)await _userManager.GetRolesAsync(user);
-
-            if (userRoles == null)
-            {
-                return RedirectToAction("Error404", "Error");
-            }
-
-            sectionModel.UserRoles = userRoles;
 
             return View(sectionModel);
         }

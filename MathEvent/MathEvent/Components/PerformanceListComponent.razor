@@ -41,7 +41,7 @@
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-5">
-                    <NotFound Comment="Нет событий, удовлетворяющих фильтрам"></NotFound>
+                    <NotFoundComponent Comment="Нет событий, удовлетворяющих фильтрам"></NotFoundComponent>
                 </div>
             </div>
         </div>
@@ -65,7 +65,7 @@
                     <div class="card-footer">
                         <div class="row d-flex align-items-center">
                             <div class="col-md-5 text-center text-md-left mb-4 mb-md-0">
-                                <small class="text-muted">Начало @item.Start.Date.ToShortDateString()</small>
+                                <small class="text-muted">Начало @item.Start.ToString("dd/MM/yyyy")</small>
                             </div>
                             <div class="col-md-7 text-center text-md-right">
                                 <small class="text-muted">@item.Location</small>

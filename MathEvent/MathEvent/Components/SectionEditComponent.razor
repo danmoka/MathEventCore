@@ -10,9 +10,11 @@
 @using MathEvent.Helpers
 @using System.Net
 @using MathEvent.Helpers.StatusCode
+@using MathEvent.Helpers.Access 
 
 @inject NavigationManager NavigationManager
 @inject DbService DbService
+@inject UserService UserService
 @inject ClientService ClientService
 @inject IStatusCodeResolver  StatusCodeResolver
 
@@ -81,12 +83,12 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text text-sea-crayola"><i class="fas fa-users"></i></span>
                         </div>
-                        <InputSelect class="custom-select form-control" @bind-Value="@SectionModel.ConferenceId">
+                        <select class="custom-select form-control" @bind="@ConferenceId">
                             @foreach (var conf in _conferences)
                             {
                                 <option value="@conf.Key">@conf.Value</option>
                             }
-                        </InputSelect>
+                        </select>
                     </div>
                     <span asp-validation-for="ConferenceId" class="text-danger"></span>
                 </div>@*<form-group*@
@@ -108,16 +110,28 @@
     [Parameter] public SectionViewModel SectionModel { get; set; }
     private List<KeyValuePair<int, string>> _conferences;
     private HttpClient _client;
+    private int _conferenceId;
+    public int ConferenceId
+    {
+        get { return _conferenceId;}
+        set
+        {
+            _conferenceId = value;
+            SectionModel.ConferenceId = value;
+        }
+    }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _conferences = new List<KeyValuePair<int, string>>();
         _client = ClientService.Client;
 
-        foreach (var conf in DbService.GetUserConferences(SectionModel.UserId, SectionModel.UserRoles)) // разнести данные юзера и секции
+        foreach (var conf in await UserService.GetUserConferences(SectionModel.UserId))
         {
             _conferences.Add(new KeyValuePair<int, string>(conf.Id, conf.Name));
         }
+
+        ConferenceId = SectionModel.ConferenceId;
     }
 
     private async Task EditSection()

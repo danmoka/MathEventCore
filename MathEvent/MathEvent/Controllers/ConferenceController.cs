@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
+using MathEvent.Helpers.Access;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -15,13 +15,15 @@ namespace MathEvent.Controllers
 {
     public class ConferenceController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserService _userService;
 
-        public ConferenceController(ApplicationContext db, UserManager<ApplicationUser> userManager)
+        public ConferenceController(ApplicationContext db, UserManager<ApplicationUser> userManager, UserService userService)
         {
             _db = db;
             _userManager = userManager;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -174,7 +176,7 @@ namespace MathEvent.Controllers
             }
 
             /// если юзер каким-либо обзразом попадает на страницу изменения конференции и не является легитимным редактором
-            if (!await IsConferenceModifier(conference.Id))
+            if (!await _userService.IsConferenceModifier(conference.Id, user.Id))
             {
                 return RedirectToAction("Error403", "Error");
             }
@@ -187,7 +189,6 @@ namespace MathEvent.Controllers
                 Start = conference.Start,
                 End = conference.End,
                 UserId = user.Id,
-                UserRoles = (List<string>)await _userManager.GetRolesAsync(user)
             };
 
             return View(conferenceModel);
@@ -302,32 +303,6 @@ namespace MathEvent.Controllers
             }
 
             return Json(true);
-        }
-
-        private async Task<bool> IsConferenceModifier(int conferenceId)
-        {
-            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefaultAsync();
-
-            var isModifier = false;
-
-            if (conference == null)
-            {
-                return isModifier;
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-
-            if (conference.ManagerId == user.Id)
-            {
-                isModifier |= true;
-            }
-
-            if (User.IsInRole("admin"))
-            {
-                isModifier |= true;
-            }
-
-            return isModifier;
         }
     }
 }

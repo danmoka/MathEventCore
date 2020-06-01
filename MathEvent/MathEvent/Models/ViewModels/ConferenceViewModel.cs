@@ -15,7 +15,6 @@ namespace MathEvent.Models.ViewModels
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string UserId { get; set; }
-        public List<string> UserRoles { get; set; }
         public List<SectionViewModel> SectionViewModels { get; set; }
     }
 }

@@ -20,14 +20,12 @@ namespace MathEvent.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationContext _db;
-        private static IWebHostEnvironment _webHostEnvironment;
 
-        public PerformanceController(ApplicationContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IWebHostEnvironment webHostEnvironment)
+        public PerformanceController(ApplicationContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _db = db;
             _userManager = userManager;
             _signInManager = signInManager;
-            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
@@ -86,8 +84,7 @@ namespace MathEvent.Controllers
 
             var performance = new PerformanceViewModel
             {
-                UserId = user.Id,
-                UserDataPath = user.DataPath
+                UserId = user.Id
             };
 
             return View(performance);
@@ -269,7 +266,6 @@ namespace MathEvent.Controllers
 
                 card.IsSubscribed = ap != null;
                 card.UserId = user.Id;
-                card.UserRoles = (List<string>) await _userManager.GetRolesAsync(user);
             }
 
             return View(card);
@@ -295,7 +291,7 @@ namespace MathEvent.Controllers
 
             if (! await IsPerformanceModifier(performanceId))
             {
-                return RedirectToAction("Eror403", "Home");
+                return RedirectToAction("Error403", "Error");
             }
 
             var performanceModel = new PerformanceViewModel
@@ -319,8 +315,6 @@ namespace MathEvent.Controllers
             {
                 return RedirectToAction("Error404", "Error");
             }
-
-            performanceModel.UserRoles = userRoles;
 
             return View(performanceModel);
         }

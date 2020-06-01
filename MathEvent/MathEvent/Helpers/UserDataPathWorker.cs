@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Formats;
 using BlazorInputFile;
 
 namespace MathEvent.Helpers
@@ -21,13 +16,8 @@ namespace MathEvent.Helpers
         private static string _instructionsDirectory = "Images/Instructions";
         private static string _emailTemplatesDirectory = "EmailTemplate";
         private static string _pdfTemplatesDirectory = "wwwroot/PdfTemplate";
-        private static int _imageWidth = 900;
-        private static int _imageHeight = 600;
 
-        public static void Init(IWebHostEnvironment webHostEnvironment)
-        {
-            _webRootPath = webHostEnvironment.WebRootPath.Replace("\\", "/");
-        }
+        public static void Init(IWebHostEnvironment webHostEnvironment) => _webRootPath = webHostEnvironment.WebRootPath.Replace("\\", "/");
 
         /// <summary>
         /// Создает путь, по которому будут храниться файлы пользователя
@@ -39,7 +29,7 @@ namespace MathEvent.Helpers
         {
             if (userId == null)
             {
-                throw new System.ArgumentException("argument is null", "userId");
+                throw new ArgumentException("argument is null", "userId");
             }
 
             return ConcatPaths(_mainUserDirectory, userId);
@@ -55,7 +45,7 @@ namespace MathEvent.Helpers
         {
             if (path == null)
             {
-                throw new System.ArgumentException("argument is null", "path");
+                throw new ArgumentException("argument is null", "path");
             }
 
             var userTrueDirPath = ConcatPaths(_webRootPath, path);             
@@ -103,6 +93,28 @@ namespace MathEvent.Helpers
 
             parentDir = ConcatPaths(parentDir, newDirName);
             return CreateDirectory(parentDir);
+        }
+
+        public static bool MoveDirectories(string source, string destination)
+        {
+            if (Directory.Exists(source))
+            {
+                if (!Directory.Exists(destination))
+                {
+                    try
+                    {
+                        Directory.Move(source, destination);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static async Task UploadFile(IFileListEntry file, string path, string fileName)

@@ -60,7 +60,7 @@
                     <input class="form-check-input" type="checkbox" @bind="@State" />
                     <label class="form-check-label">Установить данные секции</label>
                 </div>
-                <p><small>Если вы не установите данные секции, то данные события не будут автоматически измменены при изменении данных секции</small></p>
+                <p><small>Если вы не установите данные секции, то данные события не будут автоматически изменены при изменении данных секции</small></p>
             </div>@*<form-group*@
                     <div class="form-group">
                         <label class="control-label">Секция</label>
@@ -109,6 +109,7 @@
                     <div class="upload-btn-wrapper">
                         <button class="upload-btn btn-block">@_imageName</button>
                         <InputFile OnChange="@HandleImage"></InputFile>
+                        <p><small>.png .jpeg .jpg, макисмальный размер - 200 Кб </small></p>
                     </div>
                 </div>@*<form-group*@
                 <div class="form-group">
@@ -116,12 +117,12 @@
                             <button class="upload-btn btn-block">@_fileName</button>
                             <InputFile OnChange="@HandleFile"></InputFile>
                         </div>
-                    <p>.pdf .doc .docx .tex</p>
-                    <DeleteWithConfirmComponent ConfirmedChanged="DeleteProceedings"
-                                                    Message="Вы действительно хотите удалить материалы?"
-                                                    ActionName="Удалить материалы"
-                                                    Class="btn btn-block btn-danger"
-                                                    Width="380px"></DeleteWithConfirmComponent>
+                    <p><small>.pdf .doc .docx .tex, максимальный размер - 800 Кб</small></p>
+                    <ConfirmComponent ConfirmedChanged="DeleteProceedings"
+                                      Message="Вы действительно хотите удалить материалы?"
+                                      ActionName="Удалить материалы"
+                                      Class="btn btn-block btn-danger"
+                                      Width="380px"></ConfirmComponent>
                 </div>
             </div>
         </div>
@@ -143,11 +144,11 @@
                     </div>
                 </div>
                 <div class="form-row form-group d-flex align-items-end mt-4">
-                    <DeleteWithConfirmComponent 
-                                                ConfirmedChanged="Delete" 
-                                                Message="Вы действительно хотите удалить событие?"
-                                                ActionName="Удалить"
-                                                Width="380px"></DeleteWithConfirmComponent>
+                    <ConfirmComponent 
+                                      ConfirmedChanged="Delete" 
+                                      Message="Вы действительно хотите удалить событие?"
+                                      ActionName="Удалить"
+                                      Width="380px"></ConfirmComponent>
                     <input type="submit" class="btn btn-success" value="Сохранить изменения" />
                 </div>
             </div>
@@ -194,6 +195,8 @@
     private IFileListEntry _file;
     private string _fileName;
     private HttpClient _client;
+    private long _imageSize = 200846;
+    private long _proceedingsSize = 800846;
 
     protected override void OnInitialized()
     {
@@ -283,8 +286,16 @@
 
         if (IsDoc(file))
         {
-            _file = file;
-            _fileName = _file.Name;
+            if (IsGoodSize(file, _proceedingsSize))
+            {
+                _file = file;
+                _fileName = _file.Name;
+            }
+            else
+            {
+                _fileName = "Размер файла превышает допустимый!";
+            }
+
         }
         else
         {
@@ -298,8 +309,15 @@
 
         if (IsImage(file))
         {
-            _image = file;
-            _imageName = _image.Name;
+            if (IsGoodSize(file, _imageSize))
+            {
+                _image = files.FirstOrDefault();
+                _imageName = _image.Name;
+            }
+            else
+            {
+                _imageName = "Размер файла превышает допустимый!";
+            }
         }
         else
         {
@@ -364,5 +382,17 @@
                string.Compare(ext, ".docx", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".tex", StringComparison.Ordinal) == 0 ||
                string.Compare(ext, ".pdf", StringComparison.Ordinal) == 0;
+    }
+
+    private bool IsGoodSize(IFileListEntry file, long goodSize)
+    {
+        if (file.Size > goodSize)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }

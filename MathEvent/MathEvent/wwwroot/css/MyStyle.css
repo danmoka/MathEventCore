@@ -19,11 +19,30 @@
     --me-shadow-green-lawn: #87BA97;
     --me-shadow-blue: #76AFB2;
     --me-shadow-danger: #B76C7F;
+    --me-placeholder: rgba(43, 149, 154, 0.46)
+}
+
+input:-moz-placeholder, textarea:-moz-placeholder {
+    color: var(--me-placeholder) !important;
+}
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+    color: var(--me-placeholder) !important;
+}
+
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+    color: var(--me-placeholder) !important;
+}
+
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+    color: var(--me-placeholder) !important;
 }
 
 small {
     font-style: italic;
+    opacity: 0.65;
 }
+
 
 h1, h2, h3, h4, h5, h6, p {
     word-wrap: break-word;

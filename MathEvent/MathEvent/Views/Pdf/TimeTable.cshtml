@@ -1,0 +1,50 @@
+﻿@model MathEvent.Models.Conference
+
+@*@{
+    Layout = null;
+}*@
+
+<div class="row">
+    <div class="col form-group">
+        <h2 class="mb-4" style="border-bottom: 3px solid #00ff90;
+            padding-bottom: 20px;">Программа конференции "@Model.Name"</h2>
+        <p>
+            Начало: <strong>@Model.Start.ToString("dd/MM/yyyy HH:mm")</strong><br />
+            Конец: <strong>@Model.End.ToString("dd/MM/yyyy HH:mm")</strong><br />
+            Где: @Model.Location
+        </p>
+    </div>
+</div>
+
+@foreach (var sec in Model.Sections)
+{
+    <div class="container" style="        padding-left: 30px;
+        margin-top: 30px;
+">
+        <h3>Секция: @sec.Name</h3>
+        <p>
+            Начало: <strong>@sec.Start.ToString("dd/MM/yyyy HH:mm")</strong><br />
+            Конец: <strong>@sec.End.ToString("dd/MM/yyyy HH:mm")</strong><br />
+            Где: @sec.Location
+        </p>
+        <div class="container" style="padding-left: 30px; margin-top: 25px;">
+            @foreach (var performance in sec.Performances)
+            {
+                <div class="container" style="margin-top:25px;
+                        border-left: 3px solid #5299AD;
+                        padding-left: 10px;
+                        margin-left: 10px;">
+                    <h3>@performance.Type: @performance.Name</h3>
+                    @if (performance.Start != sec.Start)
+                    {
+                        <span>Начало: <strong>@performance.Start.ToString("dd/MM/yyyy HH:mm")</strong></span><br />
+                    }
+                    @if (performance.Location != sec.Location)
+                    {
+                        <span>Где: @performance.Location</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}

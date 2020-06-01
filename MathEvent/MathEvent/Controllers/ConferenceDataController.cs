@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
+using MathEvent.Helpers.Access;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -16,23 +16,25 @@ namespace MathEvent.Controllers
     public class ConferenceDataController : ControllerBase
     {
         private readonly ApplicationContext _db;
+        private readonly UserService _userService;
 
-        public ConferenceDataController(ApplicationContext db)
+        public ConferenceDataController(ApplicationContext db, UserService userService)
         {
             _db = db;
+            _userService = userService;
         }
 
         [HttpPost]
         [Route("delete")]
         public async Task<HttpStatusCode> DeleteConference(
-            [Bind("Id", "UserId", "UserRoles")] ConferenceViewModel conferenceModel)
+            [Bind("Id", "UserId")] ConferenceViewModel conferenceModel)
         {
             if (!ModelState.IsValid)
             {
                 return HttpStatusCode.BadRequest;
             }
 
-            if (!await IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId, conferenceModel.UserRoles))
+            if (!await _userService.IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -49,18 +51,18 @@ namespace MathEvent.Controllers
             _db.Conferences.Remove(conference);
             await _db.SaveChangesAsync();
 
-            //if (Directory.Exists(path))
-            //{
-            //    try
-            //    {
-            //        Directory.Delete(path, true);
-            //    }
-            //    catch
-            //    {
-            //        return HttpStatusCode.InternalServerError;
-            //    }
+            if (Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
 
-            //}
+            }
 
             return HttpStatusCode.OK;
         }
@@ -75,7 +77,7 @@ namespace MathEvent.Controllers
                 return HttpStatusCode.BadRequest;
             }
 
-            if (!await IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId, conferenceModel.UserRoles))
+            if (!await _userService.IsConferenceModifier(conferenceModel.Id, conferenceModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -97,34 +99,6 @@ namespace MathEvent.Controllers
             await _db.SaveChangesAsync();
 
             return HttpStatusCode.OK;
-        }
-
-        private async Task<bool> IsConferenceModifier(int conferenceId, string userId, List<string> userRoles)
-        {
-            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefaultAsync();
-
-            var isModifier = false;
-
-            if (conference == null)
-            {
-                return isModifier;
-            }
-
-            if (conference.ManagerId == userId)
-            {
-                isModifier |= true;
-            }
-
-            foreach (var userRole in userRoles)
-            {
-                if (userRole == "admin")
-                {
-                    isModifier |= true;
-                    break;
-                }
-            }
-
-            return isModifier;
         }
     }
 }

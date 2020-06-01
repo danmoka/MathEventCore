@@ -59,7 +59,7 @@
                             <input class="form-check-input" type="checkbox" @bind="@State"/>
                             <label class="form-check-label">Установить данные секции</label>
                         </div>
-                        <p><small>Если вы не установите данные секции, то данные события не будут автоматически измменены при изменении данных секции</small></p>
+                        <p><small>Если вы не установите данные секции, то данные события не будут автоматически изменены при изменении данных секции</small></p>
                     </div>@*<form-group*@
                     <div class="form-group">
                         <label class="control-label">Секция</label>
@@ -109,7 +109,7 @@
                         <button class="upload-btn btn-block">@_imageName</button>
                         <InputFile OnChange="@HandleImage"></InputFile>
                     </div>
-                    <p>.png .jpeg .jpg</p>
+                    <p><small>.png .jpeg .jpg, макисмальный размер - 200 Кб </small></p>
                 </div>@*<form-group*@
             </div>
         </div>
@@ -137,6 +137,7 @@
         </div>
     </div>
 </EditForm>
+
 @code {
     [Parameter]
     public PerformanceViewModel PerformanceModel { get; set; }
@@ -174,6 +175,7 @@
     private HttpClient _client;
     private IFileListEntry _image;
     private string _imageName;
+    private long _imageSize = 200846;
 
 
     protected override void OnInitialized()
@@ -228,7 +230,7 @@
 
         if (IsImage(file))
         {
-            if (IsGoodSize(file))
+            if (IsGoodSize(file, _imageSize))
             {
                 _image = files.FirstOrDefault();
                 _imageName = _image.Name;
@@ -295,9 +297,9 @@
                string.Compare(ext, ".jpg", StringComparison.Ordinal) == 0;
     }
 
-    private bool IsGoodSize(IFileListEntry file)
+    private bool IsGoodSize(IFileListEntry file, long goodSize)
     {
-        if (file.Size > 160846)
+        if (file.Size > goodSize)
         {
             return false;
         }

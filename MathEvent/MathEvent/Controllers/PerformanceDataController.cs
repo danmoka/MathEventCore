@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using MathEvent.Helpers;
 using System.IO;
 using System.Net;
+using MathEvent.Helpers.Access;
 
 namespace MathEvent.Controllers
 {
@@ -19,18 +20,20 @@ namespace MathEvent.Controllers
     public class PerformanceDataController : Controller
     {
         private readonly ApplicationContext _db;
+        private readonly UserService _userService;
 
-        public PerformanceDataController(ApplicationContext db)
+        public PerformanceDataController(ApplicationContext db, UserService userService)
         {
             _db = db;
+            _userService = userService;
         }
 
         [HttpPost]
         [Route("edit")]
         public async Task<HttpStatusCode> EditPerformance(
-            [Bind("Id", "UserId", "UserRoles", "Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionData")] PerformanceViewModel performanceModel)
+            [Bind("Id", "UserId", "Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionData")] PerformanceViewModel performanceModel)
         {
-            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId, performanceModel.UserRoles))
+            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -49,9 +52,52 @@ namespace MathEvent.Controllers
             performance.Start = performanceModel.Start;
             //performance.CreatorId = performanceModel.UserId;
             performance.Location = performanceModel.Location;
-            performance.SectionId = performanceModel.SectionId;
+            
             //performance.DataPath = performanceModel.DataPath;
             performance.IsSectionData = performanceModel.IsSectionData;
+
+
+            if (performance.SectionId != performanceModel.SectionId)
+            {
+                var performanceDataPath = performance.DataPath;
+
+                var newDataPath = performance.DataPath;
+
+                if (performanceModel.SectionId != null)
+                {
+                    var section = await _db.Sections.Where(s => s.Id == performanceModel.SectionId).SingleOrDefaultAsync();
+
+                    if (section == null)
+                    {
+                        return HttpStatusCode.NotFound;
+                    }
+
+                    newDataPath = UserDataPathWorker.ConcatPaths(section.DataPath, performance.Id.ToString());
+                }
+                else
+                {
+                    var userDataPath = await _userService.GetUserDataPath(performanceModel.UserId);
+
+                    if (string.IsNullOrEmpty(userDataPath))
+                    {
+                        return HttpStatusCode.NotFound;
+                    }
+
+                    newDataPath = UserDataPathWorker.ConcatPaths(userDataPath, performance.Id.ToString());
+                }
+
+                var newRootDataPath = UserDataPathWorker.GetRootPath(newDataPath);
+                var performanceRootDataPath = UserDataPathWorker.GetRootPath(performanceDataPath);
+
+                if(!UserDataPathWorker.MoveDirectories(performanceRootDataPath, newRootDataPath))
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
+                
+
+                performance.DataPath = newDataPath;
+                performance.SectionId = performanceModel.SectionId;
+            }
 
             _db.Performances.Update(performance);
             await _db.SaveChangesAsync();
@@ -62,7 +108,7 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Route("create")]
         public async Task<PerformanceViewModel> CreatePerformance(
-            [Bind("UserId", "UserDataPath", "Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionData")] PerformanceViewModel performanceModel)
+            [Bind("UserId", "Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionData")] PerformanceViewModel performanceModel)
         {
             var performance = new Performance
             {
@@ -90,7 +136,14 @@ namespace MathEvent.Controllers
             }
             else
             {
-                performance.DataPath = performanceModel.UserDataPath;
+                var userDataPath = await _userService.GetUserDataPath(performanceModel.UserId);
+
+                if (string.IsNullOrEmpty(userDataPath))
+                {
+                    throw new ArgumentNullException("ops...");
+                }
+
+                performance.DataPath = userDataPath;
             }
 
             await _db.Performances.AddAsync(performance);
@@ -118,9 +171,9 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Route("delete")]
         public async Task<HttpStatusCode> DeletePerformance(
-            [Bind("Id", "UserId", "UserRoles")] PerformanceViewModel performanceModel)
+            [Bind("Id", "UserId")] PerformanceViewModel performanceModel)
         {
-            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId, performanceModel.UserRoles))
+            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -153,7 +206,7 @@ namespace MathEvent.Controllers
             return HttpStatusCode.OK;
         }
 
-        private async Task<bool> IsPerformanceModifier(int performanceId, string userId, List<string> userRoles)
+        private async Task<bool> IsPerformanceModifier(int performanceId, string userId)
         {
             var performance = await _db.Performances.Where(p => p.Id == performanceId)
                 .Include(s => s.Section)
@@ -177,13 +230,9 @@ namespace MathEvent.Controllers
                 isModifier |= true;
             }
 
-            foreach (var role in userRoles)
+            if (await _userService.IsAdmin(userId))
             {
-                if (role == "admin")
-                {
-                    isModifier |= true;
-                    break;
-                }
+                isModifier |= true;
             }
 
             return isModifier;

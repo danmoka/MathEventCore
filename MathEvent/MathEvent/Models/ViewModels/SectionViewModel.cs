@@ -16,7 +16,6 @@ namespace MathEvent.Models.ViewModels
         public string Location { get; set; }
         public string DataPath { get; set; }
         public string UserId { get; set; }
-        public List<string> UserRoles { get; set; }
         public int ConferenceId { get; set; }
         public List<PerformanceViewModel> PerformanceViewModels { get; set; }
     }

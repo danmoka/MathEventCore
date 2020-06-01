@@ -61,11 +61,11 @@ namespace MathEvent.Models.ViewModels
         public string UserInfo { get; set; }
         public string CreatorName { get; set; }
         public string UserId { get; set; }
-        public List<string> UserRoles { get; set; }
-        public string UserDataPath { get; set; }
-        
+        //public List<string> UserRoles { get; set; }
+        //public string UserDataPath { get; set; }
+
         public bool IsSubscribed { get; set; }
-        
-        
+
+
     }
 }

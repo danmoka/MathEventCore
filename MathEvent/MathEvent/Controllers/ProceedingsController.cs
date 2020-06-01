@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using MathEvent.Models.ViewModels;
 using System.Net;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MathEvent.Helpers.Access;
 
 namespace MathEvent.Controllers
 {
@@ -19,10 +20,12 @@ namespace MathEvent.Controllers
     public class ProceedingsController : ControllerBase
     {
         private readonly ApplicationContext _db;
+        private readonly UserService _userService;
 
-        public ProceedingsController(ApplicationContext db)
+        public ProceedingsController(ApplicationContext db, UserService userService)
         {
             _db = db;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -108,12 +111,12 @@ namespace MathEvent.Controllers
                 isExist = true;
             }
 
-            var isModifier = await IsPerformanceModifier(performance.Id, performanceViewModel.UserId, performanceViewModel.UserRoles);
+            var isModifier = await IsPerformanceModifier(performance.Id, performanceViewModel.UserId);
 
             return isModifier && isExist;
         }
 
-        private async Task<bool> IsPerformanceModifier(int performanceId, string userId, List<string> userRoles)
+        private async Task<bool> IsPerformanceModifier(int performanceId, string userId)
         {
             var performance = await _db.Performances.Where(p => p.Id == performanceId)
                 .Include(s => s.Section)
@@ -137,16 +140,9 @@ namespace MathEvent.Controllers
                 isModifier |= true;
             }
 
-            if (userRoles != null)
+            if (await _userService.IsAdmin(userId))
             {
-                foreach (var role in userRoles)
-                {
-                    if (role == "admin")
-                    {
-                        isModifier |= true;
-                        break;
-                    }
-                }
+                isModifier |= true;
             }
 
             return isModifier;

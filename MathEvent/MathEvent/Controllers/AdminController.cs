@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using MathEvent.Helpers.Email;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -14,13 +13,11 @@ namespace MathEvent.Controllers
     {
         private readonly ApplicationContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly EmailSender _emailSender;
 
-        public AdminController(ApplicationContext db, UserManager<ApplicationUser> userManager, EmailConfiguration er)
+        public AdminController(ApplicationContext db, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             _userManager = userManager;
-            _emailSender = new EmailSender(er);
         }
 
         [HttpGet]
@@ -44,6 +41,11 @@ namespace MathEvent.Controllers
                 .ThenInclude(s => s.Performances)
                 .ToListAsync();
 
+            if (conferences == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
+
             return View(conferences);
         }
 
@@ -51,6 +53,11 @@ namespace MathEvent.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var users = await _userManager.Users.ToListAsync();
+
+            if (users == null)
+            {
+                return RedirectToAction("Error404", "Error");
+            }
 
             return View(users);
         }

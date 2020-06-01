@@ -10,13 +10,14 @@ using MathEvent.Models;
 using MathEvent.Helpers;
 using MathEvent.Helpers.Email;
 using System.Security.Claims;
-using Wkhtmltopdf.NetCore;
 using MathEvent.Helpers.Db;
 using MathEvent.Helpers.File;
 using MathEvent.Models.ViewModels;
 using MathEvent.Helpers.FluentValidator;
 using FluentValidation;
 using MathEvent.Helpers.StatusCode;
+using Rotativa.AspNetCore;
+using MathEvent.Helpers.Access;
 
 namespace MathEvent
 {
@@ -34,12 +35,18 @@ namespace MathEvent
         {
             var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
+            })
+               .AddEntityFrameworkStores<ApplicationContext>()
+               .AddDefaultTokenProviders();
             services.AddControllersWithViews();
             services.AddRazorPages();
-
             services.AddServerSideBlazor();
 
             var emailConfig = Configuration
@@ -55,8 +62,8 @@ namespace MathEvent
             });
 
             services.Configure<IdentityOptions>(options => options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
-            services.AddWkhtmltopdf(Configuration["wkhtmltopdf"]);
-            services.AddTransient<DbService>();
+            services.AddScoped<DbService, DbService>();
+            services.AddScoped<UserService, UserService>();
             services.AddScoped<IFileUpload, FileUpload>();
             services.AddScoped<IStatusCodeResolver, StatusCodeResolver>();
             services.AddTransient<IValidator<PerformanceViewModel>, PerformanceValidator>();
@@ -86,6 +93,7 @@ namespace MathEvent
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             UserDataPathWorker.Init(env);
+            RotativaConfiguration.Setup(env.WebRootPath, "Rotativa");
 
             if (env.IsDevelopment())
             {
