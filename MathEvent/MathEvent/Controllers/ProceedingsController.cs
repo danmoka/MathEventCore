@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MathEvent.Helpers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using MathEvent.Models.ViewModels;
 using System.Net;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MathEvent.Helpers.Access;
 
 namespace MathEvent.Controllers
@@ -111,41 +106,9 @@ namespace MathEvent.Controllers
                 isExist = true;
             }
 
-            var isModifier = await IsPerformanceModifier(performance.Id, performanceViewModel.UserId);
+            var isModifier = await _userService.IsPerformanceModifier(performance.Id, performanceViewModel.UserId);
 
             return isModifier && isExist;
-        }
-
-        private async Task<bool> IsPerformanceModifier(int performanceId, string userId)
-        {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId)
-                .Include(s => s.Section)
-                .SingleOrDefaultAsync();
-
-            var isModifier = false;
-
-            if (performance == null)
-            {
-                return isModifier;
-            }
-
-            if (performance.CreatorId == userId)
-            {
-                isModifier |= true;
-            }
-
-            if (performance.Section != null &&
-                performance.Section.ManagerId == userId)
-            {
-                isModifier |= true;
-            }
-
-            if (await _userService.IsAdmin(userId))
-            {
-                isModifier |= true;
-            }
-
-            return isModifier;
         }
     }
 }

@@ -7,10 +7,12 @@
 @using MathEvent.Helpers
 @using MathEvent.Models.ViewModels
 @using System.Text
-@using System.Net; 
+@using System.Net;
+@using MathEvent.Helpers.StatusCode 
 
 @inject ClientService ClientService
 @inject NavigationManager NavigationManager
+@inject StatusCodeResolver StatusCodeResolver
 
 <input type="button" class="btn btn-block download-btn" @onclick="Download" value="Скачать материалы события" hidden="@(!_isActive)" />
 
@@ -32,6 +34,8 @@
             var result = await response.Content.ReadAsStringAsync();
             _isActive = JsonConvert.DeserializeObject<bool>(result);
         }
+
+        StatusCodeResolver.ResolveStatusCode(response.StatusCode, null);
     }
 
     protected void Download()
