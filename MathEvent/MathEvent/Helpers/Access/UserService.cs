@@ -70,5 +70,69 @@ namespace MathEvent.Helpers.Access
 
             return isModifier;
         }
+
+        public async Task<bool> IsPerformanceModifier(int performanceId, string userId)
+        {
+            var performance = await _db.Performances.Where(p => p.Id == performanceId)
+                .Include(s => s.Section)
+                .SingleOrDefaultAsync();
+
+            var isModifier = false;
+
+            if (performance == null)
+            {
+                return isModifier;
+            }
+
+            if (performance.CreatorId == userId)
+            {
+                isModifier |= true;
+            }
+
+            if (performance.Section != null &&
+                performance.Section.ManagerId == userId)
+            {
+                isModifier |= true;
+            }
+
+            if (await IsAdmin(userId))
+            {
+                isModifier |= true;
+            }
+
+            return isModifier;
+        }
+
+        public async Task<bool> IsSectionModifier(int sectionId, string userId)
+        {
+            var section = await _db.Sections.Where(s => s.Id == sectionId)
+                .Include(c => c.Conference)
+                .SingleOrDefaultAsync();
+
+            var isModifier = false;
+
+            if (section == null)
+            {
+                return isModifier;
+            }
+
+            if (section.ManagerId == userId)
+            {
+                isModifier |= true;
+            }
+
+            if (section.Conference != null &&
+                section.Conference.ManagerId == userId)
+            {
+                isModifier |= true;
+            }
+
+            if (await IsAdmin(userId))
+            {
+                isModifier |= true;
+            }
+
+            return isModifier;
+        }
     }
 }

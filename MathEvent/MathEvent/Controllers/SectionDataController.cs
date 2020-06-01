@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
 using MathEvent.Helpers.Access;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,7 +34,7 @@ namespace MathEvent.Controllers
                 return HttpStatusCode.BadRequest;
             }
 
-            if (!await IsSectionModifier(sectionModel.Id, sectionModel.UserId))
+            if (!await _userService.IsSectionModifier(sectionModel.Id, sectionModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -54,8 +50,7 @@ namespace MathEvent.Controllers
             section.Location = sectionModel.Location;
             section.Start = sectionModel.Start;
             section.End = sectionModel.End;
-            //section.ManagerId = sectionModel.UserId; // надо ли?
-            //section.DataPath = sectionModel.DataPath;
+
             _db.Sections.Update(section);
 
             var performances = await _db.Performances.Where(p => p.SectionId == section.Id && p.IsSectionData).ToListAsync();
@@ -120,7 +115,7 @@ namespace MathEvent.Controllers
                 return HttpStatusCode.BadRequest;
             }
 
-            if (!await IsSectionModifier(sectionModel.Id, sectionModel.UserId))
+            if (!await _userService.IsSectionModifier(sectionModel.Id, sectionModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -151,38 +146,6 @@ namespace MathEvent.Controllers
             }
 
             return HttpStatusCode.OK;
-        }
-
-        private async Task<bool> IsSectionModifier(int sectionId, string userId)
-        {
-            var section = await _db.Sections.Where(s => s.Id == sectionId)
-                .Include(c => c.Conference)
-                .SingleOrDefaultAsync();
-
-            var isModifier = false;
-
-            if (section == null)
-            {
-                return isModifier;
-            }
-
-            if (section.ManagerId == userId)
-            {
-                isModifier |= true;
-            }
-
-            if (section.Conference != null &&
-                section.Conference.ManagerId == userId)
-            {
-                isModifier |= true;
-            }
-
-            if (await _userService.IsAdmin(userId))
-            {
-                isModifier |= true;
-            }
-
-            return isModifier;
         }
     }
 }

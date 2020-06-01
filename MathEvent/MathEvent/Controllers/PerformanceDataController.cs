@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MathEvent.Helpers;
@@ -33,7 +30,7 @@ namespace MathEvent.Controllers
         public async Task<HttpStatusCode> EditPerformance(
             [Bind("Id", "UserId", "Name", "Type", "Location", "KeyWords", "Annotation", "Start", "SectionId", "IsSectionData")] PerformanceViewModel performanceModel)
         {
-            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId))
+            if (!await _userService.IsPerformanceModifier(performanceModel.Id, performanceModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -50,10 +47,7 @@ namespace MathEvent.Controllers
             performance.Annotation = performanceModel.Annotation;
             performance.KeyWords = performanceModel.KeyWords;
             performance.Start = performanceModel.Start;
-            //performance.CreatorId = performanceModel.UserId;
             performance.Location = performanceModel.Location;
-            
-            //performance.DataPath = performanceModel.DataPath;
             performance.IsSectionData = performanceModel.IsSectionData;
 
 
@@ -173,7 +167,7 @@ namespace MathEvent.Controllers
         public async Task<HttpStatusCode> DeletePerformance(
             [Bind("Id", "UserId")] PerformanceViewModel performanceModel)
         {
-            if (!await IsPerformanceModifier(performanceModel.Id, performanceModel.UserId))
+            if (!await _userService.IsPerformanceModifier(performanceModel.Id, performanceModel.UserId))
             {
                 return HttpStatusCode.Forbidden;
             }
@@ -204,38 +198,6 @@ namespace MathEvent.Controllers
             }
 
             return HttpStatusCode.OK;
-        }
-
-        private async Task<bool> IsPerformanceModifier(int performanceId, string userId)
-        {
-            var performance = await _db.Performances.Where(p => p.Id == performanceId)
-                .Include(s => s.Section)
-                .SingleOrDefaultAsync();
-
-            var isModifier = false;
-
-            if (performance == null)
-            {
-                return isModifier;
-            }
-
-            if (performance.CreatorId == userId)
-            {
-                isModifier |= true;
-            }
-
-            if (performance.Section != null &&
-                performance.Section.ManagerId == userId)
-            {
-                isModifier |= true;
-            }
-
-            if (await _userService.IsAdmin(userId))
-            {
-                isModifier |= true;
-            }
-
-            return isModifier;
         }
     }
 }

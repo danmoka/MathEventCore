@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
+using MathEvent.Helpers.Access;
 using MathEvent.Models;
 using MathEvent.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -16,13 +16,17 @@ namespace MathEvent.Controllers
 {
     public class SectionController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserService _userService;
 
-        public SectionController(ApplicationContext db, UserManager<ApplicationUser> userManager)
+        public SectionController(ApplicationContext db, 
+            UserManager<ApplicationUser> userManager, 
+            UserService userService)
         {
             _db = db;
             _userManager = userManager;
+            _userService = userService;
         }
         
         [HttpGet]
@@ -132,7 +136,7 @@ namespace MathEvent.Controllers
                 return RedirectToAction("Error404", "Error");
             }
 
-            if (!await IsSectionModifier(sectionId))
+            if (!await _userService.IsSectionModifier(sectionId, user.Id))
             {
                 return RedirectToAction("Error403", "Error");
             }
@@ -151,84 +155,6 @@ namespace MathEvent.Controllers
 
             return View(sectionModel);
         }
-
-        //[HttpPost]
-        //[Authorize]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(
-        //    [Bind("Id", "Name", "Location", "Start", "End", "DataPath", "ConferenceId", "ManagerId")] Section section)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return RedirectToAction("Error400", "Error");
-        //    }
-
-        //    var dbSection = await _db.Sections.Where(s => s.Id == section.Id).SingleOrDefaultAsync();
-
-        //    if (dbSection == null)
-        //    {
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-
-        //    if (!await IsSectionModifier(section.Id))
-        //    {
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-
-        //    dbSection.Name = section.Name;
-        //    dbSection.Location = section.Location;
-        //    dbSection.Start = section.Start;
-        //    dbSection.End = section.End;
-
-        //    _db.Sections.Update(dbSection);
-        //    await _db.SaveChangesAsync();
-
-        //    return RedirectToAction("Index", "Account");
-        //}
-
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> Delete(int sectionId)
-        //{
-        //    var section = await _db.Sections.Where(p => p.Id == sectionId).SingleOrDefaultAsync();
-
-        //    if (section == null)
-        //    {
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-
-        //    var user = await _userManager.GetUserAsync(User);
-
-        //    if (user == null)
-        //    {
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-
-        //    if (! await IsSectionModifier(sectionId))
-        //    {
-        //        return RedirectToAction("Error500", "Error");
-        //    }
-
-        //    var path = UserDataPathWorker.GetRootPath(section.DataPath);
-
-        //    if (Directory.Exists(path))
-        //    {
-        //        try
-        //        {
-        //            Directory.Delete(path, true);
-        //        }
-        //        catch
-        //        {
-        //            return RedirectToAction("Error500", "Error");
-        //        }
-
-        //    }
-
-        //    _db.Sections.Remove(section);
-        //    await _db.SaveChangesAsync();
-
-        //    return RedirectToAction("Index", "Account");
-        //}
 
         [HttpGet]
         public IActionResult About()
@@ -276,40 +202,6 @@ namespace MathEvent.Controllers
             }
 
             return Json(true);
-        }
-
-        private async Task<bool> IsSectionModifier(int sectionId)
-        {
-            var section = await _db.Sections.Where(s => s.Id == sectionId)
-                .Include(c => c.Conference)
-                .SingleOrDefaultAsync();
-
-            var isModifier = false;
-
-            if (section == null)
-            {
-                return isModifier;
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-
-            if (section.ManagerId == user.Id)
-            {
-                isModifier |= true;
-            }
-
-            if (section.Conference != null &&
-                section.Conference.ManagerId == user.Id)
-            {
-                isModifier |= true;
-            }
-
-            if (User.IsInRole("admin"))
-            {
-                isModifier |= true;
-            }
-
-            return isModifier;
         }
     }
 }
