@@ -14,6 +14,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// Контроллер действий с секциями
+    /// </summary>
     public class SectionController : Controller
     {
         private readonly ApplicationContext _db;
@@ -45,6 +48,7 @@ namespace MathEvent.Controllers
             {
                 return RedirectToAction("Error404", "Error");
             }
+
             var userConferences = new List<Conference>();
 
             if (User.IsInRole("admin"))
@@ -72,6 +76,11 @@ namespace MathEvent.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Добавляет новую секцию и создает папку на сервере
+        /// </summary>
+        /// <param name="model">Модель секции</param>
+        /// <returns>Если добавление успешно, то страницу конференций, иначе представление ошибки</returns>
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -94,6 +103,7 @@ namespace MathEvent.Controllers
             await _db.Sections.AddAsync(model);
             await _db.SaveChangesAsync();
 
+            /// далее создается папка для секции на сервере
             var conference = await _db.Conferences.Where(c => c.Id == model.ConferenceId).SingleOrDefaultAsync();
 
             if (conference == null)
@@ -149,7 +159,6 @@ namespace MathEvent.Controllers
                 End = section.End,
                 Location = section.Location,
                 ConferenceId = section.ConferenceId,
-                DataPath = section.DataPath,
                 UserId = user.Id
             };
 
@@ -161,6 +170,8 @@ namespace MathEvent.Controllers
         {
             return View();
         }
+
+        /// далее идут методы валидации
 
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> CheckStartDate(DateTime start, DateTime end, int conferenceId)

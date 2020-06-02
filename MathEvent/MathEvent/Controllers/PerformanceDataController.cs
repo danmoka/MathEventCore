@@ -12,6 +12,10 @@ using MathEvent.Helpers.Access;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// API контроллер действий с событиями
+    /// Необходим для обработки запросов с компонентов
+    /// </summary>
     [Route("api/performances")]
     [ApiController]
     public class PerformanceDataController : Controller
@@ -25,6 +29,11 @@ namespace MathEvent.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Изменяет данные о событии
+        /// </summary>
+        /// <param name="performanceModel">Вью-модель события</param>
+        /// <returns>Статус код результата обработки</returns>
         [HttpPost]
         [Route("edit")]
         public async Task<HttpStatusCode> EditPerformance(
@@ -54,7 +63,6 @@ namespace MathEvent.Controllers
             if (performance.SectionId != performanceModel.SectionId)
             {
                 var performanceDataPath = performance.DataPath;
-
                 var newDataPath = performance.DataPath;
 
                 if (performanceModel.SectionId != null)
@@ -99,6 +107,12 @@ namespace MathEvent.Controllers
             return HttpStatusCode.OK;
         }
 
+        /// <summary>
+        /// Создает новое событие
+        /// </summary>
+        /// <param name="performanceModel">Вью-модель события</param>
+        /// <returns>Вью-модель события с идентификатором добавленного события, 
+        ///             с целью загрузки афиши</returns>
         [HttpPost]
         [Route("create")]
         public async Task<PerformanceViewModel> CreatePerformance(
@@ -117,9 +131,9 @@ namespace MathEvent.Controllers
                 IsSectionData = performanceModel.IsSectionData
             };
 
-            if (performance.SectionId != null)
+            if (performanceModel.SectionId != null)
             {
-                var section = await _db.Sections.Where(s => s.Id == performance.SectionId).SingleOrDefaultAsync();
+                var section = await _db.Sections.Where(s => s.Id == performanceModel.SectionId).SingleOrDefaultAsync();
 
                 if (section == null)
                 {
@@ -156,12 +170,16 @@ namespace MathEvent.Controllers
             performance.DataPath = performanceDataPath;
             _db.Performances.Update(performance);
             await _db.SaveChangesAsync();
-
             performanceModel.Id = performance.Id;
 
             return performanceModel;
         }
 
+        /// <summary>
+        /// Удаляет событие
+        /// </summary>
+        /// <param name="performanceModel">Вью-модель события</param>
+        /// <returns>Статус код результата обработки</returns>
         [HttpPost]
         [Route("delete")]
         public async Task<HttpStatusCode> DeletePerformance(
@@ -184,17 +202,9 @@ namespace MathEvent.Controllers
             _db.Performances.Remove(performance);
             await _db.SaveChangesAsync();
 
-            if (Directory.Exists(path))
+            if (!UserDataPathWorker.RemoveDirectory(path))
             {
-                try
-                {
-                    Directory.Delete(path, true);
-                }
-                catch
-                {
-                    return HttpStatusCode.NotFound;
-                }
-
+                return HttpStatusCode.NotFound;
             }
 
             return HttpStatusCode.OK;

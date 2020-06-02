@@ -2,6 +2,7 @@
 @using MathEvent.Components
 @using Microsoft.AspNetCore.Identity
 @using MathEvent.Helpers
+
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 
@@ -33,7 +34,7 @@
         </div>
         <div class="row">
             <div class="col">
-                @(await Html.RenderComponentAsync<SubscribeComponent>(RenderMode.ServerPrerendered, new { Traffic = Model.Traffic, Card = Model, IsSignIn = SignInManager.IsSignedIn(User)}))
+                @(await Html.RenderComponentAsync<SubscribeComponent>(RenderMode.ServerPrerendered, new { Card = Model, IsSignIn = SignInManager.IsSignedIn(User)}))
                 @Html.RouteLink("Написать организатору", new { controller = "Email", action = "Send", performanceId = Model.Id }, new { @class = "btn btn-block btn-info md-4" })
                 <div class="mt-4">
                     @(await Html.RenderComponentAsync<DownloadProceedingsComponent>(RenderMode.ServerPrerendered, new { Performance = Model }))

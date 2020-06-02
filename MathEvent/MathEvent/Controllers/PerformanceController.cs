@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// Контроллер действий с событиями
+    /// </summary>
     public class PerformanceController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -31,13 +34,18 @@ namespace MathEvent.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Возращает представление с коллекцией будущих событий
+        /// </summary>
+        /// <returns>Представление с коллекцией будущих событий</returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var performances = await _db.Performances
                 .Where(p => p.Start.Month >= DateTime.Now.Month)
                 .Include(p => p.Section)
-                .Include(p => p.Creator).ToListAsync();
+                .Include(p => p.Creator)
+                .ToListAsync();
 
             if (performances == null)
             {
@@ -59,14 +67,8 @@ namespace MathEvent.Controllers
                     PosterName = performance.PosterName,
                     Traffic = performance.Traffic,
                     Type = performance.Type,
-                    Location = performance.Location,
-                    IsSectionData = performance.IsSectionData
+                    Location = performance.Location
                 };
-
-                if (performance.Creator != null)
-                {
-                    card.CreatorName = $"{performance.Creator.Name} {performance.Creator.Surname}";
-                }
 
                 cards.Add(card);
             }
@@ -93,12 +95,18 @@ namespace MathEvent.Controllers
             return View(performance);
         }
 
+        /// <summary>
+        /// Возращает представление-карточку события
+        /// </summary>
+        /// <param name="id">Идентификатор события</param>
+        /// <returns>Представление-карточка события</returns>
         [HttpGet]
         public async Task<IActionResult> Card(int id)
         {
             var performance = await _db.Performances.Where(p => p.Id == id)
                 .Include(p => p.Section)
-                .Include(p => p.Creator).SingleOrDefaultAsync();
+                .Include(p => p.Creator)
+                .SingleOrDefaultAsync();
 
             if (performance == null)
             {
@@ -116,9 +124,7 @@ namespace MathEvent.Controllers
                 PosterName = performance.PosterName,
                 Traffic = performance.Traffic,
                 Location = performance.Location,
-                Type = performance.Type,
-                SectionId = performance.SectionId,
-                IsSectionData = performance.IsSectionData
+                Type = performance.Type
             };
 
             if (performance.Creator != null)
@@ -152,14 +158,22 @@ namespace MathEvent.Controllers
                 }
             }
 
+            /// если пользователь авторизован, то передаем информацию, 
+            /// которая позволит расширить возможности пользователя
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return RedirectToAction("Error404", "Error");
+                }
+
                 var userId = user.Id;
 
                 var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == id && ap.ApplicationUserId == userId).SingleOrDefaultAsync();
 
-                card.IsSubscribed = ap != null;
+                card.IsSubscribed = ap != null; // попробовать вынести проверку на подписку в UserService
                 card.UserId = user.Id;
             }
 
@@ -204,13 +218,6 @@ namespace MathEvent.Controllers
                 IsSectionData = performance.IsSectionData
             };
 
-            var userRoles = (List<string>)await _userManager.GetRolesAsync(user);
-
-            if (userRoles == null)
-            {
-                return RedirectToAction("Error404", "Error");
-            }
-
             return View(performanceModel);
         }
 
@@ -219,6 +226,8 @@ namespace MathEvent.Controllers
         {
             return View();
         }
+
+        ///далее идет набор методов валидации
 
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckStartDate(DateTime start, int? sectionId)

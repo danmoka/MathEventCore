@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MathEvent.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// API контроллер фильтрации событий
+    /// </summary>
+    [Route("api/filters")]
     [ApiController]
     public class FilterController : ControllerBase
     {
@@ -22,7 +25,9 @@ namespace MathEvent.Controllers
                 return filterViewModel;
             }
 
-            filterViewModel.Cards = filterViewModel.Cards.Where(c => c.Type == filterViewModel.FilterPatameter).ToList();
+            filterViewModel.Cards = filterViewModel.Cards
+                .Where(c => c.Type == filterViewModel.FilterPatameter)
+                .ToList();
 
             if (filterViewModel.Cards == null)
             {
@@ -48,13 +53,19 @@ namespace MathEvent.Controllers
             switch (period)
             {
                 case "Сегодня":
-                    filterViewModel.Cards = filterViewModel.Cards.Where(p => p.Start.Day == DateTime.Now.Day).ToList();
+                    filterViewModel.Cards = filterViewModel.Cards
+                        .Where(p => p.Start.Day == DateTime.Now.Day)
+                        .ToList();
                     break;
                 case "В этом месяце":
-                    filterViewModel.Cards = filterViewModel.Cards.Where(p => p.Start.Month == DateTime.Now.Month).ToList();
+                    filterViewModel.Cards = filterViewModel.Cards
+                        .Where(p => p.Start.Month == DateTime.Now.Month)
+                        .ToList();
                     break;
                 case "В этом году":
-                    filterViewModel.Cards = filterViewModel.Cards.Where(p => p.Start.Year == DateTime.Now.Year).ToList();
+                    filterViewModel.Cards = filterViewModel.Cards
+                        .Where(p => p.Start.Year == DateTime.Now.Year)
+                        .ToList();
                     break;
                 default:
                     break;

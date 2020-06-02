@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
@@ -11,6 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// API контроллер действий с секциями
+    /// Необходим для обработки запросов с компонентов
+    /// </summary>
     [Route("api/sections")]
     [ApiController]
     public class SectionDataController : ControllerBase
@@ -24,6 +27,11 @@ namespace MathEvent.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Изменяет данные о секции и перемещает директорию, если требуется
+        /// </summary>
+        /// <param name="sectionModel">Вью-модель секции</param>
+        /// <returns>Статус код результата обработки</returns>
         [HttpPost]
         [Route("edit")]
         public async Task<HttpStatusCode> EditSection(
@@ -39,7 +47,9 @@ namespace MathEvent.Controllers
                 return HttpStatusCode.Forbidden;
             }
 
-            var section = await _db.Sections.Where(s => s.Id == sectionModel.Id).SingleOrDefaultAsync();
+            var section = await _db.Sections
+                .Where(s => s.Id == sectionModel.Id)
+                .SingleOrDefaultAsync();
 
             if (section == null)
             {
@@ -53,7 +63,9 @@ namespace MathEvent.Controllers
 
             _db.Sections.Update(section);
 
-            var performances = await _db.Performances.Where(p => p.SectionId == section.Id && p.IsSectionData).ToListAsync();
+            var performances = await _db.Performances
+                .Where(p => p.SectionId == section.Id && p.IsSectionData)
+                .ToListAsync();
 
             if (performances == null)
             {
@@ -70,7 +82,9 @@ namespace MathEvent.Controllers
             {
                 var sectionDataPath = section.DataPath;
                 var newDataPath = section.DataPath;
-                var conference = await _db.Conferences.Where(c => c.Id == sectionModel.ConferenceId).SingleOrDefaultAsync();
+                var conference = await _db.Conferences
+                    .Where(c => c.Id == sectionModel.ConferenceId)
+                    .SingleOrDefaultAsync();
 
                 if (conference == null)
                 {
@@ -105,6 +119,11 @@ namespace MathEvent.Controllers
             return HttpStatusCode.OK;
         }
 
+        /// <summary>
+        /// Удаляет секции и директорию на сервере
+        /// </summary>
+        /// <param name="sectionModel">Вью-модель секции</param>
+        /// <returns>Статус код результата обработки</returns>
         [HttpPost]
         [Route("delete")]
         public async Task<HttpStatusCode> DeleteSection(
@@ -120,7 +139,9 @@ namespace MathEvent.Controllers
                 return HttpStatusCode.Forbidden;
             }
 
-            var section = await _db.Sections.Where(s => s.Id == sectionModel.Id).SingleOrDefaultAsync();
+            var section = await _db.Sections
+                .Where(s => s.Id == sectionModel.Id)
+                .SingleOrDefaultAsync();
 
             if (section == null)
             {
@@ -132,17 +153,9 @@ namespace MathEvent.Controllers
             _db.Sections.Remove(section);
             await _db.SaveChangesAsync();
 
-            if (Directory.Exists(path))
+            if (!UserDataPathWorker.RemoveDirectory(path))
             {
-                try
-                {
-                    Directory.Delete(path, true);
-                }
-                catch
-                {
-                    return HttpStatusCode.NotFound;
-                }
-
+                return HttpStatusCode.NotFound;
             }
 
             return HttpStatusCode.OK;

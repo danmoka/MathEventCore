@@ -130,7 +130,7 @@
         var filteredCards = _performancesOriginal;
         Type = "Любой";
         Period = "За всё время";
-        Performances = await FilterAction(_performancesOriginal, this.SearchString, "api/Filter/search");
+        Performances = await FilterAction(_performancesOriginal, this.SearchString, "api/filters/search");
     }
 
     public async Task Filter()
@@ -140,12 +140,12 @@
         var filteredCards = _performancesOriginal;
         if (Type != "Любой")
         {
-            filteredCards = await FilterAction(filteredCards, Type, "api/Filter/type");
+            filteredCards = await FilterAction(filteredCards, Type, "api/filters/type");
         }
 
         if (Period != "За всё время")
         {
-            filteredCards = await FilterAction(filteredCards, Period, "api/Filter/period");
+            filteredCards = await FilterAction(filteredCards, Period, "api/filters/period");
         }
 
         Performances = filteredCards;

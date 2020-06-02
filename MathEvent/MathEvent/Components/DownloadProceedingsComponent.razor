@@ -12,7 +12,7 @@
 
 @inject ClientService ClientService
 @inject NavigationManager NavigationManager
-@inject StatusCodeResolver StatusCodeResolver
+@inject IStatusCodeResolver StatusCodeResolver
 
 <input type="button" class="btn btn-block download-btn" @onclick="Download" value="Скачать материалы события" hidden="@(!_isActive)" />
 
@@ -26,7 +26,7 @@
         _client = ClientService.Client;
         var model = JsonConvert.SerializeObject(Performance);
         var content = new StringContent(model, Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync("api/Proceedings/isFileExists", content);
+        var response = await _client.PostAsync("api/proceedings/isFileExists", content);
 
 
         if (response.StatusCode == HttpStatusCode.OK)
@@ -40,6 +40,6 @@
 
     protected void Download()
     {
-        NavigationManager.NavigateTo($"/api/Proceedings/downloadProceedings?performanceId={Performance.Id}", true);
+        NavigationManager.NavigateTo($"/api/proceedings/download?performanceId={Performance.Id}&userId={Performance.UserId}", true);
     }
 }

@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// Контроллер действий с конференциями
+    /// </summary>
     public class ConferenceController : Controller
     {
         private readonly ApplicationContext _db;
@@ -26,6 +29,10 @@ namespace MathEvent.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Предоставляет страницу с коллекцией будующих конференций
+        /// </summary>
+        /// <returns>Страница с коллекцией конференций</returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -121,7 +128,8 @@ namespace MathEvent.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add([Bind("Name", "Location", "Start", "End")] Conference model)
+        public async Task<IActionResult> Add(
+            [Bind("Name", "Location", "Start", "End")] Conference model)
         {
             if (!ModelState.IsValid)
             {
@@ -139,6 +147,7 @@ namespace MathEvent.Controllers
             await _db.Conferences.AddAsync(model);
             await _db.SaveChangesAsync();
 
+            /// после создания конференции нужно добавить папку на сервер
             var conferenceDataPath = user.DataPath;
 
             if (!UserDataPathWorker.CreateSubDirectory(ref conferenceDataPath, model.Id.ToString()))
@@ -160,7 +169,9 @@ namespace MathEvent.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int conferenceId)
         {
-            var conference = await _db.Conferences.Where(c => c.Id == conferenceId).SingleOrDefaultAsync();
+            var conference = await _db.Conferences
+                .Where(c => c.Id == conferenceId)
+                .SingleOrDefaultAsync();
 
             if (conference == null)
             {
@@ -200,6 +211,12 @@ namespace MathEvent.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Метод валидации даты начала
+        /// </summary>
+        /// <param name="start">Дата начала</param>
+        /// <param name="end">Дата конца</param>
+        /// <returns>Json(true), если данные валидны, иначе сообщение об ошибке</returns>
         [AcceptVerbs("Get", "Post")]
         public IActionResult CheckStartDate(DateTime start, DateTime end)
         {
@@ -215,6 +232,12 @@ namespace MathEvent.Controllers
             return Json(true);
         }
 
+        /// <summary>
+        /// Метод валидации даты конца
+        /// </summary>
+        /// <param name="end">Дата конца</param>
+        /// <param name="start">Дата начала</param>
+        /// <returns>Json(true), если данные валидны, иначе сообщение об ошибке</returns>
         [AcceptVerbs("Get", "Post")]
         public IActionResult CheckEndDate(DateTime end, DateTime start)
         {

@@ -268,7 +268,7 @@
         {
             var model = JsonConvert.SerializeObject(PerformanceModel);
             var content = new StringContent(model, Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync($"/api/Proceedings/deleteProceedings", content);
+            var response = await _client.PostAsync($"/api/proceedings/delete", content);
             var responseResult = await response.Content.ReadAsStringAsync();
             var statusCode = (JsonConvert.DeserializeObject<HttpStatusCode>(responseResult));
             StatusCodeResolver.ResolveStatusCode(statusCode, null);

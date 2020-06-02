@@ -2,7 +2,9 @@
 
 namespace MathEvent.Controllers
 {
-    //todo: сделать красивые View
+    /// <summary>
+    /// Контроллер ошибок
+    /// </summary>
     public class ErrorController : Controller
     {
         [Route("error/404")]
@@ -29,6 +31,11 @@ namespace MathEvent.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Обработка остальных ошибок
+        /// </summary>
+        /// <param name="code">Код ошибки</param>
+        /// <returns>Представление ошибки</returns>
         [Route("error/{code:int}")]
         public IActionResult Error(int code)
         {

@@ -64,7 +64,7 @@ namespace MathEvent
             services.Configure<IdentityOptions>(options => options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
             services.AddScoped<DbService, DbService>();
             services.AddScoped<UserService, UserService>();
-            services.AddScoped<IFileUpload, FileUpload>();
+            services.AddScoped<IFileUpload, FileUploadService>();
             services.AddScoped<IStatusCodeResolver, StatusCodeService>();
             services.AddTransient<IValidator<PerformanceViewModel>, PerformanceValidator>();
             services.AddTransient<IValidator<SectionViewModel>, SectionValidator>();

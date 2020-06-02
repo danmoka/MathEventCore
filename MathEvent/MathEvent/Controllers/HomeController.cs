@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MathEvent.Models;
 using Microsoft.EntityFrameworkCore;
-using MathEvent.Helpers.Email;
 
 namespace MathEvent.Controllers
 {
@@ -14,11 +13,8 @@ namespace MathEvent.Controllers
     {
         private readonly ApplicationContext _db;
         private readonly ILogger<HomeController> _logger;
-        private readonly EmailService _emailSender;
-
-        public HomeController(ApplicationContext db, EmailConfiguration es)
+        public HomeController(ApplicationContext db)
         {
-            _emailSender = new EmailService(es);
             _db = db;
         }
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace MathEvent.Models.ViewModels
 {
@@ -20,5 +21,8 @@ namespace MathEvent.Models.ViewModels
         [StringLength(100, ErrorMessage = "Длина информации о вас должна быть от 3 до 300 символов", MinimumLength = 1)]
         [Display(Name = "О вас")]
         public string UserInfo { get; set; }
+
+        [HiddenInput(DisplayValue = false)]
+        public string ReturnUrl { get; set; }
     }
 }

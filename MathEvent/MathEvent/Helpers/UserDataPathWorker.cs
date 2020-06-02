@@ -6,6 +6,9 @@ using BlazorInputFile;
 
 namespace MathEvent.Helpers
 {
+    /// <summary>
+    /// Статический класс работы с файлами и директориями
+    /// </summary>
     public static class UserDataPathWorker
     {
         private static string _webRootPath;
@@ -95,6 +98,12 @@ namespace MathEvent.Helpers
             return CreateDirectory(parentDir);
         }
 
+        /// <summary>
+        /// Перемещает директорию
+        /// </summary>
+        /// <param name="source">Текущее положение</param>
+        /// <param name="destination">Целевое положение</param>
+        /// <returns>true, если перемещение удачно, иначе false</returns>
         public static bool MoveDirectories(string source, string destination)
         {
             if (Directory.Exists(source))
@@ -117,6 +126,38 @@ namespace MathEvent.Helpers
             return false;
         }
 
+        /// <summary>
+        /// Удаляет директорию 
+        /// </summary>
+        /// <param name="path">Путь до директории</param>
+        /// <returns>true, если удаление удачно, иначе false</returns>
+        public static bool RemoveDirectory(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Загружает файл
+        /// </summary>
+        /// <param name="file">Файл</param>
+        /// <param name="path">Целевой путь загрузки</param>
+        /// <param name="fileName">Имя файла</param>
+        /// <returns></returns>
         public static async Task UploadFile(IFileListEntry file, string path, string fileName)
         {
             if (file != null)
@@ -128,6 +169,14 @@ namespace MathEvent.Helpers
             }
         }
 
+        /// <summary>
+        /// Загружает афишку события
+        /// Если файл отсутствует, то загружается изображение по умполчанию
+        /// </summary>
+        /// <param name="file">Файл</param>
+        /// <param name="path">Целевой путь загрузки</param>
+        /// <param name="fileName">Имя файла</param>
+        /// <returns></returns>
         public static async Task UploadImage(IFileListEntry file, string path, string fileName)
         {
             if (file != null)

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MathEvent.Helpers;
@@ -11,6 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// API контроллер действий с конференциями
+    /// Необходим для обработки запросов с компонентов
+    /// </summary>
     [Route("api/conferences")]
     [ApiController]
     public class ConferenceDataController : ControllerBase
@@ -24,6 +27,11 @@ namespace MathEvent.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Удаляет конференцию с указанным идентификатором
+        /// </summary>
+        /// <param name="conferenceModel">Вью-модель конференции</param>
+        /// <returns>Статус код обработки запроса</returns>
         [HttpPost]
         [Route("delete")]
         public async Task<HttpStatusCode> DeleteConference(
@@ -51,26 +59,23 @@ namespace MathEvent.Controllers
             _db.Conferences.Remove(conference);
             await _db.SaveChangesAsync();
 
-            if (Directory.Exists(path))
+            if (!UserDataPathWorker.RemoveDirectory(path))
             {
-                try
-                {
-                    Directory.Delete(path, true);
-                }
-                catch
-                {
-                    return HttpStatusCode.InternalServerError;
-                }
-
+                return HttpStatusCode.InternalServerError;
             }
 
             return HttpStatusCode.OK;
         }
 
+        /// <summary>
+        /// Изменяет данные о конференции
+        /// </summary>
+        /// <param name="conferenceModel">Вью-модель конференции</param>
+        /// <returns>Статус код обработки запроса</returns>
         [HttpPost]
         [Route("edit")]
         public async Task<HttpStatusCode> EditConference(
-            [Bind("Id", "Name", "Location", "Start", "End", "UserId", "UserRoles", "SectionViewModels")] ConferenceViewModel conferenceModel)
+            [Bind("Id", "Name", "Location", "Start", "End", "UserId")] ConferenceViewModel conferenceModel)
         {
             if (!ModelState.IsValid)
             {

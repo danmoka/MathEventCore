@@ -93,10 +93,10 @@
                     <span asp-validation-for="ConferenceId" class="text-danger"></span>
                 </div>@*<form-group*@
                 <div class="form-row form-group d-flex align-items-end mt-4">
-                    <DeleteWithConfirmComponent ConfirmedChanged="Delete"
+                    <ConfirmComponent ConfirmedChanged="Delete"
                                                 Message="Вы действительно хотите удалить секцию? Все события секции будут удалены."
                                                 ActionName="Удалить"
-                                                Width="380px"></DeleteWithConfirmComponent>
+                                                Width="380px"></ConfirmComponent>
                     <input type="submit" class="btn btn-success" value="Сохранить изменения" />
                 </div>
             </div>

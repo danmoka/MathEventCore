@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// Контроллер отправки email сообщений
+    /// </summary>
     [Authorize]
     public class EmailController : Controller
     {
@@ -53,6 +56,11 @@ namespace MathEvent.Controllers
             return View(emailSendMessageViewModel);
         }
 
+        /// <summary>
+        /// Отправляет обычное сообщение
+        /// </summary>
+        /// <param name="model">Вью-модель email сообщения</param>
+        /// <returns>Представление карточки, если обработка запроса успешна</returns>
         [HttpPost]
         public async Task<IActionResult> Send(
             [Bind("PerformanceId", "CreatorEmail", "UserEmail", "Message", "Content")] EmailSendMessageViewModel model)

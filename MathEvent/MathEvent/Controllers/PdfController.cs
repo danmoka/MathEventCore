@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using MathEvent.Helpers;
 using MathEvent.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +6,10 @@ using Rotativa.AspNetCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// Контроллер для скачивания программы конференции в формате pdf
+    /// Работает только на localhost
+    /// </summary>
     public class PdfController : Controller
     {
         private readonly ApplicationContext _db;

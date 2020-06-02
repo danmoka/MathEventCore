@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MathEvent.Controllers
 {
+    /// <summary>
+    /// API контроллер для записи/отписка на событие
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SubscribeController : Controller
@@ -19,13 +22,21 @@ namespace MathEvent.Controllers
             _db = db;
         }
 
+        /// <summary>
+        /// Записывает/отписывает пользователя на/от события
+        /// </summary>
+        /// <param name="model">Вью-модель события</param>
+        /// <returns>Статус код результата обработки</returns>
         [HttpPost]
         [Route("signup")]
         public async Task<HttpStatusCode> SignUp(
             [Bind("Id", "UserId")]PerformanceViewModel model)
         {
-            var ap = await _db.ApplicationUserPerformances.Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId).SingleOrDefaultAsync();
+            var ap = await _db.ApplicationUserPerformances
+                .Where(ap => ap.PerformanceId == model.Id && ap.ApplicationUserId == model.UserId)
+                .SingleOrDefaultAsync();
 
+            /// еще не подписан
             if (ap == null)
             {
                 ap = new ApplicationUserPerformance()
@@ -35,7 +46,9 @@ namespace MathEvent.Controllers
                 };
 
                 _db.ApplicationUserPerformances.Add(ap);
-                var performance = await _db.Performances.Where(p => p.Id == model.Id).SingleOrDefaultAsync(); // или лучше триггер?
+                var performance = await _db.Performances
+                    .Where(p => p.Id == model.Id).
+                    SingleOrDefaultAsync(); // или лучше триггер?
 
                 if (performance == null)
                 {
@@ -46,10 +59,12 @@ namespace MathEvent.Controllers
                 _db.Performances.Update(performance);
                 await _db.SaveChangesAsync();
             }
-            else
+            else /// если подписан
             {
                 _db.ApplicationUserPerformances.Remove(ap);
-                var performance = await _db.Performances.Where(p => p.Id == model.Id).SingleOrDefaultAsync(); // или лучше триггер?
+                var performance = await _db.Performances
+                    .Where(p => p.Id == model.Id)
+                    .SingleOrDefaultAsync(); // или лучше триггер?
 
                 if (performance == null)
                 {

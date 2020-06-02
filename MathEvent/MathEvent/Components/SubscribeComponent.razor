@@ -23,7 +23,6 @@
 
 @code {
     [Parameter] public PerformanceViewModel Card { get; set; }
-    [Parameter] public int Traffic { get; set; }
     [Parameter] public bool IsSignIn { get; set; }
     private HttpClient _client;
 
@@ -48,12 +47,12 @@
 
         if (!Card.IsSubscribed)
         {
-            Traffic++;
+            Card.Traffic++;
             Card.IsSubscribed = !Card.IsSubscribed;
         }
         else
         {
-            Traffic--;
+            Card.Traffic--;
             Card.IsSubscribed = !Card.IsSubscribed;
         }
 
@@ -62,7 +61,7 @@
 
     protected int Count()
     {
-        return Traffic;
+        return Card.Traffic;
     }
 
     protected string CurrentButtonValue()
